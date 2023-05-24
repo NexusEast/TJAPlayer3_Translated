@@ -140,21 +140,21 @@ namespace TJAPlayer3
 		}
 		public override void On非活性化()
 		{
-			if( !base.b活性化してない )
+			if( !base.bDeactivated )
 			{
 				base.On非活性化();
 			}
 		}
-		public override void OnManagedリソースの作成()
+		public override void OnManagedResourceLoaded()
 		{
-			if( !base.b活性化してない )
+			if( !base.bDeactivated )
 			{
-				base.OnManagedリソースの作成();
+				base.OnManagedResourceLoaded();
 			}
 		}
-		public override void OnManagedリソースの解放()
+		public override void OnManagedDisposed()
 		{
-			base.OnManagedリソースの解放();
+			base.OnManagedDisposed();
 		}
 
 		#region [ private ]

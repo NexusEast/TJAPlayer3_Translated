@@ -3,17 +3,17 @@
 	/// <summary>
 	/// 一定間隔で単純増加する整数（カウント値）を扱う。
 	/// </summary>
-    /// <remarks>
-    /// ○使い方
-    /// 1.CCounterの変数をつくる。
-    /// 2.CCounterを生成
-    ///   ctCounter = new CCounter( 0, 3, 10, CDTXMania.Timer );
-    /// 3.進行メソッドを使用する。
-    /// 4.ウマー。
-    ///
-    /// double値を使う場合、t進行db、t進行LoopDbを使うこと。
-    /// また、double版では間隔の値はミリ秒単位ではなく、通常の秒単位になります。
-    /// </remarks>
+	/// <remarks>
+	/// ○使い方
+	/// 1.CCounterの変数をつくる。
+	/// 2.CCounterを生成
+	///   ctCounter = new CCounter( 0, 3, 10, CDTXMania.Timer );
+	/// 3.進行メソッドを使用する。
+	/// 4.ウマー。
+	///
+	/// double値を使う場合、tStartdb、t進行LoopDbを使うこと。
+	/// また、double版では間隔の値はミリ秒単位ではなく、通常の秒単位になります。
+	/// </remarks>
 	public class CCounter
 	{
 		// 値プロパティ
@@ -28,7 +28,7 @@
 			get;
 			private set;
 		}
-		public int n現在の値
+		public int nCurrentValue
 		{
 			get;
 			set;
@@ -71,13 +71,13 @@
 		{
 			get { return !this.b進行中; }
 		}
-		public bool b終了値に達した
+		public bool bEnded
 		{
-			get { return ( this.n現在の値 >= this.n終了値 ); }
+			get { return ( this.nCurrentValue >= this.n終了値 ); }
 		}
 		public bool b終了値に達してない
 		{
-			get { return !this.b終了値に達した; }
+			get { return !this.bEnded; }
 		}
 
         /// <summary>通常のCCounterでは使用できません。</summary>
@@ -93,7 +93,7 @@
         }
 
         /// <summary>通常のCCounterでは使用できません。</summary>
-        public bool b終了値に達したdb
+        public bool bEndeddb
         {
             get { return ( this.db現在の値 >= this.db終了値 ); }
         }
@@ -101,7 +101,7 @@
         /// <summary>通常のCCounterでは使用できません。</summary>
         public bool b終了値に達してないdb
         {
-            get { return !this.b終了値に達したdb; }
+            get { return !this.bEndeddb; }
         }
 
 
@@ -113,7 +113,7 @@
 			this.n開始値 = 0;
 			this.n終了値 = 0;
 			this.n間隔ms = 0;
-			this.n現在の値 = 0;
+			this.nCurrentValue = 0;
 			this.n現在の経過時間ms = CTimer.n未使用;
 
             this.db開始値 = 0;
@@ -127,14 +127,14 @@
 		public CCounter( int n開始値, int n終了値, int n間隔ms, CTimer timer )
 			: this()
 		{
-			this.t開始( n開始値, n終了値, n間隔ms, timer );
+			this.tStart( n開始値, n終了値, n間隔ms, timer );
 		}
 
         /// <summary>生成と同時に開始する。(double版)</summary>
         public CCounter( double db開始値, double db終了値, double db間隔, CSoundTimer timer )
             : this()
         {
-            this.t開始( db開始値, db終了値, db間隔 * 1000.0, timer );
+            this.tStart( db開始値, db終了値, db間隔 * 1000.0, timer );
         }
 
 
@@ -147,14 +147,14 @@
 		/// <param name="n終了値">最後のカウント値。</param>
 		/// <param name="n間隔ms">カウント値を１増加させるのにかける時間（ミリ秒単位）。</param>
 		/// <param name="timer">カウントに使用するタイマ。</param>
-		public void t開始( int n開始値, int n終了値, int n間隔ms, CTimer timer )
+		public void tStart( int n開始値, int n終了値, int n間隔ms, CTimer timer )
 		{
 			this.n開始値 = n開始値;
 			this.n終了値 = n終了値;
 			this.n間隔ms = n間隔ms;
 			this.timer = timer;
 			this.n現在の経過時間ms = this.timer.n現在時刻;
-			this.n現在の値 = n開始値;
+			this.nCurrentValue = n開始値;
             if (n間隔ms <= 0)
                 n間隔ms = -n間隔ms;
 		}
@@ -166,7 +166,7 @@
 		/// <param name="db終了値">最後のカウント値。</param>
 		/// <param name="db間隔">カウント値を１増加させるのにかける時間（秒単位）。</param>
 		/// <param name="timer">カウントに使用するタイマ。</param>
-		public void t開始( double db開始値, double db終了値, double db間隔, CSoundTimer timer )
+		public void tStart( double db開始値, double db終了値, double db間隔, CSoundTimer timer )
 		{
 			this.db開始値 = db開始値;
 			this.db終了値 = db終了値;
@@ -179,10 +179,10 @@
 		}
 
 		/// <summary>
-		/// 前回の t進行() の呼び出しからの経過時間をもとに、必要なだけカウント値を増加させる。
+		/// 前回の tStart() の呼び出しからの経過時間をもとに、必要なだけカウント値を増加させる。
 		/// カウント値が終了値に達している場合は、それ以上増加しない（終了値を維持する）。
 		/// </summary>
-		public void t進行()
+		public void tStart()
 		{
 			if ( ( this.timer != null ) && ( this.n現在の経過時間ms != CTimer.n未使用 ) )
 			{
@@ -194,8 +194,8 @@
 
 				while ( ( num - this.n現在の経過時間ms ) >= this.n間隔ms )
 				{
-					if ( ++this.n現在の値 > this.n終了値 )
-						this.n現在の値 = this.n終了値;
+					if ( ++this.nCurrentValue > this.n終了値 )
+						this.nCurrentValue = this.n終了値;
 
 					this.n現在の経過時間ms += this.n間隔ms;
 				}
@@ -203,10 +203,10 @@
 		}
 
         /// <summary>
-		/// 前回の t進行() の呼び出しからの経過時間をもとに、必要なだけカウント値を増加させる。
+		/// 前回の tStart() の呼び出しからの経過時間をもとに、必要なだけカウント値を増加させる。
 		/// カウント値が終了値に達している場合は、それ以上増加しない（終了値を維持する）。
 		/// </summary>
-		public void t進行db()
+		public void tStartdb()
 		{
 			if ( ( this.timerdb != null ) && ( this.db現在の経過時間 != CSoundTimer.n未使用 ) )
 			{
@@ -227,10 +227,10 @@
 		}
 
 		/// <summary>
-		/// 前回の t進行Loop() の呼び出しからの経過時間をもとに、必要なだけカウント値を増加させる。
+		/// 前回の tStartLoop() の呼び出しからの経過時間をもとに、必要なだけカウント値を増加させる。
 		/// カウント値が終了値に達している場合は、次の増加タイミングで開始値に戻る（値がループする）。
 		/// </summary>
-		public void t進行Loop()
+		public void tStartLoop()
 		{
 			if ( ( this.timer != null ) && ( this.n現在の経過時間ms != CTimer.n未使用 ) )
 			{
@@ -242,8 +242,8 @@
 
 				while ( ( num - this.n現在の経過時間ms ) >= this.n間隔ms )
 				{
-					if ( ++this.n現在の値 > this.n終了値 )
-						this.n現在の値 = this.n開始値;
+					if ( ++this.nCurrentValue > this.n終了値 )
+						this.nCurrentValue = this.n開始値;
 
 					this.n現在の経過時間ms += this.n間隔ms;
 				}
@@ -251,10 +251,10 @@
 		}
 
         /// <summary>
-		/// 前回の t進行Loop() の呼び出しからの経過時間をもとに、必要なだけカウント値を増加させる。
+		/// 前回の tStartLoop() の呼び出しからの経過時間をもとに、必要なだけカウント値を増加させる。
 		/// カウント値が終了値に達している場合は、次の増加タイミングで開始値に戻る（値がループする）。
 		/// </summary>
-		public void t進行LoopDb()
+		public void tStartLoopDb()
 		{
 			if ( ( this.timerdb != null ) && ( this.db現在の経過時間 != CSoundTimer.n未使用 ) )
 			{
@@ -276,9 +276,9 @@
 
 		/// <summary>
 		/// カウントを停止する。
-		/// これ以降に t進行() や t進行Loop() を呼び出しても何も処理されない。
+		/// これ以降に tStart() や tStartLoop() を呼び出しても何も処理されない。
 		/// </summary>
-		public void t停止()
+		public void tStop()
 		{
 			this.n現在の経過時間ms = CTimer.n未使用;
             this.db現在の経過時間 = CSoundTimer.n未使用;
@@ -305,12 +305,12 @@
 
 			if ( bキー押下 )
 			{
-				switch ( this.n現在の値 )
+				switch ( this.nCurrentValue )
 				{
 					case n1回目:
 
 						tキー処理();
-						this.n現在の値 = n2回目;
+						this.nCurrentValue = n2回目;
 						this.n現在の経過時間ms = this.timer.n現在時刻;
 						return;
 
@@ -320,7 +320,7 @@
 						{
 							tキー処理();
 							this.n現在の経過時間ms = this.timer.n現在時刻;
-							this.n現在の値 = n3回目以降;
+							this.nCurrentValue = n3回目以降;
 						}
 						return;
 
@@ -336,7 +336,7 @@
 			}
 			else
 			{
-				this.n現在の値 = n1回目;
+				this.nCurrentValue = n1回目;
 			}
 		}
 		public delegate void DGキー処理();

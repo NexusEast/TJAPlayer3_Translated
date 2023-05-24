@@ -20,7 +20,7 @@
         /// <returns>不透明度。</returns>
         public override object GetAnimation()
         {
-            var opacity = (TimeMs - base.Counter.n現在の値) * 255 / TimeMs;
+            var opacity = (TimeMs - base.Counter.nCurrentValue) * 255 / TimeMs;
             return opacity;
         }
 

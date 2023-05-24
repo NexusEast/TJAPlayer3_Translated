@@ -13,7 +13,7 @@ namespace TJAPlayer3
 
 		public CActSelectステータスパネル()
 		{
-			base.b活性化してない = true;
+			base.bDeactivated = true;
 		}
 		public void t選択曲が変更された()
 		{
@@ -33,25 +33,25 @@ namespace TJAPlayer3
 
 			base.On非活性化();
 		}
-		public override void OnManagedリソースの作成()
+		public override void OnManagedResourceLoaded()
 		{
-			if( !base.b活性化してない )
+			if( !base.bDeactivated )
 			{
 
-				base.OnManagedリソースの作成();
+				base.OnManagedResourceLoaded();
 			}
 		}
-		public override void OnManagedリソースの解放()
+		public override void OnManagedDisposed()
 		{
-			if( !base.b活性化してない )
+			if( !base.bDeactivated )
 			{
 
-				base.OnManagedリソースの解放();
+				base.OnManagedDisposed();
 			}
 		}
-		public override int On進行描画()
+		public override int OnDraw()
 		{
-			if( !base.b活性化してない )
+			if( !base.bDeactivated )
 			{
 
 			}

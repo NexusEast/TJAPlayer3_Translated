@@ -60,7 +60,7 @@ namespace TJAPlayer3
 
 			this.st文字位置 = st文字位置Array;
 
-			base.b活性化してない = true;
+			base.bDeactivated = true;
 
         }
 
@@ -93,25 +93,25 @@ namespace TJAPlayer3
             base.On非活性化();
         }
 
-        public override void OnManagedリソースの作成()
+        public override void OnManagedResourceLoaded()
         {
-            base.OnManagedリソースの作成();
+            base.OnManagedResourceLoaded();
         }
 
-        public override void OnManagedリソースの解放()
+        public override void OnManagedDisposed()
         {
-            base.OnManagedリソースの解放();
+            base.OnManagedDisposed();
         }
 
-        public override int On進行描画( )
+        public override int OnDraw( )
         {
-            return base.On進行描画();
+            return base.OnDraw();
         }
 
         public int On進行描画( int n連打数, int player )
         {
-            this.ct連打枠カウンター[ player ].t進行();
-            this.ct連打アニメ[player].t進行();
+            this.ct連打枠カウンター[ player ].tStart();
+            this.ct連打アニメ[player].tStart();
             FadeOut[player].Tick();
             //1PY:-3 2PY:514
             //仮置き
@@ -119,10 +119,10 @@ namespace TJAPlayer3
             int[] nRollNumber = new int[] { 48, 559, 0, 0 };
             for( int i = 0; i < TJAPlayer3.ConfigIni.nPlayerCount; i++ )
             {
-                //CDTXMania.act文字コンソール.tPrint(0, 0, C文字コンソール.Eフォント種別.白, this.ct連打枠カウンター[player].n現在の値.ToString());
+                //CDTXMania.act文字コンソール.tPrint(0, 0, C文字コンソール.Eフォント種別.白, this.ct連打枠カウンター[player].nCurrentValue.ToString());
                 if ( this.ct連打枠カウンター[ player ].b終了値に達してない)
                 {
-                    if (ct連打枠カウンター[player].n現在の値 > 1333 && !FadeOut[player].Counter.b進行中)
+                    if (ct連打枠カウンター[player].nCurrentValue > 1333 && !FadeOut[player].Counter.b進行中)
                     {
                         FadeOut[player].Start();
                     }
@@ -144,14 +144,14 @@ namespace TJAPlayer3
                 }
             }
 
-            return base.On進行描画();
+            return base.OnDraw();
         }
 
         public void t枠表示時間延長( int player )
         {
             this.ct連打枠カウンター[ player ] = new CCounter( 0, 1500, 1, TJAPlayer3.Timer );
-            FadeOut[player].Counter.n現在の値 = 0;
-            FadeOut[player].Counter.t停止();
+            FadeOut[player].Counter.nCurrentValue = 0;
+            FadeOut[player].Counter.tStop();
         }
 
 
@@ -188,7 +188,7 @@ namespace TJAPlayer3
 		{
             int n桁数 = n連打.ToString().Length;
             
-            //CDTXMania.act文字コンソール.tPrint(0, 0, C文字コンソール.Eフォント種別.白, ct連打アニメ[nPlayer].n現在の値.ToString());
+            //CDTXMania.act文字コンソール.tPrint(0, 0, C文字コンソール.Eフォント種別.白, ct連打アニメ[nPlayer].nCurrentValue.ToString());
             foreach ( char ch in str )
 			{
 				for( int i = 0; i < this.st文字位置.Length; i++ )
@@ -200,7 +200,7 @@ namespace TJAPlayer3
 						if(TJAPlayer3.Tx.Balloon_Number_Roll != null )
 						{
                             TJAPlayer3.Tx.Balloon_Number_Roll.vc拡大縮小倍率.X = TJAPlayer3.Skin.Game_Balloon_Roll_Number_Scale;
-                            TJAPlayer3.Tx.Balloon_Number_Roll.vc拡大縮小倍率.Y = TJAPlayer3.Skin.Game_Balloon_Roll_Number_Scale + RollScale[this.ct連打アニメ[nPlayer].n現在の値];
+                            TJAPlayer3.Tx.Balloon_Number_Roll.vc拡大縮小倍率.Y = TJAPlayer3.Skin.Game_Balloon_Roll_Number_Scale + RollScale[this.ct連打アニメ[nPlayer].nCurrentValue];
                             TJAPlayer3.Tx.Balloon_Number_Roll.t2D拡大率考慮下基準描画( TJAPlayer3.app.Device, x - ( ( (TJAPlayer3.Skin.Game_Balloon_Number_Padding + 2) * n桁数 ) / 2 ), y, rectangle );
 						}
 						break;

@@ -58,7 +58,7 @@ namespace TJAPlayer3
 			st文字位置11.pt = new Point( 558 + 62, 0 );
 			st文字位置Array[ 10 ] = st文字位置11;
 			this.st文字位置 = st文字位置Array;
-			base.b活性化してない = true;
+			base.bDeactivated = true;
 		}
 
 
@@ -94,31 +94,31 @@ namespace TJAPlayer3
 			}
 			base.On非活性化();
 		}
-		public override void OnManagedリソースの作成()
+		public override void OnManagedResourceLoaded()
 		{
-			if( !base.b活性化してない )
+			if( !base.bDeactivated )
 			{
     //            this.txBlack = CDTXMania.tテクスチャの生成( CSkin.Path( @"Graphics\Tile black 64x64.png" ) );
 				//this.txStageFailed = CDTXMania.tテクスチャの生成( CSkin.Path( @"Graphics\7_stage_failed.jpg" ) );
 				//this.txGameFailed = CDTXMania.tテクスチャの生成( CSkin.Path( @"Graphics\7_GameFailed.png" ) );
     //            this.tx数字 = CDTXMania.tテクスチャの生成( CSkin.Path( @"Graphics\7_RollNumber.png" ) );
-				base.OnManagedリソースの作成();
+				base.OnManagedResourceLoaded();
 			}
 		}
-		public override void OnManagedリソースの解放()
+		public override void OnManagedDisposed()
 		{
-			if( !base.b活性化してない )
+			if( !base.bDeactivated )
 			{
 				//CDTXMania.tテクスチャの解放( ref this.txStageFailed );
 				//CDTXMania.tテクスチャの解放( ref this.txGameFailed );
     //            CDTXMania.tテクスチャの解放( ref this.txBlack );
     //            CDTXMania.tテクスチャの解放( ref this.tx数字 );
-				base.OnManagedリソースの解放();
+				base.OnManagedDisposed();
 			}
 		}
-		public override int On進行描画()
+		public override int OnDraw()
 		{
-			if( base.b活性化してない )
+			if( base.bDeactivated )
 			{
 				return 0;
 			}
@@ -126,7 +126,7 @@ namespace TJAPlayer3
 			{
 				return 0;
 			}
-			this.ct進行.t進行();
+			this.ct進行.tStart();
 
             if (TJAPlayer3.ConfigIni.eGameMode == EGame.完走叩ききりまショー || TJAPlayer3.ConfigIni.eGameMode == EGame.完走叩ききりまショー激辛)
             {
@@ -140,7 +140,7 @@ namespace TJAPlayer3
                         }
                     }
                 }
-                if (this.ct進行.n現在の値 > 1500)
+                if (this.ct進行.nCurrentValue > 1500)
                 {
                     TJAPlayer3.Tx.Failed_Game?.t2D描画(TJAPlayer3.app.Device, 0, 0);
 
@@ -155,9 +155,9 @@ namespace TJAPlayer3
             }
             else
             {
-                if (this.ct進行.n現在の値 < 100)
+                if (this.ct進行.nCurrentValue < 100)
                 {
-                    int x = (int)(640.0 * Math.Cos((Math.PI / 2 * this.ct進行.n現在の値) / 100.0));
+                    int x = (int)(640.0 * Math.Cos((Math.PI / 2 * this.ct進行.nCurrentValue) / 100.0));
                     if ((x != 640) && (TJAPlayer3.Tx.Failed_Stage != null))
                     {
                         TJAPlayer3.Tx.Failed_Stage.t2D描画(TJAPlayer3.app.Device, 0, 0, new Rectangle(x, 0, 640 - x, 720));
@@ -168,7 +168,7 @@ namespace TJAPlayer3
                 {
                     TJAPlayer3.Tx.Failed_Stage?.t2D描画(TJAPlayer3.app.Device, 0, 0);
 
-                    if (this.ct進行.n現在の値 <= 250)
+                    if (this.ct進行.nCurrentValue <= 250)
                     {
                         int num2 = TJAPlayer3.Random.Next(5) - 2;
                         int y = TJAPlayer3.Random.Next(5) - 2;
@@ -182,7 +182,7 @@ namespace TJAPlayer3
                 }
             }
 
-			if( !this.ct進行.b終了値に達した )
+			if( !this.ct進行.bEnded )
 			{
 				return 0;
 			}

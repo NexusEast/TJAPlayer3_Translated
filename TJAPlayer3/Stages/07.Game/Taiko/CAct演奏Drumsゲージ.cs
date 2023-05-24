@@ -37,7 +37,7 @@ namespace TJAPlayer3
         /// </summary>
 		public CAct演奏Drumsゲージ()
 		{
-			base.b活性化してない = true;
+			base.bDeactivated = true;
 		}
 
         public override void Start(int nLane, E判定 judge, int player)
@@ -122,9 +122,9 @@ namespace TJAPlayer3
             }
             this.ct炎 = null;
 		}
-		public override void OnManagedリソースの作成()
+		public override void OnManagedResourceLoaded()
 		{
-			if( !base.b活性化してない )
+			if( !base.bDeactivated )
 			{
 				//this.txゲージ = CDTXMania.tテクスチャの生成( CSkin.Path( @"Graphics\7_Gauge.png" ) );
 				//this.txゲージ背景 = CDTXMania.tテクスチャの生成( CSkin.Path( @"Graphics\7_Gauge_base.png" ) );
@@ -151,12 +151,12 @@ namespace TJAPlayer3
                 this.ct虹アニメ = new CCounter( 0, TJAPlayer3.Skin.Game_Gauge_Rainbow_Ptn -1, TJAPlayer3.Skin.Game_Gauge_Rainbow_Timer, TJAPlayer3.Timer );
                 this.ct虹透明度 = new CCounter(0, TJAPlayer3.Skin.Game_Gauge_Rainbow_Timer-1, 1, TJAPlayer3.Timer);
                 //this.tx音符 = CDTXMania.tテクスチャの生成(CSkin.Path(@"Graphics\7_taiko_notes.png"));
-                base.OnManagedリソースの作成();
+                base.OnManagedResourceLoaded();
 			}
 		}
-		public override void OnManagedリソースの解放()
+		public override void OnManagedDisposed()
 		{
-			if( !base.b活性化してない )
+			if( !base.bDeactivated )
 			{
 				//CDTXMania.tテクスチャの解放( ref this.txゲージ );
 				//CDTXMania.tテクスチャの解放( ref this.txゲージ背景 );
@@ -179,12 +179,12 @@ namespace TJAPlayer3
                 this.ct虹アニメ = null;
 
                 //CDTXMania.tテクスチャの解放(ref this.tx音符);
-                base.OnManagedリソースの解放();
+                base.OnManagedDisposed();
 			}
 		}
-		public override int On進行描画()
+		public override int OnDraw()
 		{
-			if ( !base.b活性化してない )
+			if ( !base.bDeactivated )
 			{
                 //CDTXMania.act文字コンソール.tPrint( 20, 150, C文字コンソール.Eフォント種別.白, this.db現在のゲージ値.Taiko.ToString() );
 
@@ -198,7 +198,7 @@ namespace TJAPlayer3
 
                 int nRectX = (int)( this.db現在のゲージ値[ 0 ] / 2 ) * 14;
                 int nRectX2P = (int)( this.db現在のゲージ値[ 1 ] / 2 ) * 14;
-                int 虹ベース = ct虹アニメ.n現在の値 + 1;
+                int 虹ベース = ct虹アニメ.nCurrentValue + 1;
                 if (虹ベース == ct虹アニメ.n終了値+1) 虹ベース = 0;
                 /*
 
@@ -365,13 +365,13 @@ namespace TJAPlayer3
                                 {
                                     if (TJAPlayer3.ConfigIni.eGaugeMode == EGaugeMode.Normal && this.db現在のゲージ値[0] >= 100.0)
                                     {
-                                        this.ct虹アニメ.t進行Loop();
-                                        this.ct虹透明度.t進行Loop();
-                                        if (TJAPlayer3.Tx.Gauge_Rainbow[this.ct虹アニメ.n現在の値] != null)
+                                        this.ct虹アニメ.tStartLoop();
+                                        this.ct虹透明度.tStartLoop();
+                                        if (TJAPlayer3.Tx.Gauge_Rainbow[this.ct虹アニメ.nCurrentValue] != null)
                                         {
-                                            TJAPlayer3.Tx.Gauge_Rainbow[this.ct虹アニメ.n現在の値].Opacity = 255;
-                                            TJAPlayer3.Tx.Gauge_Rainbow[this.ct虹アニメ.n現在の値].t2D描画(TJAPlayer3.app.Device, TJAPlayer3.Skin.Game_Gauge_X[0], TJAPlayer3.Skin.Game_Gauge_Y[0]);
-                                            TJAPlayer3.Tx.Gauge_Rainbow[虹ベース].Opacity = (ct虹透明度.n現在の値 * 255 / ct虹透明度.n終了値) / 1;
+                                            TJAPlayer3.Tx.Gauge_Rainbow[this.ct虹アニメ.nCurrentValue].Opacity = 255;
+                                            TJAPlayer3.Tx.Gauge_Rainbow[this.ct虹アニメ.nCurrentValue].t2D描画(TJAPlayer3.app.Device, TJAPlayer3.Skin.Game_Gauge_X[0], TJAPlayer3.Skin.Game_Gauge_Y[0]);
+                                            TJAPlayer3.Tx.Gauge_Rainbow[虹ベース].Opacity = (ct虹透明度.nCurrentValue * 255 / ct虹透明度.n終了値) / 1;
                                             TJAPlayer3.Tx.Gauge_Rainbow[虹ベース].t2D描画(TJAPlayer3.app.Device, TJAPlayer3.Skin.Game_Gauge_X[0], TJAPlayer3.Skin.Game_Gauge_Y[0]);
                                         }
                                     }
@@ -399,13 +399,13 @@ namespace TJAPlayer3
 
                                     if (TJAPlayer3.ConfigIni.eGaugeMode == EGaugeMode.Normal && this.db現在のゲージ値[1] >= 100.0)
                                     {
-                                        this.ct虹アニメ.t進行Loop();
-                                        this.ct虹透明度.t進行Loop();
-                                        if (TJAPlayer3.Tx.Gauge_Rainbow[this.ct虹アニメ.n現在の値] != null)
+                                        this.ct虹アニメ.tStartLoop();
+                                        this.ct虹透明度.tStartLoop();
+                                        if (TJAPlayer3.Tx.Gauge_Rainbow[this.ct虹アニメ.nCurrentValue] != null)
                                         {
-                                            TJAPlayer3.Tx.Gauge_Rainbow[ct虹アニメ.n現在の値].Opacity = 255;
-                                            TJAPlayer3.Tx.Gauge_Rainbow[ct虹アニメ.n現在の値].t2D上下反転描画(TJAPlayer3.app.Device, TJAPlayer3.Skin.Game_Gauge_X[1], TJAPlayer3.Skin.Game_Gauge_Y[1]);
-                                            TJAPlayer3.Tx.Gauge_Rainbow[虹ベース].Opacity = (ct虹透明度.n現在の値 * 255 / ct虹透明度.n終了値) / 1;
+                                            TJAPlayer3.Tx.Gauge_Rainbow[ct虹アニメ.nCurrentValue].Opacity = 255;
+                                            TJAPlayer3.Tx.Gauge_Rainbow[ct虹アニメ.nCurrentValue].t2D上下反転描画(TJAPlayer3.app.Device, TJAPlayer3.Skin.Game_Gauge_X[1], TJAPlayer3.Skin.Game_Gauge_Y[1]);
+                                            TJAPlayer3.Tx.Gauge_Rainbow[虹ベース].Opacity = (ct虹透明度.nCurrentValue * 255 / ct虹透明度.n終了値) / 1;
                                             TJAPlayer3.Tx.Gauge_Rainbow[虹ベース].t2D上下反転描画(TJAPlayer3.app.Device, TJAPlayer3.Skin.Game_Gauge_X[1], TJAPlayer3.Skin.Game_Gauge_Y[1]);
                                         }
                                     }
@@ -441,8 +441,8 @@ namespace TJAPlayer3
                     {
                         if (this.db現在のゲージ値[i] >= 100.0)
                         {
-                            this.ct炎.t進行Loop();
-                            TJAPlayer3.Tx.Gauge_Soul_Fire.t2D描画(TJAPlayer3.app.Device, 620 + TJAPlayer3.Skin.Game_Gauge_X[i], TJAPlayer3.Skin.Game_Gauge_Y[i] - nDefaultGaugeY[i] + nSoulFire[i], new Rectangle(230 * (this.ct炎.n現在の値), 0, 230, 230));
+                            this.ct炎.tStartLoop();
+                            TJAPlayer3.Tx.Gauge_Soul_Fire.t2D描画(TJAPlayer3.app.Device, 620 + TJAPlayer3.Skin.Game_Gauge_X[i], TJAPlayer3.Skin.Game_Gauge_Y[i] - nDefaultGaugeY[i] + nSoulFire[i], new Rectangle(230 * (this.ct炎.nCurrentValue), 0, 230, 230));
                         }
                     }
                 }
@@ -470,24 +470,24 @@ namespace TJAPlayer3
                 {
                     if( this.st花火状態[d].b使用中 )
                     {
-                        this.st花火状態[d].ct進行.t進行();
-                        if (this.st花火状態[d].ct進行.b終了値に達した)
+                        this.st花火状態[d].ct進行.tStart();
+                        if (this.st花火状態[d].ct進行.bEnded)
                         {
-                            this.st花火状態[d].ct進行.t停止();
+                            this.st花火状態[d].ct進行.tStop();
                             this.st花火状態[d].b使用中 = false;
                         }
                             
                             
                         //if(CDTXMania.Tx.Gauge_Soul_Explosion != null )
                         //{
-                        //    CDTXMania.Tx.Gauge_Soul_Explosion.t2D描画( CDTXMania.app.Device, 1140, 73, new Rectangle( this.st花火状態[d].ct進行.n現在の値 * 140, 0, 140, 180 ) );
+                        //    CDTXMania.Tx.Gauge_Soul_Explosion.t2D描画( CDTXMania.app.Device, 1140, 73, new Rectangle( this.st花火状態[d].ct進行.nCurrentValue * 140, 0, 140, 180 ) );
                         //}
                         //if (CDTXMania.Tx.Notes != null)
                         //{
                             //CDTXMania.Tx.Notes.t2D中心基準描画(CDTXMania.app.Device, 1224, 162, new Rectangle(this.st花火状態[d].nLane * 130, 0, 130, 130));
-                            //this.tx音符.color4 = new Color4( 1.0f, 1.0f, 1.0f - (this.st花火状態[d].ct進行.n現在の値 / 10f) );
-                            //CDTXMania.act文字コンソール.tPrint(60, 140, C文字コンソール.Eフォント種別.白, this.st花火状態[d].ct進行.n現在の値.ToString());
-                            //CDTXMania.act文字コンソール.tPrint(60, 160, C文字コンソール.Eフォント種別.白, (this.st花火状態[d].ct進行.n現在の値 / 10f).ToString());
+                            //this.tx音符.color4 = new Color4( 1.0f, 1.0f, 1.0f - (this.st花火状態[d].ct進行.nCurrentValue / 10f) );
+                            //CDTXMania.act文字コンソール.tPrint(60, 140, C文字コンソール.Eフォント種別.白, this.st花火状態[d].ct進行.nCurrentValue.ToString());
+                            //CDTXMania.act文字コンソール.tPrint(60, 160, C文字コンソール.Eフォント種別.白, (this.st花火状態[d].ct進行.nCurrentValue / 10f).ToString());
                         //}
                         break;
                     }
@@ -496,24 +496,24 @@ namespace TJAPlayer3
                 {
                     if (this.st花火状態2P[d].b使用中)
                     {
-                        this.st花火状態2P[d].ct進行.t進行();
-                        if (this.st花火状態2P[d].ct進行.b終了値に達した)
+                        this.st花火状態2P[d].ct進行.tStart();
+                        if (this.st花火状態2P[d].ct進行.bEnded)
                         {
-                            this.st花火状態2P[d].ct進行.t停止();
+                            this.st花火状態2P[d].ct進行.tStop();
                             this.st花火状態2P[d].b使用中 = false;
                         }
                             
                             
                         //if(CDTXMania.Tx.Gauge_Soul_Explosion != null )
                         //{
-                        //    CDTXMania.Tx.Gauge_Soul_Explosion.t2D描画( CDTXMania.app.Device, 1140, 468, new Rectangle( this.st花火状態2P[d].ct進行.n現在の値 * 140, 0, 140, 180 ) );
+                        //    CDTXMania.Tx.Gauge_Soul_Explosion.t2D描画( CDTXMania.app.Device, 1140, 468, new Rectangle( this.st花火状態2P[d].ct進行.nCurrentValue * 140, 0, 140, 180 ) );
                         //}
                         //if (CDTXMania.Tx.Notes != null)
                         //{
                         //    CDTXMania.Tx.Notes.t2D中心基準描画(CDTXMania.app.Device, 1224, 162, new Rectangle(this.st花火状態[d].nLane * 130, 0, 130, 130));
-                        //    //this.tx音符.color4 = new Color4( 1.0f, 1.0f, 1.0f - (this.st花火状態[d].ct進行.n現在の値 / 10f) );
-                        //    //CDTXMania.act文字コンソール.tPrint(60, 140, C文字コンソール.Eフォント種別.白, this.st花火状態[d].ct進行.n現在の値.ToString());
-                        //    //CDTXMania.act文字コンソール.tPrint(60, 160, C文字コンソール.Eフォント種別.白, (this.st花火状態[d].ct進行.n現在の値 / 10f).ToString());
+                        //    //this.tx音符.color4 = new Color4( 1.0f, 1.0f, 1.0f - (this.st花火状態[d].ct進行.nCurrentValue / 10f) );
+                        //    //CDTXMania.act文字コンソール.tPrint(60, 140, C文字コンソール.Eフォント種別.白, this.st花火状態[d].ct進行.nCurrentValue.ToString());
+                        //    //CDTXMania.act文字コンソール.tPrint(60, 160, C文字コンソール.Eフォント種別.白, (this.st花火状態[d].ct進行.nCurrentValue / 10f).ToString());
                         //}
                         break;
                     }

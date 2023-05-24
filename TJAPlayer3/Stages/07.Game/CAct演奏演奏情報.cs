@@ -18,7 +18,7 @@ namespace TJAPlayer3
 
 		public CAct演奏演奏情報()
 		{
-			base.b活性化してない = true;
+			base.bDeactivated = true;
 		}
 
 				
@@ -34,13 +34,13 @@ namespace TJAPlayer3
             this.dbSCROLL = 1.0;
 			base.On活性化();
 		}
-		public override int On進行描画()
+		public override int OnDraw()
 		{
 			throw new InvalidOperationException( "t進行描画(int x, int y) のほうを使用してください。" );
 		}
 		public void t進行描画( int x, int y )
 		{
-			if ( !base.b活性化してない )
+			if ( !base.bDeactivated )
 			{
 				y += 0x153;
 				TJAPlayer3.act文字コンソール.tPrint( x, y, C文字コンソール.Eフォント種別.白, string.Format( "BGM/Taiko Adj: {0:####0}/{1:####0} ms", TJAPlayer3.DTX.nBGMAdjust, TJAPlayer3.ConfigIni.nInputAdjustTimeMs ) );

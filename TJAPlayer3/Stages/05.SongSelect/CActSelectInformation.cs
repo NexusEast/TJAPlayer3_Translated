@@ -15,7 +15,7 @@ namespace TJAPlayer3
 
 		public CActSelectInformation()
 		{
-			base.b活性化してない = true;
+			base.bDeactivated = true;
 		}
 
 
@@ -35,28 +35,28 @@ namespace TJAPlayer3
 			this.ctスクロール用 = null;
 			base.On非活性化();
 		}
-		public override void OnManagedリソースの作成()
+		public override void OnManagedResourceLoaded()
 		{
-			if( !base.b活性化してない )
+			if( !base.bDeactivated )
 			{
                 this.txInfo_Back = TJAPlayer3.tテクスチャの生成( CSkin.Path( @"Graphics\5_information_BG.png" ) );
                 this.txInfo[ 0 ] = TJAPlayer3.tテクスチャの生成( CSkin.Path( @"Graphics\5_information.png" ) );
                 this.txInfo[ 1 ] = TJAPlayer3.tテクスチャの生成( CSkin.Path( @"Graphics\5_information2.png" ) );
-				base.OnManagedリソースの作成();
+				base.OnManagedResourceLoaded();
 			}
 		}
-		public override void OnManagedリソースの解放()
+		public override void OnManagedDisposed()
 		{
-			if( !base.b活性化してない )
+			if( !base.bDeactivated )
 			{
 				TJAPlayer3.t安全にDisposeする(ref this.txInfo_Back);
 				TJAPlayer3.t安全にDisposeする(txInfo);
-				base.OnManagedリソースの解放();
+				base.OnManagedDisposed();
 			}
 		}
-		public override int On進行描画()
+		public override int OnDraw()
 		{
-			if( !base.b活性化してない )
+			if( !base.bDeactivated )
 			{
 				if( base.b初めての進行描画 )
 				{
@@ -67,32 +67,32 @@ namespace TJAPlayer3
                     this.txInfo_Back.t2D描画( TJAPlayer3.app.Device, 340, 600 );
 
 
-				this.ct進行用.t進行Loop();
+				this.ct進行用.tStartLoop();
                 if( this.bFirst )
                 {
-                    this.ct進行用.n現在の値 = 300;
+                    this.ct進行用.nCurrentValue = 300;
                 }
 
                 #region[ 透明度制御 ]
                 if( this.txInfo[ 0 ] != null && this.txInfo[ 1 ] != null )
                 {
-                    if( this.ct進行用.n現在の値 < 255 )
+                    if( this.ct進行用.nCurrentValue < 255 )
                     {
-                        this.txInfo[ 0 ].Opacity = this.ct進行用.n現在の値;
-                        this.txInfo[ 1 ].Opacity = 255 - this.ct進行用.n現在の値;
+                        this.txInfo[ 0 ].Opacity = this.ct進行用.nCurrentValue;
+                        this.txInfo[ 1 ].Opacity = 255 - this.ct進行用.nCurrentValue;
                     }
-                    else if( this.ct進行用.n現在の値 >= 255 && this.ct進行用.n現在の値 < 1245 )
+                    else if( this.ct進行用.nCurrentValue >= 255 && this.ct進行用.nCurrentValue < 1245 )
                     {
                         this.bFirst = false;
                         this.txInfo[ 0 ].Opacity = 255;
                         this.txInfo[ 1 ].Opacity = 0;
                     }
-                    else if( this.ct進行用.n現在の値 >= 1245 && this.ct進行用.n現在の値 < 1500 )
+                    else if( this.ct進行用.nCurrentValue >= 1245 && this.ct進行用.nCurrentValue < 1500 )
                     {
-                        this.txInfo[ 0 ].Opacity = 255 - ( this.ct進行用.n現在の値 - 1245 );
-                        this.txInfo[ 1 ].Opacity = this.ct進行用.n現在の値 - 1245;
+                        this.txInfo[ 0 ].Opacity = 255 - ( this.ct進行用.nCurrentValue - 1245 );
+                        this.txInfo[ 1 ].Opacity = this.ct進行用.nCurrentValue - 1245;
                     }
-                    else if( this.ct進行用.n現在の値 >= 1500 && this.ct進行用.n現在の値 <= 3000 )
+                    else if( this.ct進行用.nCurrentValue >= 1500 && this.ct進行用.nCurrentValue <= 3000 )
                     {
                         this.txInfo[ 0 ].Opacity = 0;
                         this.txInfo[ 1 ].Opacity = 255;

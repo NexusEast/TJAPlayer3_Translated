@@ -171,11 +171,11 @@ namespace TJAPlayer3
 				"垂直帰線同期：\n画面の描画をディスプレイの垂直帰\n線中に行なう場合には ON を指定し\nます。ON にすると、ガタつきのない\n滑らかな画面描画が実現されます。",
 				"Turn ON to wait VSync (Vertical\n Synchronizing signal) at every\n drawings. (so FPS becomes 60)\nIf you have enough CPU/GPU power,\n the scroll would become smooth." );
 			this.list項目リスト.Add( this.iSystemVSyncWait );
-			this.iSystemAVI = new CItemToggle( "AVI", TJAPlayer3.ConfigIni.bAVI有効,
+			this.iSystemAVI = new CItemToggle( "AVI", TJAPlayer3.ConfigIni.bAVIEnabled,
 				"AVIの使用：\n動画(AVI)を再生可能にする場合に\nON にします。AVI の再生には、それ\nなりのマシンパワーが必要とされます。",
 				"To use AVI playback or not." );
 			this.list項目リスト.Add( this.iSystemAVI );
-			this.iSystemBGA = new CItemToggle( "BGA", TJAPlayer3.ConfigIni.bBGA有効,
+			this.iSystemBGA = new CItemToggle( "BGA", TJAPlayer3.ConfigIni.bBGAEnabled,
 				"BGAの使用：\n画像(BGA)を表示可能にする場合に\nON にします。BGA の再生には、それ\nなりのマシンパワーが必要とされます。",
 				"To draw BGA (back ground animations)\n or not." );
 			this.list項目リスト.Add( this.iSystemBGA );
@@ -195,7 +195,7 @@ namespace TJAPlayer3
 				"背景画像の半透明割合：\n背景画像をDTXManiaのフレーム画像\nと合成する際の、背景画像の透明度\nを指定します。\n0 が完全透明で、255 が完全不透明\nとなります。",
 				"The degree for transparing playing\n screen and wallpaper.\n\n0=completely transparent,\n255=no transparency" );
 			this.list項目リスト.Add( this.iSystemBGAlpha );
-			this.iSystemBGMSound = new CItemToggle( "BGM Sound", TJAPlayer3.ConfigIni.bBGM音を発声する,
+			this.iSystemBGMSound = new CItemToggle( "BGM Sound", TJAPlayer3.ConfigIni.bBGMEnabled,
 				"BGMの再生：\nこれをOFFにすると、BGM を再生しな\nくなります。",
 				"Turn OFF if you don't want to play\n BGM." );
 			this.list項目リスト.Add( this.iSystemBGMSound );
@@ -1438,7 +1438,7 @@ namespace TJAPlayer3
 		{
 			//if ( this.list項目リスト[ this.n現在の選択項目 ] == this.iSystemMasterVolume )				// #33700 2014.4.26 yyagi
 			//{
-			//    CDTXMania.Sound管理.nMasterVolume = this.iSystemMasterVolume.n現在の値;
+			//    CDTXMania.Sound管理.nMasterVolume = this.iSystemMasterVolume.nCurrentValue;
 			//}
 		}
 
@@ -1491,15 +1491,15 @@ namespace TJAPlayer3
 			this.ct三角矢印アニメ = new CCounter();
 
 			this.iSystemSoundType_initial			= this.iSystemSoundType.n現在選択されている項目番号;	// CONFIGに入ったときの値を保持しておく
-			// this.iSystemWASAPIBufferSizeMs_initial	= this.iSystemWASAPIBufferSizeMs.n現在の値;				// CONFIG脱出時にこの値から変更されているようなら
-			// this.iSystemASIOBufferSizeMs_initial	= this.iSystemASIOBufferSizeMs.n現在の値;				// サウンドデバイスを再構築する
+			// this.iSystemWASAPIBufferSizeMs_initial	= this.iSystemWASAPIBufferSizeMs.nCurrentValue;				// CONFIG脱出時にこの値から変更されているようなら
+			// this.iSystemASIOBufferSizeMs_initial	= this.iSystemASIOBufferSizeMs.nCurrentValue;				// サウンドデバイスを再構築する
 			this.iSystemASIODevice_initial			= this.iSystemASIODevice.n現在選択されている項目番号;	//
 			this.iSystemSoundTimerType_initial      = this.iSystemSoundTimerType.GetIndex();				//
 			base.On活性化();
 		}
 		public override void On非活性化()
 		{
-			if( this.b活性化してない )
+			if( this.bDeactivated )
 				return;
 
 			this.tConfigIniへ記録する();
@@ -1520,7 +1520,7 @@ namespace TJAPlayer3
 			#region [ サウンドデバイス変更 ]
 			if ( this.iSystemSoundType_initial != this.iSystemSoundType.n現在選択されている項目番号 ||
 				 this.iSystemWASAPIBufferSizeMs_initial != this.iSystemWASAPIBufferSizeMs.n現在の値 ||
-				// this.iSystemASIOBufferSizeMs_initial != this.iSystemASIOBufferSizeMs.n現在の値 ||
+				// this.iSystemASIOBufferSizeMs_initial != this.iSystemASIOBufferSizeMs.nCurrentValue ||
 				this.iSystemASIODevice_initial != this.iSystemASIODevice.n現在選択されている項目番号 ||
 				this.iSystemSoundTimerType_initial != this.iSystemSoundTimerType.GetIndex() )
 			{
@@ -1544,30 +1544,30 @@ namespace TJAPlayer3
 				TJAPlayer3.Sound管理.t初期化( soundDeviceType,
 										this.iSystemWASAPIBufferSizeMs.n現在の値,
 										0,
-										// this.iSystemASIOBufferSizeMs.n現在の値,
+										// this.iSystemASIOBufferSizeMs.nCurrentValue,
 										this.iSystemASIODevice.n現在選択されている項目番号,
 										this.iSystemSoundTimerType.bON );
 				TJAPlayer3.app.ShowWindowTitleWithSoundType();
 			}
 			#endregion
 			#region [ サウンドのタイムストレッチモード変更 ]
-			FDK.CSound管理.bIsTimeStretch = this.iSystemTimeStretch.bON;
+			FDK.CSoundManager.bIsTimeStretch = this.iSystemTimeStretch.bON;
 			#endregion
 		}
-		public override void OnManagedリソースの作成()
+		public override void OnManagedResourceLoaded()
 		{
-			if( this.b活性化してない )
+			if( this.bDeactivated )
 				return;
 
 			//this.tx通常項目行パネル = CDTXMania.tテクスチャの生成( CSkin.Path( @"Graphics\4_itembox.png" ), false );
 			//this.txその他項目行パネル = CDTXMania.tテクスチャの生成( CSkin.Path( @"Graphics\4_itembox other.png" ), false );
 			//this.tx三角矢印 = CDTXMania.tテクスチャの生成( CSkin.Path( @"Graphics\4_triangle arrow.png" ), false );
 			this.txSkinSample1 = null;		// スキン選択時に動的に設定するため、ここでは初期化しない
-			base.OnManagedリソースの作成();
+			base.OnManagedResourceLoaded();
 		}
-		public override void OnManagedリソースの解放()
+		public override void OnManagedDisposed()
 		{
-			if( this.b活性化してない )
+			if( this.bDeactivated )
 				return;
 
 			TJAPlayer3.t安全にDisposeする(ref this.txSkinSample1);
@@ -1575,7 +1575,7 @@ namespace TJAPlayer3
 			//CDTXMania.tテクスチャの解放( ref this.txその他項目行パネル );
 			//CDTXMania.tテクスチャの解放( ref this.tx三角矢印 );
 		
-			base.OnManagedリソースの解放();
+			base.OnManagedDisposed();
 		}
 		private void OnListMenuの初期化()
 		{
@@ -1604,13 +1604,13 @@ namespace TJAPlayer3
 				this.listMenu = null;
 			}
 		}
-		public override int On進行描画()
+		public override int OnDraw()
 		{
 			throw new InvalidOperationException( "t進行描画(bool)のほうを使用してください。" );
 		}
 		public int t進行描画( bool b項目リスト側にフォーカスがある )
 		{
-			if( this.b活性化してない )
+			if( this.bDeactivated )
 				return 0;
 
 			// 進行
@@ -1619,8 +1619,8 @@ namespace TJAPlayer3
 			//-----------------
 			if( base.b初めての進行描画 )
 			{
-                this.nスクロール用タイマ値 = CSound管理.rc演奏用タイマ.n現在時刻;
-				this.ct三角矢印アニメ.t開始( 0, 9, 50, TJAPlayer3.Timer );
+                this.nスクロール用タイマ値 = CSoundManager.rPlaybackTimer.n現在時刻;
+				this.ct三角矢印アニメ.tStart( 0, 9, 50, TJAPlayer3.Timer );
 			
 				base.b初めての進行描画 = false;
 			}
@@ -1715,7 +1715,7 @@ namespace TJAPlayer3
 			#region [ ▲印アニメの進行 ]
 			//-----------------
 			if( this.b項目リスト側にフォーカスがある && ( this.n目標のスクロールカウンタ == 0 ) )
-				this.ct三角矢印アニメ.t進行Loop();
+				this.ct三角矢印アニメ.tStartLoop();
 			//-----------------
 			#endregion
 
@@ -1809,7 +1809,7 @@ namespace TJAPlayer3
 						}
 						else
 						{
-							//CDTXMania.stageコンフィグ.actFont.t文字列描画( x + 210, y + 12, ( (CItemInteger) this.list項目リスト[ nItem ] ).n現在の値.ToString(), ( n行番号 == 0 ) && this.b要素値にフォーカス中 );
+							//CDTXMania.stageコンフィグ.actFont.t文字列描画( x + 210, y + 12, ( (CItemInteger) this.list項目リスト[ nItem ] ).nCurrentValue.ToString(), ( n行番号 == 0 ) && this.b要素値にフォーカス中 );
 							strParam = ( (CItemInteger) this.list項目リスト[ nItem ] ).n現在の値.ToString();
 						}
 						b強調 = ( n行番号 == 0 ) && this.b要素値にフォーカス中;
@@ -1890,14 +1890,14 @@ namespace TJAPlayer3
 				if( this.b要素値にフォーカス中 )
 				{
 					x = 552;	// 要素値の上下あたり。
-					y_upper = 0x117 - this.ct三角矢印アニメ.n現在の値;
-					y_lower = 0x17d + this.ct三角矢印アニメ.n現在の値;
+					y_upper = 0x117 - this.ct三角矢印アニメ.nCurrentValue;
+					y_lower = 0x17d + this.ct三角矢印アニメ.nCurrentValue;
 				}
 				else
 				{
 					x = 552;	// 項目名の上下あたり。
-					y_upper = 0x129 - this.ct三角矢印アニメ.n現在の値;
-					y_lower = 0x16b + this.ct三角矢印アニメ.n現在の値;
+					y_upper = 0x129 - this.ct三角矢印アニメ.nCurrentValue;
+					y_lower = 0x16b + this.ct三角矢印アニメ.nCurrentValue;
 				}
 
 				// 描画。
@@ -2242,14 +2242,14 @@ namespace TJAPlayer3
 			//CDTXMania.ConfigIni.bWave再生位置自動調整機能有効 = this.iSystemAdjustWaves.bON;
 			TJAPlayer3.ConfigIni.b垂直帰線待ちを行う = this.iSystemVSyncWait.bON;
 			TJAPlayer3.ConfigIni.bバッファ入力を行う = this.iSystemBufferedInput.bON;
-			TJAPlayer3.ConfigIni.bAVI有効 = this.iSystemAVI.bON;
-			TJAPlayer3.ConfigIni.bBGA有効 = this.iSystemBGA.bON;
+			TJAPlayer3.ConfigIni.bAVIEnabled = this.iSystemAVI.bON;
+			TJAPlayer3.ConfigIni.bBGAEnabled = this.iSystemBGA.bON;
 //			CDTXMania.ConfigIni.bGraph有効 = this.iSystemGraph.bON;#24074 2011.01.23 comment-out ikanick オプション(Drums)へ移行
 			TJAPlayer3.ConfigIni.n曲が選択されてからプレビュー音が鳴るまでのウェイトms = this.iSystemPreviewSoundWait.n現在の値;
 			TJAPlayer3.ConfigIni.n曲が選択されてからプレビュー画像が表示開始されるまでのウェイトms = this.iSystemPreviewImageWait.n現在の値;
 			TJAPlayer3.ConfigIni.b演奏情報を表示する = this.iSystemDebugInfo.bON;
 			TJAPlayer3.ConfigIni.n背景の透過度 = this.iSystemBGAlpha.n現在の値;
-			TJAPlayer3.ConfigIni.bBGM音を発声する = this.iSystemBGMSound.bON;
+			TJAPlayer3.ConfigIni.bBGMEnabled = this.iSystemBGMSound.bON;
 			//CDTXMania.ConfigIni.b歓声を発声する = this.iSystemAudienceSound.bON;
 			//CDTXMania.ConfigIni.eダメージレベル = (Eダメージレベル) this.iSystemDamageLevel.n現在選択されている項目番号;
 			TJAPlayer3.ConfigIni.bScoreIniを出力する = this.iSystemSaveScore.bON;
@@ -2278,7 +2278,7 @@ namespace TJAPlayer3
 
 			TJAPlayer3.ConfigIni.nSoundDeviceType = this.iSystemSoundType.n現在選択されている項目番号;		// #24820 2013.1.3 yyagi
 			TJAPlayer3.ConfigIni.nWASAPIBufferSizeMs = this.iSystemWASAPIBufferSizeMs.n現在の値;				// #24820 2013.1.15 yyagi
-//			CDTXMania.ConfigIni.nASIOBufferSizeMs = this.iSystemASIOBufferSizeMs.n現在の値;					// #24820 2013.1.3 yyagi
+//			CDTXMania.ConfigIni.nASIOBufferSizeMs = this.iSystemASIOBufferSizeMs.nCurrentValue;					// #24820 2013.1.3 yyagi
 			TJAPlayer3.ConfigIni.nASIODevice = this.iSystemASIODevice.n現在選択されている項目番号;			// #24820 2013.1.17 yyagi
 			TJAPlayer3.ConfigIni.bUseOSTimer = this.iSystemSoundTimerType.bON;								// #33689 2014.6.17 yyagi
 
@@ -2287,7 +2287,7 @@ namespace TJAPlayer3
 //Trace.TraceInformation( "Skin現在Current : " + CDTXMania.Skin.GetCurrentSkinSubfolderFullName(true) );
 //Trace.TraceInformation( "Skin現在System  : " + CSkin.strSystemSkinSubfolderFullName );
 //Trace.TraceInformation( "Skin現在BoxDef  : " + CSkin.strBoxDefSkinSubfolderFullName );
-			//CDTXMania.ConfigIni.nMasterVolume = this.iSystemMasterVolume.n現在の値;							// #33700 2014.4.26 yyagi
+			//CDTXMania.ConfigIni.nMasterVolume = this.iSystemMasterVolume.nCurrentValue;							// #33700 2014.4.26 yyagi
 			//CDTXMania.ConfigIni.e判定表示優先度 = (E判定表示優先度) this.iSystemJudgeDispPriority.n現在選択されている項目番号;
             TJAPlayer3.ConfigIni.ShowChara = this.ShowChara.bON;
             TJAPlayer3.ConfigIni.ShowDancer = this.ShowDancer.bON;

@@ -126,7 +126,7 @@ namespace TJAPlayer3
 
             this.r現在選択中の曲 = null;
             this.n現在のアンカ難易度レベル = TJAPlayer3.ConfigIni.nDefaultCourse;
-			base.b活性化してない = true;
+			base.bDeactivated = true;
 			this.bIsEnumeratingSongs = false;
 		}
 
@@ -562,7 +562,7 @@ namespace TJAPlayer3
 
         public override void On非活性化()
 		{
-			if( this.b活性化してない )
+			if( this.bDeactivated )
 				return;
 
 		    _titleTextures.ItemRemoved -= OnTitleTexturesOnItemRemoved;
@@ -580,9 +580,9 @@ namespace TJAPlayer3
 
 			base.On非活性化();
 		}
-		public override void OnManagedリソースの作成()
+		public override void OnManagedResourceLoaded()
 		{
-			if( this.b活性化してない )
+			if( this.bDeactivated )
 				return;
 
 			//this.tx曲名バー.Score = CDTXMania.tテクスチャの生成( CSkin.Path( @"Graphics\5_bar score.png" ), false );
@@ -683,11 +683,11 @@ namespace TJAPlayer3
 			#region [ 曲数表示 ]
 			//this.txアイテム数数字 = CDTXMania.tテクスチャの生成( CSkin.Path( @"Graphics\ScreenSelect skill number on gauge etc.png" ), false );
 			#endregion
-			base.OnManagedリソースの作成();
+			base.OnManagedResourceLoaded();
 		}
-		public override void OnManagedリソースの解放()
+		public override void OnManagedDisposed()
 		{
-			if( this.b活性化してない )
+			if( this.bDeactivated )
 				return;
 
 			//CDTXMania.t安全にDisposeする( ref this.txアイテム数数字 );
@@ -736,11 +736,11 @@ namespace TJAPlayer3
          //   CDTXMania.tテクスチャの解放( ref this.txカーソル左 );
          //   CDTXMania.tテクスチャの解放( ref this.txカーソル右 );
 
-			base.OnManagedリソースの解放();
+			base.OnManagedDisposed();
 		}
-		public override int On進行描画()
+		public override int OnDraw()
 		{
-			if( this.b活性化してない )
+			if( this.bDeactivated )
 				return 0;
 
 			#region [ 初めての進行描画 ]
@@ -750,11 +750,11 @@ namespace TJAPlayer3
 				for( int i = 0; i < 13; i++ )
 					this.ct登場アニメ用[ i ] = new CCounter( -i * 10, 100, 3, TJAPlayer3.Timer );
 
-				this.nスクロールタイマ = CSound管理.rc演奏用タイマ.n現在時刻;
+				this.nスクロールタイマ = CSoundManager.rPlaybackTimer.n現在時刻;
 				TJAPlayer3.stage選曲.t選択曲変更通知();
 
-                this.n矢印スクロール用タイマ値 = CSound管理.rc演奏用タイマ.n現在時刻;
-				this.ct三角矢印アニメ.t開始( 0, 1000, 1, TJAPlayer3.Timer );
+                this.n矢印スクロール用タイマ値 = CSoundManager.rPlaybackTimer.n現在時刻;
+				this.ct三角矢印アニメ.tStart( 0, 1000, 1, TJAPlayer3.Timer );
                     base.b初めての進行描画 = false;
 			}
 			//-----------------
@@ -771,8 +771,8 @@ namespace TJAPlayer3
 
 
             // 進行。
-            if (n現在のスクロールカウンタ == 0) ct三角矢印アニメ.t進行Loop();
-            else ct三角矢印アニメ.n現在の値 = 0;
+            if (n現在のスクロールカウンタ == 0) ct三角矢印アニメ.tStartLoop();
+            else ct三角矢印アニメ.nCurrentValue = 0;
 
 
 
@@ -783,10 +783,10 @@ namespace TJAPlayer3
 				//-----------------
 				for( int i = 0; i < 13; i++ )	// パネルは全13枚。
 				{
-					this.ct登場アニメ用[ i ].t進行();
+					this.ct登場アニメ用[ i ].tStart();
 
-					if( this.ct登場アニメ用[ i ].b終了値に達した )
-						this.ct登場アニメ用[ i ].t停止();
+					if( this.ct登場アニメ用[ i ].bEnded )
+						this.ct登場アニメ用[ i ].tStop();
 				}
 
 				// 全部の進行が終わったら、this.b登場アニメ全部完了 を true にする。
@@ -807,7 +807,7 @@ namespace TJAPlayer3
 			{
 				#region [ (2) 通常フェーズの進行。]
 				//-----------------
-				long n現在時刻 = CSound管理.rc演奏用タイマ.n現在時刻;
+				long n現在時刻 = CSoundManager.rPlaybackTimer.n現在時刻;
 				
 				if( n現在時刻 < this.nスクロールタイマ )	// 念のため
 					this.nスクロールタイマ = n現在時刻;
@@ -1175,9 +1175,9 @@ namespace TJAPlayer3
 				//-----------------
 				for( int i = 0; i < 13; i++ )	// パネルは全13枚。
 				{
-					if( this.ct登場アニメ用[ i ].n現在の値 >= 0 )
+					if( this.ct登場アニメ用[ i ].nCurrentValue >= 0 )
 					{
-						double db割合0to1 = ( (double) this.ct登場アニメ用[ i ].n現在の値 ) / 100.0;
+						double db割合0to1 = ( (double) this.ct登場アニメ用[ i ].nCurrentValue ) / 100.0;
 						double db回転率 = Math.Sin( Math.PI * 3 / 5 * db割合0to1 );
 						int nパネル番号 = ( ( ( this.n現在の選択行 - 5 ) + i ) + 13 ) % 13;
 						
@@ -1449,20 +1449,20 @@ namespace TJAPlayer3
 	    		//-----------------
 		    	if( ( this.n目標のスクロールカウンタ == 0 ) )
 			    {
-                    int Cursor_L = 372 - this.ct三角矢印アニメ.n現在の値 / 50;
-                    int Cursor_R = 819 + this.ct三角矢印アニメ.n現在の値 / 50;
+                    int Cursor_L = 372 - this.ct三角矢印アニメ.nCurrentValue / 50;
+                    int Cursor_R = 819 + this.ct三角矢印アニメ.nCurrentValue / 50;
                     int y = 289;
 
                         // 描画。
 
                     if (TJAPlayer3.Tx.SongSelect_Cursor_Left != null)
                     {
-                        TJAPlayer3.Tx.SongSelect_Cursor_Left.Opacity = 255 - (ct三角矢印アニメ.n現在の値 * 255 / ct三角矢印アニメ.n終了値) ;
+                        TJAPlayer3.Tx.SongSelect_Cursor_Left.Opacity = 255 - (ct三角矢印アニメ.nCurrentValue * 255 / ct三角矢印アニメ.n終了値) ;
                         TJAPlayer3.Tx.SongSelect_Cursor_Left.t2D描画(TJAPlayer3.app.Device, Cursor_L, y);
                     }
                     if (TJAPlayer3.Tx.SongSelect_Cursor_Right != null)
                     {
-                        TJAPlayer3.Tx.SongSelect_Cursor_Right.Opacity = 255 - (ct三角矢印アニメ.n現在の値 * 255 / ct三角矢印アニメ.n終了値) ;
+                        TJAPlayer3.Tx.SongSelect_Cursor_Right.Opacity = 255 - (ct三角矢印アニメ.nCurrentValue * 255 / ct三角矢印アニメ.n終了値) ;
                         TJAPlayer3.Tx.SongSelect_Cursor_Right.t2D描画(TJAPlayer3.app.Device, Cursor_R, y);
                     }
                 }

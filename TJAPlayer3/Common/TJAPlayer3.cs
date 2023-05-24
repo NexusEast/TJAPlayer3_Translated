@@ -226,7 +226,7 @@ namespace TJAPlayer3
 			private set;
 		}
 
-		public static CSound管理 Sound管理
+		public static CSoundManager Sound管理
 		{
 			get;
 			private set;
@@ -455,7 +455,7 @@ namespace TJAPlayer3
 			if ( this.listトップレベルActivities != null )
 			{
 				foreach( CActivity activity in this.listトップレベルActivities )
-					activity.OnManagedリソースの作成();
+					activity.OnManagedResourceLoaded();
 			}
 
 #if GPUFlushAfterPresent
@@ -530,7 +530,7 @@ namespace TJAPlayer3
 		protected override void Draw( GameTime gameTime )
 		{
             Timer?.t更新();
-            CSound管理.rc演奏用タイマ?.t更新();
+            CSoundManager.rPlaybackTimer?.t更新();
             Input管理?.tポーリング( this.bApplicationActive, TJAPlayer3.ConfigIni.bバッファ入力を行う );
             FPS?.tカウンタ更新();
 
@@ -553,7 +553,7 @@ namespace TJAPlayer3
 
 			if( r現在のステージ != null )
 			{
-				this.n進行描画の戻り値 = ( r現在のステージ != null ) ? r現在のステージ.On進行描画() : 0;
+				this.n進行描画の戻り値 = ( r現在のステージ != null ) ? r現在のステージ.OnDraw() : 0;
 
 				if ( Control.IsKeyLocked( Keys.CapsLock ) )				// #30925 2013.3.11 yyagi; capslock=ON時は、EnumSongsしないようにして、起動負荷とASIOの音切れの関係を確認する
 				{														// → songs.db等の書き込み時だと音切れするっぽい
@@ -564,7 +564,7 @@ namespace TJAPlayer3
 
 				#region [ 曲検索スレッドの起動/終了 ]					// ここに"Enumerating Songs..."表示を集約
 
-				actEnumSongs.On進行描画();							// "Enumerating Songs..."アイコンの描画
+				actEnumSongs.OnDraw();							// "Enumerating Songs..."アイコンの描画
 
 				switch ( r現在のステージ.eステージID )
 				{
@@ -950,11 +950,11 @@ for (int i = 0; i < 3; i++) {
 					case CStage.Eステージ.演奏:
 						#region [ *** ]
 						//-----------------------------
-						//long n1 = FDK.CSound管理.rc演奏用タイマ.nシステム時刻ms;
-						//long n2 = FDK.CSound管理.SoundDevice.n経過時間ms;
-						//long n3 = FDK.CSound管理.SoundDevice.tmシステムタイマ.nシステム時刻ms;
-						//long n4 = FDK.CSound管理.rc演奏用タイマ.n現在時刻;
-						//long n5 = FDK.CSound管理.SoundDevice.n経過時間を更新したシステム時刻ms;
+						//long n1 = FDK.CSoundManager.rPlaybackTimer.nシステム時刻ms;
+						//long n2 = FDK.CSoundManager.SoundDevice.n経過時間ms;
+						//long n3 = FDK.CSoundManager.SoundDevice.tmシステムタイマ.nシステム時刻ms;
+						//long n4 = FDK.CSoundManager.rPlaybackTimer.n現在時刻;
+						//long n5 = FDK.CSoundManager.SoundDevice.n経過時間を更新したシステム時刻ms;
 
 						//swlist1.Add( Convert.ToInt32(n1) );
 						//swlist2.Add( Convert.ToInt32(n2) );
@@ -1226,7 +1226,7 @@ for (int i = 0; i < 3; i++) {
 						break;
 				}
 
-			    actScanningLoudness.On進行描画();
+			    actScanningLoudness.OnDraw();
 
                 // オーバレイを描画する(テクスチャの生成されていない起動ステージは例外
                 if(r現在のステージ != null && r現在のステージ.eステージID != CStage.Eステージ.起動 && TJAPlayer3.Tx.Overlay != null)
@@ -1237,7 +1237,7 @@ for (int i = 0; i < 3; i++) {
 			this.Device.EndScene();			// Present()は game.csのOnFrameEnd()に登録された、GraphicsDeviceManager.game_FrameEnd() 内で実行されるので不要
 											// (つまり、Present()は、Draw()完了後に実行される)
 #if !GPUFlushAfterPresent
-			actFlushGPU?.On進行描画();		// Flush GPU	// EndScene()～Present()間 (つまりVSync前) でFlush実行
+			actFlushGPU?.OnDraw();		// Flush GPU	// EndScene()～Present()間 (つまりVSync前) でFlush実行
 #endif
 
 			#region [ 全画面_ウインドウ切り替え ]
@@ -1767,7 +1767,7 @@ for (int i = 0; i < 3; i++) {
 						soundDeviceType = ESoundDeviceType.Unknown;
 						break;
 				}
-				Sound管理 = new CSound管理(base.Window.Handle,
+				Sound管理 = new CSoundManager(base.Window.Handle,
 											soundDeviceType,
 											TJAPlayer3.ConfigIni.nWASAPIBufferSizeMs,
 					// CDTXMania.ConfigIni.nASIOBufferSizeMs,
@@ -1775,7 +1775,7 @@ for (int i = 0; i < 3; i++) {
 											TJAPlayer3.ConfigIni.nASIODevice,
 											TJAPlayer3.ConfigIni.bUseOSTimer
 				);
-				//Sound管理 = FDK.CSound管理.Instance;
+				//Sound管理 = FDK.CSoundManager.Instance;
 				//Sound管理.t初期化( soundDeviceType, 0, 0, CDTXMania.ConfigIni.nASIODevice, base.Window.Handle );
 
 
@@ -1802,9 +1802,9 @@ for (int i = 0; i < 3; i++) {
 				}
 
 				ShowWindowTitleWithSoundType();
-				FDK.CSound管理.bIsTimeStretch = TJAPlayer3.ConfigIni.bTimeStretch;
+				FDK.CSoundManager.bIsTimeStretch = TJAPlayer3.ConfigIni.bTimeStretch;
 				Sound管理.nMasterVolume = TJAPlayer3.ConfigIni.nMasterVolume;
-				//FDK.CSound管理.bIsMP3DecodeByWindowsCodec = CDTXMania.ConfigIni.bNoMP3Streaming;
+				//FDK.CSoundManager.bIsMP3DecodeByWindowsCodec = CDTXMania.ConfigIni.bNoMP3Streaming;
 				Trace.TraceInformation( "サウンドデバイスの初期化を完了しました。" );
 			}
 			catch (Exception e)
@@ -1906,11 +1906,11 @@ for (int i = 0; i < 3; i++) {
 		public void ShowWindowTitleWithSoundType()
 		{
 			string delay = "";
-			if ( CSound管理.GetCurrentSoundDeviceType() != "DirectSound" )
+			if ( CSoundManager.GetCurrentSoundDeviceType() != "DirectSound" )
 			{
 				delay = " (" + Sound管理.GetSoundDelay() + "ms)";
 			}
-            base.Window.Text = $"{AppDisplayNameWithInformationalVersion} ({CSound管理.GetCurrentSoundDeviceType()}{delay})";
+            base.Window.Text = $"{AppDisplayNameWithInformationalVersion} ({CSoundManager.GetCurrentSoundDeviceType()}{delay})";
 		}
 
 		private void t終了処理()

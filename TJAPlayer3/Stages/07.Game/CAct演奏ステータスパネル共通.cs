@@ -78,7 +78,7 @@ namespace TJAPlayer3
 			//statuspanelArray[ 11 ] = statuspanel12;
 			//this.stパネルマップ = statuspanelArray;
 			#endregion
-			base.b活性化してない = true;
+			base.bDeactivated = true;
 		}
 
 

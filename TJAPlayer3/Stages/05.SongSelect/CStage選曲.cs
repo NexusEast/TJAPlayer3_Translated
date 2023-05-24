@@ -97,7 +97,7 @@ namespace TJAPlayer3
 		{
 			base.eステージID = CStage.Eステージ.選曲;
 			base.eフェーズID = CStage.Eフェーズ.共通_通常状態;
-			base.b活性化してない = true;
+			base.bDeactivated = true;
 			base.list子Activities.Add( this.actオプションパネル = new CActオプションパネル() );
             base.list子Activities.Add( this.actFIFO = new CActFIFOBlack() );
 			base.list子Activities.Add( this.actFIfrom結果画面 = new CActFIFOBlack() );
@@ -183,9 +183,9 @@ namespace TJAPlayer3
 				Trace.Unindent();
 			}
 		}
-		public override void OnManagedリソースの作成()
+		public override void OnManagedResourceLoaded()
 		{
-			if( !base.b活性化してない )
+			if( !base.bDeactivated )
 			{
 				//this.tx背景 = CDTXMania.tテクスチャの生成( CSkin.Path( @"Graphics\5_background.jpg" ), false );
 				//this.tx上部パネル = CDTXMania.tテクスチャの生成( CSkin.Path( @"Graphics\5_header_panel.png" ), false );
@@ -210,12 +210,12 @@ namespace TJAPlayer3
                 //this.tx難易度別背景[4] = CDTXMania.tテクスチャの生成( CSkin.Path( @"Graphics\5_background_Edit.png" ) );
                 //this.tx下部テキスト = CDTXMania.tテクスチャの生成( CSkin.Path( @"Graphics\5_footer text.png" ) );
                 this.ct背景スクロール用タイマー = new CCounter(0, TJAPlayer3.Tx.SongSelect_Background?.szテクスチャサイズ.Width ?? 1280, 30, TJAPlayer3.Timer);
-				base.OnManagedリソースの作成();
+				base.OnManagedResourceLoaded();
 			}
 		}
-		public override void OnManagedリソースの解放()
+		public override void OnManagedDisposed()
 		{
-			if( !base.b活性化してない )
+			if( !base.bDeactivated )
 			{
 				//CDTXMania.tテクスチャの解放( ref this.tx背景 );
 				//CDTXMania.tテクスチャの解放( ref this.tx上部パネル );
@@ -231,14 +231,14 @@ namespace TJAPlayer3
                 //{
                 //    CDTXMania.tテクスチャの解放( ref this.tx難易度別背景[ j ] );
                 //}
-				base.OnManagedリソースの解放();
+				base.OnManagedDisposed();
 			}
 		}
-		public override int On進行描画()
+		public override int OnDraw()
 		{
-			if( !base.b活性化してない )
+			if( !base.bDeactivated )
 			{
-			this.ct背景スクロール用タイマー.t進行Loop();
+			this.ct背景スクロール用タイマー.tStartLoop();
 				#region [ 初めての進行描画 ]
 				//---------------------
 				if( base.b初めての進行描画 )
@@ -260,7 +260,7 @@ namespace TJAPlayer3
 				//---------------------
 				#endregion
 
-				this.ct登場時アニメ用共通.t進行();
+				this.ct登場時アニメ用共通.tStart();
 
 			    if (TJAPlayer3.Tx.SongSelect_Background != null)
 			    {
@@ -274,20 +274,20 @@ namespace TJAPlayer3
 			                var width = TJAPlayer3.Tx.SongSelect_Background.szテクスチャサイズ.Width;
 			                for (int i = 0; i < (1280 / width) + 2; i++)
 			                {
-			                    genreBack.t2D描画(TJAPlayer3.app.Device, -ct背景スクロール用タイマー.n現在の値 + width * i, 0);
+			                    genreBack.t2D描画(TJAPlayer3.app.Device, -ct背景スクロール用タイマー.nCurrentValue + width * i, 0);
 			                }
 			            }
 			        }
 			    }
 
-			    //this.actPreimageパネル.On進行描画();
+			    //this.actPreimageパネル.OnDraw();
 			//	this.bIsEnumeratingSongs = !this.actPreimageパネル.bIsPlayingPremovie;				// #27060 2011.3.2 yyagi: #PREMOVIE再生中は曲検索を中断する
 
-				this.act曲リスト.On進行描画();
+				this.act曲リスト.OnDraw();
 
                 TJAPlayer3.Tx.SongSelect_Header?.t2D描画( TJAPlayer3.app.Device, 0, 0 );
 
-				this.actInformation.On進行描画();
+				this.actInformation.OnDraw();
 
                 TJAPlayer3.Tx.SongSelect_Footer?.t2D描画( TJAPlayer3.app.Device, 0, 720 - TJAPlayer3.Tx.SongSelect_Footer.sz画像サイズ.Height );
 
@@ -329,17 +329,17 @@ namespace TJAPlayer3
 
                 #endregion
 
-                //this.actステータスパネル.On進行描画();
+                //this.actステータスパネル.OnDraw();
 
-                this.actPresound.On進行描画();
+                this.actPresound.OnDraw();
 				//if( this.txコメントバー != null )
 				{
 					//this.txコメントバー.t2D描画( CDTXMania.app.Device, 484, 314 );
 				}
-				//this.actArtistComment.On進行描画();
-                this.act演奏履歴パネル.On進行描画();
-				//this.actオプションパネル.On進行描画();
-				this.actShowCurrentPosition.On進行描画();								// #27648 2011.3.28 yyagi
+				//this.actArtistComment.OnDraw();
+                this.act演奏履歴パネル.OnDraw();
+				//this.actオプションパネル.OnDraw();
+				this.actShowCurrentPosition.OnDraw();								// #27648 2011.3.28 yyagi
 
                 //CDTXMania.act文字コンソール.tPrint( 0, 0, C文字コンソール.Eフォント種別.白, this.n現在選択中の曲の難易度.ToString() );
                 TJAPlayer3.Tx.SongSelect_Difficulty?.t2D描画( TJAPlayer3.app.Device, 980, 30, new Rectangle( 0, 70 * this.n現在選択中の曲の難易度, 260, 70 ) );
@@ -353,7 +353,7 @@ namespace TJAPlayer3
 
 //Debug.WriteLine( "パンくず=" + this.r現在選択中の曲.strBreadcrumbs );
                 if( this.ctDiffSelect移動待ち != null )
-                    this.ctDiffSelect移動待ち.t進行();
+                    this.ctDiffSelect移動待ち.tStart();
 
 				// キー入力
 				if( base.eフェーズID == CStage.Eフェーズ.共通_通常状態 )
@@ -625,39 +625,39 @@ namespace TJAPlayer3
                 //if (this.act難易度選択画面.bIsDifficltSelect)
                 //{
 
-                //    if (this.ctDiffSelect移動待ち.n現在の値 == this.ctDiffSelect移動待ち.n終了値)
+                //    if (this.ctDiffSelect移動待ち.nCurrentValue == this.ctDiffSelect移動待ち.n終了値)
                 //    {
-                //        this.act難易度選択画面.On進行描画();
+                //        this.act難易度選択画面.OnDraw();
                 //        CDTXMania.act文字コンソール.tPrint(0, 0, C文字コンソール.Eフォント種別.赤, "NowStage:DifficltSelect");
                 //    }
-                //    CDTXMania.act文字コンソール.tPrint(0, 16, C文字コンソール.Eフォント種別.赤, "Count:" + this.ctDiffSelect移動待ち.n現在の値);
+                //    CDTXMania.act文字コンソール.tPrint(0, 16, C文字コンソール.Eフォント種別.赤, "Count:" + this.ctDiffSelect移動待ち.nCurrentValue);
                 //}
                 //------------------------------
 				switch ( base.eフェーズID )
 				{
 					case CStage.Eフェーズ.共通_フェードイン:
-						if( this.actFIFO.On進行描画() != 0 )
+						if( this.actFIFO.OnDraw() != 0 )
 						{
 							base.eフェーズID = CStage.Eフェーズ.共通_通常状態;
 						}
 						break;
 
 					case CStage.Eフェーズ.共通_フェードアウト:
-						if( this.actFIFO.On進行描画() == 0 )
+						if( this.actFIFO.OnDraw() == 0 )
 						{
 							break;
 						}
 						return (int) this.eフェードアウト完了時の戻り値;
 
 					case CStage.Eフェーズ.選曲_結果画面からのフェードイン:
-						if( this.actFIfrom結果画面.On進行描画() != 0 )
+						if( this.actFIfrom結果画面.OnDraw() != 0 )
 						{
 							base.eフェーズID = CStage.Eフェーズ.共通_通常状態;
 						}
 						break;
 
 					case CStage.Eフェーズ.選曲_NowLoading画面へのフェードアウト:
-						if( this.actFOtoNowLoading.On進行描画() == 0 )
+						if( this.actFOtoNowLoading.OnDraw() == 0 )
 						{
 							break;
 						}

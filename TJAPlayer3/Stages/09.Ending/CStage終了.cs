@@ -11,7 +11,7 @@ namespace TJAPlayer3
 		{
 			base.eステージID = CStage.Eステージ.終了;
 			base.eフェーズID = CStage.Eフェーズ.共通_通常状態;
-			base.b活性化してない = true;
+			base.bDeactivated = true;
 		}
 
 
@@ -46,42 +46,42 @@ namespace TJAPlayer3
 				Trace.Unindent();
 			}
 		}
-		public override void OnManagedリソースの作成()
+		public override void OnManagedResourceLoaded()
 		{
-			if( !base.b活性化してない )
+			if( !base.bDeactivated )
 			{
-				base.OnManagedリソースの作成();
+				base.OnManagedResourceLoaded();
 			}
 		}
-		public override void OnManagedリソースの解放()
+		public override void OnManagedDisposed()
 		{
-			if( !base.b活性化してない )
+			if( !base.bDeactivated )
 			{
-				base.OnManagedリソースの解放();
+				base.OnManagedDisposed();
 			}
 		}
-		public override int On進行描画()
+		public override int OnDraw()
 		{
             if( !TJAPlayer3.ConfigIni.bEndingAnime ) //2017.01.27 DD
             {
                 return 1;
             }
 
-			if( !base.b活性化してない )
+			if( !base.bDeactivated )
 			{
 				if( base.b初めての進行描画 )
 				{
 					TJAPlayer3.Skin.soundゲーム終了音.t再生する();
-					this.ct時間稼ぎ.t開始( 0, 3000, 1, TJAPlayer3.Timer );
+					this.ct時間稼ぎ.tStart( 0, 3000, 1, TJAPlayer3.Timer );
                     base.b初めての進行描画 = false;
 				}
 
 
-				this.ct時間稼ぎ.t進行();
+				this.ct時間稼ぎ.tStart();
 
                 TJAPlayer3.Tx.Exit_Background?.t2D描画(TJAPlayer3.app.Device, 0, 0);
 
-                if( this.ct時間稼ぎ.b終了値に達した && !TJAPlayer3.Skin.soundゲーム終了音.b再生中 )
+                if( this.ct時間稼ぎ.bEnded && !TJAPlayer3.Skin.soundゲーム終了音.b再生中 )
 				{
 					return 1;
 				}

@@ -102,7 +102,7 @@ namespace FDK
                         {
                             nKey = key,
                             b押された = wasPressed,
-                            nTimeStamp = CSound管理.rc演奏用タイマ.nサウンドタイマーのシステム時刻msへの変換( rawBufferedData.Timestamp ),
+                            nTimeStamp = CSoundManager.rPlaybackTimer.nサウンドタイマーのシステム時刻msへの変換( rawBufferedData.Timestamp ),
                         };
                         this.list入力イベント.Add( item );
 
@@ -129,7 +129,7 @@ namespace FDK
 								var ev = new STInputEvent() {
 									nKey = j,
 									b押された = true,
-									nTimeStamp = CSound管理.rc演奏用タイマ.nシステム時刻,	// 演奏用タイマと同じタイマを使うことで、BGMと譜面、入力ずれを防ぐ。
+									nTimeStamp = CSoundManager.rPlaybackTimer.nシステム時刻,	// 演奏用タイマと同じタイマを使うことで、BGMと譜面、入力ずれを防ぐ。
 								};
 								this.list入力イベント.Add( ev );
 
@@ -141,7 +141,7 @@ namespace FDK
 								var ev = new STInputEvent() {
 									nKey = j,
 									b押された = false,
-									nTimeStamp = CSound管理.rc演奏用タイマ.nシステム時刻,	// 演奏用タイマと同じタイマを使うことで、BGMと譜面、入力ずれを防ぐ。
+									nTimeStamp = CSoundManager.rPlaybackTimer.nシステム時刻,	// 演奏用タイマと同じタイマを使うことで、BGMと譜面、入力ずれを防ぐ。
 								};
 								this.list入力イベント.Add( ev );
 

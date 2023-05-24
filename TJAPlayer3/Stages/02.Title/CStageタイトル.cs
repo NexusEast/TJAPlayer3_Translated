@@ -14,7 +14,7 @@ namespace TJAPlayer3
 		public CStageタイトル()
 		{
 			base.eステージID = CStage.Eステージ.タイトル;
-			base.b活性化してない = true;
+			base.bDeactivated = true;
 			base.list子Activities.Add( this.actFIfromSetup = new CActFIFOWhite() );
 			base.list子Activities.Add( this.actFI = new CActFIFOWhite() );
 			base.list子Activities.Add( this.actFO = new CActFIFOWhite() );
@@ -65,27 +65,27 @@ namespace TJAPlayer3
 			}
 			base.On非活性化();
 		}
-		public override void OnManagedリソースの作成()
+		public override void OnManagedResourceLoaded()
 		{
-			//if( !base.b活性化してない )
+			//if( !base.bDeactivated )
 			//{
 			//	this.tx背景 = CDTXMania.tテクスチャの生成( CSkin.Path(@"Graphics\2_background.png"));
 			//	this.txメニュー = CDTXMania.tテクスチャの生成( CSkin.Path( @"Graphics\2_menu.png" ));
-			//	base.OnManagedリソースの作成();
+			//	base.OnManagedResourceLoaded();
 			//}
 		}
-		public override void OnManagedリソースの解放()
+		public override void OnManagedDisposed()
 		{
-			//if( !base.b活性化してない )
+			//if( !base.bDeactivated )
 			//{
 			//	CDTXMania.tテクスチャの解放( ref this.tx背景 );
 			//	CDTXMania.tテクスチャの解放( ref this.txメニュー );
-			//	base.OnManagedリソースの解放();
+			//	base.OnManagedDisposed();
 			//}
 		}
-		public override int On進行描画()
+		public override int OnDraw()
 		{
-			if( !base.b活性化してない )
+			if( !base.bDeactivated )
 			{
 				#region [ 初めての進行描画 ]
 				//---------------------
@@ -101,8 +101,8 @@ namespace TJAPlayer3
 						this.actFI.tフェードイン開始();
 						base.eフェーズID = CStage.Eフェーズ.共通_フェードイン;
 					}
-					this.ctカーソルフラッシュ用.t開始( 0, 700, 5, TJAPlayer3.Timer );
-					this.ctカーソルフラッシュ用.n現在の値 = 100;
+					this.ctカーソルフラッシュ用.tStart( 0, 700, 5, TJAPlayer3.Timer );
+					this.ctカーソルフラッシュ用.nCurrentValue = 100;
 					base.b初めての進行描画 = false;
                 }
 				//---------------------
@@ -114,10 +114,10 @@ namespace TJAPlayer3
 				//---------------------
 				if( this.ct上移動用.b進行中 )
 				{
-					this.ct上移動用.t進行();
-					if( this.ct上移動用.b終了値に達した )
+					this.ct上移動用.tStart();
+					if( this.ct上移動用.bEnded )
 					{
-						this.ct上移動用.t停止();
+						this.ct上移動用.tStop();
 					}
 				}
 				//---------------------
@@ -126,17 +126,17 @@ namespace TJAPlayer3
 				//---------------------
 				if( this.ct下移動用.b進行中 )
 				{
-					this.ct下移動用.t進行();
-					if( this.ct下移動用.b終了値に達した )
+					this.ct下移動用.tStart();
+					if( this.ct下移動用.bEnded )
 					{
-						this.ct下移動用.t停止();
+						this.ct下移動用.tStop();
 					}
 				}
 				//---------------------
 				#endregion
 				#region [ カーソルフラッシュ ]
 				//---------------------
-				this.ctカーソルフラッシュ用.t進行Loop();
+				this.ctカーソルフラッシュ用.tStartLoop();
 				//---------------------
 				#endregion
 
@@ -200,18 +200,18 @@ namespace TJAPlayer3
 					int y = MENU_Y + ( this.n現在のカーソル行 * MENU_H );
 					if( this.ct上移動用.b進行中 )
 					{
-						y += (int) ( (double)MENU_H / 2 * ( Math.Cos( Math.PI * ( ( (double) this.ct上移動用.n現在の値 ) / 100.0 ) ) + 1.0 ) );
+						y += (int) ( (double)MENU_H / 2 * ( Math.Cos( Math.PI * ( ( (double) this.ct上移動用.nCurrentValue ) / 100.0 ) ) + 1.0 ) );
 					}
 					else if( this.ct下移動用.b進行中 )
 					{
-						y -= (int) ( (double)MENU_H / 2 * ( Math.Cos( Math.PI * ( ( (double) this.ct下移動用.n現在の値 ) / 100.0 ) ) + 1.0 ) );
+						y -= (int) ( (double)MENU_H / 2 * ( Math.Cos( Math.PI * ( ( (double) this.ct下移動用.nCurrentValue ) / 100.0 ) ) + 1.0 ) );
 					}
-					if( this.ctカーソルフラッシュ用.n現在の値 <= 100 )
+					if( this.ctカーソルフラッシュ用.nCurrentValue <= 100 )
 					{
-						float nMag = (float) ( 1.0 + ( ( ( (double) this.ctカーソルフラッシュ用.n現在の値 ) / 100.0 ) * 0.5 ) );
+						float nMag = (float) ( 1.0 + ( ( ( (double) this.ctカーソルフラッシュ用.nCurrentValue ) / 100.0 ) * 0.5 ) );
                         TJAPlayer3.Tx.Title_Menu.vc拡大縮小倍率.X = nMag;
                         TJAPlayer3.Tx.Title_Menu.vc拡大縮小倍率.Y = nMag;
-                        TJAPlayer3.Tx.Title_Menu.Opacity = (int) ( 255.0 * ( 1.0 - ( ( (double) this.ctカーソルフラッシュ用.n現在の値 ) / 100.0 ) ) );
+                        TJAPlayer3.Tx.Title_Menu.Opacity = (int) ( 255.0 * ( 1.0 - ( ( (double) this.ctカーソルフラッシュ用.nCurrentValue ) / 100.0 ) ) );
 						int x_magnified = x + ( (int) ( ( MENU_W * ( 1.0 - nMag ) ) / 2.0 ) );
 						int y_magnified = y + ( (int) ( ( MENU_H * ( 1.0 - nMag ) ) / 2.0 ) );
                         TJAPlayer3.Tx.Title_Menu.t2D描画( TJAPlayer3.app.Device, x_magnified, y_magnified, new Rectangle( 0, MENU_H * 5, MENU_W, MENU_H ) );
@@ -250,7 +250,7 @@ namespace TJAPlayer3
 				switch( eフェーズid )
 				{
 					case CStage.Eフェーズ.共通_フェードイン:
-						if( this.actFI.On進行描画() != 0 )
+						if( this.actFI.OnDraw() != 0 )
 						{
 							TJAPlayer3.Skin.soundタイトル音.t再生する();
 							base.eフェーズID = CStage.Eフェーズ.共通_通常状態;
@@ -258,7 +258,7 @@ namespace TJAPlayer3
 						break;
 
 					case CStage.Eフェーズ.共通_フェードアウト:
-						if( this.actFO.On進行描画() == 0 )
+						if( this.actFO.OnDraw() == 0 )
 						{
 							break;
 						}
@@ -278,7 +278,7 @@ namespace TJAPlayer3
 						break;
 
 					case CStage.Eフェーズ.タイトル_起動画面からのフェードイン:
-						if( this.actFIfromSetup.On進行描画() != 0 )
+						if( this.actFIfromSetup.OnDraw() != 0 )
 						{
 							TJAPlayer3.Skin.soundタイトル音.t再生する();
 							base.eフェーズID = CStage.Eフェーズ.共通_通常状態;
@@ -373,11 +373,11 @@ namespace TJAPlayer3
 			{
 				TJAPlayer3.Skin.soundカーソル移動音.t再生する();
 				this.n現在のカーソル行++;
-				this.ct下移動用.t開始( 0, 100, 1, TJAPlayer3.Timer );
+				this.ct下移動用.tStart( 0, 100, 1, TJAPlayer3.Timer );
 				if( this.ct上移動用.b進行中 )
 				{
-					this.ct下移動用.n現在の値 = 100 - this.ct上移動用.n現在の値;
-					this.ct上移動用.t停止();
+					this.ct下移動用.nCurrentValue = 100 - this.ct上移動用.nCurrentValue;
+					this.ct上移動用.tStop();
 				}
 			}
 		}
@@ -387,11 +387,11 @@ namespace TJAPlayer3
 			{
 				TJAPlayer3.Skin.soundカーソル移動音.t再生する();
 				this.n現在のカーソル行--;
-				this.ct上移動用.t開始( 0, 100, 1, TJAPlayer3.Timer );
+				this.ct上移動用.tStart( 0, 100, 1, TJAPlayer3.Timer );
 				if( this.ct下移動用.b進行中 )
 				{
-					this.ct上移動用.n現在の値 = 100 - this.ct下移動用.n現在の値;
-					this.ct下移動用.t停止();
+					this.ct上移動用.nCurrentValue = 100 - this.ct下移動用.nCurrentValue;
+					this.ct下移動用.tStop();
 				}
 			}
 		}

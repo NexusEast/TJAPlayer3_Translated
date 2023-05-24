@@ -14,7 +14,7 @@ namespace TJAPlayer3
         /// </summary>
         public CAct演奏DrumsRunner()
         {
-            base.b活性化してない = true;
+            base.bDeactivated = true;
         }
 
         public void Start(int Player, bool IsMiss, CDTX.CChip pChip)
@@ -81,30 +81,30 @@ namespace TJAPlayer3
             base.On非活性化();
         }
 
-        public override void OnManagedリソースの作成()
+        public override void OnManagedResourceLoaded()
         {
-            base.OnManagedリソースの作成();
+            base.OnManagedResourceLoaded();
         }
 
-        public override void OnManagedリソースの解放()
+        public override void OnManagedDisposed()
         {
-            base.OnManagedリソースの解放();
+            base.OnManagedDisposed();
         }
 
-        public override int On進行描画()
+        public override int OnDraw()
         {
             for (int i = 0; i < 128; i++)
             {
                 if (stRunners[i].b使用中)
                 {
-                    stRunners[i].nOldValue = stRunners[i].ct進行.n現在の値;
-                    stRunners[i].ct進行.t進行();
-                    if (stRunners[i].ct進行.b終了値に達した || stRunners[i].fX > 1280)
+                    stRunners[i].nOldValue = stRunners[i].ct進行.nCurrentValue;
+                    stRunners[i].ct進行.tStart();
+                    if (stRunners[i].ct進行.bEnded || stRunners[i].fX > 1280)
                     {
-                        stRunners[i].ct進行.t停止();
+                        stRunners[i].ct進行.tStop();
                         stRunners[i].b使用中 = false;
                     }
-                    for (int n = stRunners[i].nOldValue; n < stRunners[i].ct進行.n現在の値; n++)
+                    for (int n = stRunners[i].nOldValue; n < stRunners[i].ct進行.nCurrentValue; n++)
                     {
                         stRunners[i].fX += (float)TJAPlayer3.stage演奏ドラム画面.actPlayInfo.dbBPM / 18;
                         int Width = 1280 / Ptn;
@@ -123,7 +123,7 @@ namespace TJAPlayer3
                     }
                 }
             }
-            return base.On進行描画();
+            return base.OnDraw();
         }
 
         #region[ private ]

@@ -16,7 +16,7 @@ using Un4seen.Bass.AddOn.Fx;
 namespace FDK
 {
 	#region [ DTXMania用拡張 ]
-	public class CSound管理	// : CSound
+	public class CSoundManager	// : CSound
 	{
 		private static ISoundDevice SoundDevice
 		{
@@ -26,7 +26,7 @@ namespace FDK
 		{
 			get; set;
 		}
-		public static CSoundTimer rc演奏用タイマ = null;
+		public static CSoundTimer rPlaybackTimer = null;
 		public static bool bUseOSTimer = false;		// OSのタイマーを使うか、CSoundTimerを使うか。DTXCではfalse, DTXManiaではtrue。
 													// DTXC(DirectSound)でCSoundTimerを使うと、内部で無音のループサウンドを再生するため
 
@@ -162,7 +162,7 @@ namespace FDK
 		/// <param name="nSoundDelayExclusiveWASAPI"></param>
 		/// <param name="nSoundDelayASIO"></param>
 		/// <param name="nASIODevice"></param>
-		public CSound管理( IntPtr handle, ESoundDeviceType soundDeviceType, int nSoundDelayExclusiveWASAPI, int nSoundDelayASIO, int nASIODevice, bool _bUseOSTimer )
+		public CSoundManager( IntPtr handle, ESoundDeviceType soundDeviceType, int nSoundDelayExclusiveWASAPI, int nSoundDelayASIO, int nASIODevice, bool _bUseOSTimer )
 		{
 			WindowHandle = handle;
 			SoundDevice = null;
@@ -177,7 +177,7 @@ namespace FDK
 		public void t初期化( ESoundDeviceType soundDeviceType, int _nSoundDelayExclusiveWASAPI, int _nSoundDelayASIO, int _nASIODevice, bool _bUseOSTimer )
 		{
 			//SoundDevice = null;						// 後で再初期化することがあるので、null初期化はコンストラクタに回す
-			rc演奏用タイマ = null;						// Global.Bass 依存（つまりユーザ依存）
+			rPlaybackTimer = null;						// Global.Bass 依存（つまりユーザ依存）
 			nMixing = 0;
 
 			SoundDelayExclusiveWASAPI = _nSoundDelayExclusiveWASAPI;
@@ -240,7 +240,7 @@ namespace FDK
 		public static void t終了()
 		{
 			C共通.tDisposeする( SoundDevice ); SoundDevice = null;
-			C共通.tDisposeする( ref rc演奏用タイマ );	// Global.Bass を解放した後に解放すること。（Global.Bass で参照されているため）
+			C共通.tDisposeする( ref rPlaybackTimer );	// Global.Bass を解放した後に解放すること。（Global.Bass で参照されているため）
 		}
 
 
@@ -258,7 +258,7 @@ namespace FDK
 				// サウンドデバイスと演奏タイマを解放する。
 
 				C共通.tDisposeする( SoundDevice ); SoundDevice = null;
-				C共通.tDisposeする( ref rc演奏用タイマ );	// Global.SoundDevice を解放した後に解放すること。（Global.SoundDevice で参照されているため）
+				C共通.tDisposeする( ref rPlaybackTimer );	// Global.SoundDevice を解放した後に解放すること。（Global.SoundDevice で参照されているため）
 			}
 			//-----------------
 			#endregion
@@ -290,7 +290,7 @@ namespace FDK
 			#endregion
 			#region [ 新しい演奏タイマを構築する。]
 			//-----------------
-			rc演奏用タイマ = new CSoundTimer( SoundDevice );
+			rPlaybackTimer = new CSoundTimer( SoundDevice );
 			//-----------------
 			#endregion
 
@@ -430,7 +430,7 @@ namespace FDK
 							this.hBassStream = _hBassStream;
 				        }
 
-						if ( CSound管理.bIsTimeStretch )
+						if ( CSoundManager.bIsTimeStretch )
 						{
 							Bass.BASS_ChannelSetAttribute( this.hBassStream, BASSAttribute.BASS_ATTRIB_TEMPO, (float) ( db再生速度 * 100 - 100 ) );
 							//double seconds = Bass.BASS_ChannelBytes2Seconds( this.hTempoStream, nBytes );
@@ -1059,7 +1059,7 @@ namespace FDK
 				tBASSサウンドをミキサーから削除する();
 				_cbEndofStream = null;
 				//_cbStreamXA = null;
-				CSound管理.nStreams--;
+				CSoundManager.nStreams--;
 			}
 			bool bManagedも解放する = true;
 			bool bインスタンス削除 = _bインスタンス削除;	// CSoundの再初期化時は、インスタンスは存続する。
@@ -1603,11 +1603,11 @@ Debug.WriteLine("更に再生に失敗: " + Path.GetFileName(this.strファイ�
 
 		private void tBASSサウンドを作成する_ストリーム生成後の共通処理( int hMixer )
 		{
-			CSound管理.nStreams++;
+			CSoundManager.nStreams++;
 
 			// 個々のストリームの出力をテンポ変更のストリームに入力する。テンポ変更ストリームの出力を、Mixerに出力する。
 
-//			if ( CSound管理.bIsTimeStretch )	// TimeStretchのON/OFFに関わりなく、テンポ変更のストリームを生成する。後からON/OFF切り替え可能とするため。
+//			if ( CSoundManager.bIsTimeStretch )	// TimeStretchのON/OFFに関わりなく、テンポ変更のストリームを生成する。後からON/OFF切り替え可能とするため。
 			{
 				this._hTempoStream = BassFx.BASS_FX_TempoCreate( this._hBassStream, BASSFlag.BASS_STREAM_DECODE | BASSFlag.BASS_FX_FREESOURCE );
 				if ( this._hTempoStream == 0 )
@@ -1694,8 +1694,8 @@ Debug.WriteLine("更に再生に失敗: " + Path.GetFileName(this.strファイ�
 			bool b = BassMix.BASS_Mixer_ChannelRemove( channel );
 			if ( b )
 			{
-				Interlocked.Decrement( ref CSound管理.nMixing );
-//				Debug.WriteLine( "Removed: " + Path.GetFileName( this.strファイル名 ) + " (" + channel + ")" + " MixedStreams=" + CSound管理.nMixing );
+				Interlocked.Decrement( ref CSoundManager.nMixing );
+//				Debug.WriteLine( "Removed: " + Path.GetFileName( this.strファイル名 ) + " (" + channel + ")" + " MixedStreams=" + CSoundManager.nMixing );
 			}
 			return b;
 		}
@@ -1708,7 +1708,7 @@ Debug.WriteLine("更に再生に失敗: " + Path.GetFileName(this.strファイ�
 			if ( BassMix.BASS_Mixer_ChannelGetMixer( hBassStream ) == 0 )
 			{
 				BASSFlag bf = BASSFlag.BASS_SPEAKER_FRONT | BASSFlag.BASS_MIXER_NORAMPIN | BASSFlag.BASS_MIXER_PAUSE;
-				Interlocked.Increment( ref CSound管理.nMixing );
+				Interlocked.Increment( ref CSoundManager.nMixing );
 
 				// preloadされることを期待して、敢えてflagからはBASS_MIXER_PAUSEを外してAddChannelした上で、すぐにPAUSEする
 				// -> ChannelUpdateでprebufferできることが分かったため、BASS_MIXER_PAUSEを使用することにした
@@ -1716,7 +1716,7 @@ Debug.WriteLine("更に再生に失敗: " + Path.GetFileName(this.strファイ�
 				bool b1 = BassMix.BASS_Mixer_StreamAddChannel( this.hMixer, this.hBassStream, bf );
 				//bool b2 = BassMix.BASS_Mixer_ChannelPause( this.hBassStream );
 				t再生位置を先頭に戻す();	// StreamAddChannelの後で再生位置を戻さないとダメ。逆だと再生位置が変わらない。
-//Trace.TraceInformation( "Add Mixer: " + Path.GetFileName( this.strファイル名 ) + " (" + hBassStream + ")" + " MixedStreams=" + CSound管理.nMixing );
+//Trace.TraceInformation( "Add Mixer: " + Path.GetFileName( this.strファイル名 ) + " (" + hBassStream + ")" + " MixedStreams=" + CSoundManager.nMixing );
 				Bass.BASS_ChannelUpdate( this.hBassStream, 0 );	// pre-buffer
 				return b1;	// &b2;
 			}

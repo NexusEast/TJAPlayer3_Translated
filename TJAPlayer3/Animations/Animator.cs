@@ -29,10 +29,10 @@ namespace TJAPlayer3.Animations
             switch (Type)
             {
                 case CounterType.Normal:
-                    Counter.t開始((int)StartValue, (int)EndValue, (int)TickInterval, TJAPlayer3.Timer);
+                    Counter.tStart((int)StartValue, (int)EndValue, (int)TickInterval, TJAPlayer3.Timer);
                     break;
                 case CounterType.Double:
-                    Counter.t開始((double)StartValue, (double)EndValue, (double)TickInterval, CSound管理.rc演奏用タイマ);
+                    Counter.tStart((double)StartValue, (double)EndValue, (double)TickInterval, CSoundManager.rPlaybackTimer);
                     break;
                 default:
                     break;
@@ -41,7 +41,7 @@ namespace TJAPlayer3.Animations
         public void Stop()
         {
             if (Counter == null) throw new NullReferenceException();
-            Counter.t停止();
+            Counter.tStop();
         }
         public void Reset()
         {
@@ -55,12 +55,12 @@ namespace TJAPlayer3.Animations
             switch (Type)
             {
                 case CounterType.Normal:
-                    if (IsLoop) Counter.t進行Loop(); else Counter.t進行();
-                    if (!IsLoop && Counter.b終了値に達した) Stop();
+                    if (IsLoop) Counter.tStartLoop(); else Counter.tStart();
+                    if (!IsLoop && Counter.bEnded) Stop();
                     break;
                 case CounterType.Double:
-                    if (IsLoop) Counter.t進行LoopDb(); else Counter.t進行db();
-                    if (!IsLoop && Counter.b終了値に達したdb) Stop();
+                    if (IsLoop) Counter.tStartLoopDb(); else Counter.tStartdb();
+                    if (!IsLoop && Counter.bEndeddb) Stop();
                     break;
                 default:
                     break;

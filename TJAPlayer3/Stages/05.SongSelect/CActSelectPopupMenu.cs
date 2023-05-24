@@ -191,7 +191,7 @@ namespace TJAPlayer3
 			{
 				this.ctキー反復用[ i ] = new CCounter( 0, 0, 0, TJAPlayer3.Timer );
 			}
-			base.b活性化してない = true;
+			base.bDeactivated = true;
 
 			this.bIsActivePopupMenu = false;
 			this.font = new CActDFPFont();
@@ -202,7 +202,7 @@ namespace TJAPlayer3
 		}
 		public override void On非活性化()
 		{
-			if ( !base.b活性化してない )
+			if ( !base.bDeactivated )
 			{
 				base.list子Activities.Remove( this.font );
 				this.font.On非活性化();
@@ -218,32 +218,32 @@ namespace TJAPlayer3
 			}
 		}
 
-		public override void OnManagedリソースの作成()
+		public override void OnManagedResourceLoaded()
 		{
-		    base.OnManagedリソースの作成();
+		    base.OnManagedResourceLoaded();
 
 		    ConditionallyInitializePrvFont();
 		}
 
-		public override void OnManagedリソースの解放()
+		public override void OnManagedDisposed()
 		{
-			if ( !base.b活性化してない )
+			if ( !base.bDeactivated )
 			{
 				//CDTXMania.tテクスチャの解放( ref this.txPopupMenuBackground );
 				//CDTXMania.tテクスチャの解放( ref this.txCursor );
                 TJAPlayer3.t安全にDisposeする( ref this.prvFont );
 			}
-			base.OnManagedリソースの解放();
+			base.OnManagedDisposed();
 		}
 
-		public override int On進行描画()
+		public override int OnDraw()
 		{
 			throw new InvalidOperationException( "t進行描画(bool)のほうを使用してください。" );
 		}
 
 		public int t進行描画()
 		{
-			if ( !base.b活性化してない && this.bIsActivePopupMenu )
+			if ( !base.bDeactivated && this.bIsActivePopupMenu )
 			{
 				if ( this.bキー入力待ち )
 				{

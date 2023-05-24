@@ -14,7 +14,7 @@ namespace TJAPlayer3
 
 		public CAct演奏Drumsチップエフェクト()
 		{
-			//base.b活性化してない = true;
+			//base.bDeactivated = true;
 		}
 		
 		
@@ -60,26 +60,26 @@ namespace TJAPlayer3
             }
 			base.On非活性化();
 		}
-		public override int On進行描画()
+		public override int OnDraw()
 		{
             for (int i = 0; i < 128; i++)
             {
                 if (st[i].b使用中)
                 {
-                    st[i].ct進行.t進行();
-                    if (st[i].ct進行.b終了値に達した)
+                    st[i].ct進行.tStart();
+                    if (st[i].ct進行.bEnded)
                     {
-                        st[i].ct進行.t停止();
+                        st[i].ct進行.tStop();
                         st[i].b使用中 = false;
                     }
                     switch (st[i].nプレイヤー)
                     {
                         case 0:
-                            TJAPlayer3.Tx.Gauge_Soul_Explosion[0]?.t2D中心基準描画(TJAPlayer3.app.Device, TJAPlayer3.Skin.Game_Effect_FlyingNotes_EndPoint_X[0], TJAPlayer3.Skin.Game_Effect_FlyingNotes_EndPoint_Y[0], new Rectangle(st[i].ct進行.n現在の値 * TJAPlayer3.Skin.Game_Effect_NotesFlash[0], 0, TJAPlayer3.Skin.Game_Effect_NotesFlash[0], TJAPlayer3.Skin.Game_Effect_NotesFlash[1]));
+                            TJAPlayer3.Tx.Gauge_Soul_Explosion[0]?.t2D中心基準描画(TJAPlayer3.app.Device, TJAPlayer3.Skin.Game_Effect_FlyingNotes_EndPoint_X[0], TJAPlayer3.Skin.Game_Effect_FlyingNotes_EndPoint_Y[0], new Rectangle(st[i].ct進行.nCurrentValue * TJAPlayer3.Skin.Game_Effect_NotesFlash[0], 0, TJAPlayer3.Skin.Game_Effect_NotesFlash[0], TJAPlayer3.Skin.Game_Effect_NotesFlash[1]));
                             TJAPlayer3.Tx.Notes?.t2D中心基準描画(TJAPlayer3.app.Device, TJAPlayer3.Skin.Game_Effect_FlyingNotes_EndPoint_X[0], TJAPlayer3.Skin.Game_Effect_FlyingNotes_EndPoint_Y[0], new Rectangle(st[i].Lane * 130, 0, 130, 130));
                             break;
                         case 1:
-                            TJAPlayer3.Tx.Gauge_Soul_Explosion[1]?.t2D中心基準描画(TJAPlayer3.app.Device, TJAPlayer3.Skin.Game_Effect_FlyingNotes_EndPoint_X[1], TJAPlayer3.Skin.Game_Effect_FlyingNotes_EndPoint_Y[1], new Rectangle(st[i].ct進行.n現在の値 * TJAPlayer3.Skin.Game_Effect_NotesFlash[0], 0, TJAPlayer3.Skin.Game_Effect_NotesFlash[0], TJAPlayer3.Skin.Game_Effect_NotesFlash[1]));
+                            TJAPlayer3.Tx.Gauge_Soul_Explosion[1]?.t2D中心基準描画(TJAPlayer3.app.Device, TJAPlayer3.Skin.Game_Effect_FlyingNotes_EndPoint_X[1], TJAPlayer3.Skin.Game_Effect_FlyingNotes_EndPoint_Y[1], new Rectangle(st[i].ct進行.nCurrentValue * TJAPlayer3.Skin.Game_Effect_NotesFlash[0], 0, TJAPlayer3.Skin.Game_Effect_NotesFlash[0], TJAPlayer3.Skin.Game_Effect_NotesFlash[1]));
                             TJAPlayer3.Tx.Notes?.t2D中心基準描画(TJAPlayer3.app.Device, TJAPlayer3.Skin.Game_Effect_FlyingNotes_EndPoint_X[1], TJAPlayer3.Skin.Game_Effect_FlyingNotes_EndPoint_Y[1], new Rectangle(st[i].Lane * 130, 0, 130, 130));
                             break;
                     }

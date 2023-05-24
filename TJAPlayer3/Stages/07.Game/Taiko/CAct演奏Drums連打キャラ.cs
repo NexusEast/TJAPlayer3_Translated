@@ -10,7 +10,7 @@ namespace TJAPlayer3
 
 		public CAct演奏Drums連打キャラ()
 		{
-			base.b活性化してない = true;
+			base.bDeactivated = true;
 		}
 		
 		
@@ -116,9 +116,9 @@ namespace TJAPlayer3
             }
 			base.On非活性化();
 		}
-		public override void OnManagedリソースの作成()
+		public override void OnManagedResourceLoaded()
 		{
-			if( !base.b活性化してない )
+			if( !base.bDeactivated )
 			{
                 //this.nTex枚数 = 4;
                 //this.txChara = new CTexture[ this.nTex枚数 ];
@@ -127,24 +127,24 @@ namespace TJAPlayer3
                 //{
                 //    this.txChara[ i ] = CDTXMania.tテクスチャの生成( CSkin.Path( @"Graphics\RollEffect\00\" + i.ToString() + ".png" ) );
                 //}
-				base.OnManagedリソースの作成();
+				base.OnManagedResourceLoaded();
 			}
 		}
-		public override void OnManagedリソースの解放()
+		public override void OnManagedDisposed()
 		{
-			if( !base.b活性化してない )
+			if( !base.bDeactivated )
 			{
         //        for (int i = 0; i < this.nTex枚数; i++)
         //        {
 				    //CDTXMania.tテクスチャの解放( ref this.txChara[ i ] );
         //        }
-				base.OnManagedリソースの解放();
+				base.OnManagedDisposed();
 			}
 		}
 
-        public override int On進行描画()
+        public override int OnDraw()
         {
-            if (base.b活性化してない)
+            if (base.bDeactivated)
             {
                 return 0;
             }
@@ -158,15 +158,15 @@ namespace TJAPlayer3
                     continue;
                 }
 
-                rollChara.OldValue = rollChara.Counter.n現在の値;
-                rollChara.Counter.t進行();
-                if (rollChara.Counter.b終了値に達した)
+                rollChara.OldValue = rollChara.Counter.nCurrentValue;
+                rollChara.Counter.tStart();
+                if (rollChara.Counter.bEnded)
                 {
-                    rollChara.Counter.t停止();
+                    rollChara.Counter.tStop();
                     rollChara.IsUsing = false;
                 }
 
-                for (int l = rollChara.OldValue; l < rollChara.Counter.n現在の値; l++)
+                for (int l = rollChara.OldValue; l < rollChara.Counter.nCurrentValue; l++)
                 {
                     rollChara.X += rollChara.XAdd;
                     rollChara.Y += rollChara.YAdd;
@@ -183,13 +183,13 @@ namespace TJAPlayer3
                 // 画面外にいたら描画をやめさせる
                 if (rollChara.X < 0 - txRollCharaEffect.szテクスチャサイズ.Width || rollChara.X > 1280)
                 {
-                    rollChara.Counter.t停止();
+                    rollChara.Counter.tStop();
                     rollChara.IsUsing = false;
                 }
 
                 if (rollChara.Y < 0 - txRollCharaEffect.szテクスチャサイズ.Height || rollChara.Y > 720)
                 {
-                    rollChara.Counter.t停止();
+                    rollChara.Counter.tStop();
                     rollChara.IsUsing = false;
                 }
             }

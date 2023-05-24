@@ -20,7 +20,7 @@ namespace TJAPlayer3
 
 		public void tPrint( int x, int y, Eフォント種別 font, string str英数字文字列 )
 		{
-			if( !base.b活性化してない && !string.IsNullOrEmpty( str英数字文字列 ) )
+			if( !base.bDeactivated && !string.IsNullOrEmpty( str英数字文字列 ) )
 			{
 				int BOL = x;
 				for( int i = 0; i < str英数字文字列.Length; i++ )
@@ -77,18 +77,18 @@ namespace TJAPlayer3
 
 			base.On非活性化();
 		}
-		public override void OnManagedリソースの作成()
+		public override void OnManagedResourceLoaded()
 		{
-			if( !base.b活性化してない )
+			if( !base.bDeactivated )
 			{
 				this.txフォント8x16[ 0 ] = TJAPlayer3.Tx.TxCUntracked(@"Console_Font.png");
 				this.txフォント8x16[ 1 ] = TJAPlayer3.Tx.TxCUntracked(@"Console_Font_Small.png");
-                base.OnManagedリソースの作成();
+                base.OnManagedResourceLoaded();
 			}
 		}
-		public override void OnManagedリソースの解放()
+		public override void OnManagedDisposed()
 		{
-			if( !base.b活性化してない )
+			if( !base.bDeactivated )
 			{
 				for( int i = 0; i < 2; i++ )
 				{
@@ -98,7 +98,7 @@ namespace TJAPlayer3
 						this.txフォント8x16[ i ] = null;
 					}
 				}
-				base.OnManagedリソースの解放();
+				base.OnManagedDisposed();
 			}
 		}
 

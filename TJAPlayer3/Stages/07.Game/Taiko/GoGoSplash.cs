@@ -12,7 +12,7 @@ namespace TJAPlayer3
     {
         public GoGoSplash()
         {
-            this.b活性化してない = true;
+            this.bDeactivated = true;
         }
 
         public override void On活性化()
@@ -31,16 +31,16 @@ namespace TJAPlayer3
         /// SkinCofigで本数を変更することができます。
         /// </summary>
         /// <returns></returns>
-        public override int On進行描画()
+        public override int OnDraw()
         {
-            if (Splash == null) return base.On進行描画();
+            if (Splash == null) return base.OnDraw();
             // for Debug
             // if (CDTXMania.Input管理.Keyboard.bキーが押された((int)SlimDX.DirectInput.Key.A)) StartSplash();
-            Splash.t進行();
-            if (Splash.b終了値に達した)
+            Splash.tStart();
+            if (Splash.bEnded)
             {
-                Splash.n現在の値 = 0;
-                Splash.t停止();
+                Splash.nCurrentValue = 0;
+                Splash.tStop();
             }
             if (Splash.b進行中)
             {
@@ -72,10 +72,10 @@ namespace TJAPlayer3
                             TJAPlayer3.Tx.Effects_GoGoSplash.fZ軸中心回転 = 0.0f;
                         }
                     }
-                    TJAPlayer3.Tx.Effects_GoGoSplash?.t2D拡大率考慮下中心基準描画(TJAPlayer3.app.Device, TJAPlayer3.Skin.Game_Effect_GoGoSplash_X[i], TJAPlayer3.Skin.Game_Effect_GoGoSplash_Y[i], new Rectangle(TJAPlayer3.Skin.Game_Effect_GoGoSplash[0] * Splash.n現在の値, 0, TJAPlayer3.Skin.Game_Effect_GoGoSplash[0], TJAPlayer3.Skin.Game_Effect_GoGoSplash[1]));
+                    TJAPlayer3.Tx.Effects_GoGoSplash?.t2D拡大率考慮下中心基準描画(TJAPlayer3.app.Device, TJAPlayer3.Skin.Game_Effect_GoGoSplash_X[i], TJAPlayer3.Skin.Game_Effect_GoGoSplash_Y[i], new Rectangle(TJAPlayer3.Skin.Game_Effect_GoGoSplash[0] * Splash.nCurrentValue, 0, TJAPlayer3.Skin.Game_Effect_GoGoSplash[0], TJAPlayer3.Skin.Game_Effect_GoGoSplash[1]));
                 }
             }
-            return base.On進行描画();
+            return base.OnDraw();
         }
 
         public void StartSplash()

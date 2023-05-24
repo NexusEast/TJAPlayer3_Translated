@@ -255,7 +255,7 @@ namespace TJAPlayer3
 
             public void tRemoveMixer()
             {
-                if (CSound管理.GetCurrentSoundDeviceType() != "DirectShow")
+                if (CSoundManager.GetCurrentSoundDeviceType() != "DirectShow")
                 {
                     for (int i = 0; i < 2; i++)
                     {

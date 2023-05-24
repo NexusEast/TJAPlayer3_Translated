@@ -84,7 +84,7 @@ namespace TJAPlayer3
 				case (int) EOrder.Continue:
                     TJAPlayer3.stage演奏ドラム画面.bPAUSE = false;
 
-                    CSound管理.rc演奏用タイマ.t再開();
+                    CSoundManager.rPlaybackTimer.t再開();
 					TJAPlayer3.Timer.t再開();
 					TJAPlayer3.DTX.t全チップの再生再開();
                     TJAPlayer3.stage演奏ドラム画面.actAVI.tPauseControl();
@@ -97,7 +97,7 @@ namespace TJAPlayer3
 					break;
 
 				case (int) EOrder.Return:
-                    CSound管理.rc演奏用タイマ.t再開();
+                    CSoundManager.rPlaybackTimer.t再開();
 					TJAPlayer3.Timer.t再開();
                     TJAPlayer3.stage演奏ドラム画面.t演奏中止();
 					this.tDeativatePopupMenu();
@@ -123,9 +123,9 @@ namespace TJAPlayer3
 		{
 			base.On非活性化();
 		}
-		public override void OnManagedリソースの作成()
+		public override void OnManagedResourceLoaded()
 		{
-			if( !base.b活性化してない )
+			if( !base.bDeactivated )
 			{
 				string pathパネル本体 = CSkin.Path( @"Graphics\ScreenSelect popup auto settings.png" );
 				if ( File.Exists( pathパネル本体 ) )
@@ -133,16 +133,16 @@ namespace TJAPlayer3
 					this.txパネル本体 = TJAPlayer3.tテクスチャの生成( pathパネル本体, true );
 				}
 
-				base.OnManagedリソースの作成();
+				base.OnManagedResourceLoaded();
 			}
 		}
-		public override void OnManagedリソースの解放()
+		public override void OnManagedDisposed()
 		{
-			if ( !base.b活性化してない )
+			if ( !base.bDeactivated )
 			{
 				TJAPlayer3.t安全にDisposeする(ref this.txパネル本体);
 				TJAPlayer3.t安全にDisposeする(ref this.tx文字列パネル);
-				base.OnManagedリソースの解放();
+				base.OnManagedDisposed();
 			}
 		}
 

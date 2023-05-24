@@ -56,7 +56,7 @@ namespace TJAPlayer3
             st文字位置Array[9] = st文字位置10;
             this.st小文字位置 = st文字位置Array;
 
-			base.b活性化してない = true;
+			base.bDeactivated = true;
 		}
 		public void t選択曲が変更された()
 		{
@@ -113,9 +113,9 @@ namespace TJAPlayer3
 			this.ct登場アニメ用 = null;
 			base.On非活性化();
 		}
-		public override void OnManagedリソースの作成()
+		public override void OnManagedResourceLoaded()
 		{
-			if( !base.b活性化してない )
+			if( !base.bDeactivated )
 			{
 				//this.txパネル本体 = CDTXMania.tテクスチャの生成( CSkin.Path( @"Graphics\5_play history panel.png" ) );
                 //this.txスコアボード[0] = CDTXMania.tテクスチャの生成( CSkin.Path( @"Graphics\5_scoreboard_0.png" ) );
@@ -124,12 +124,12 @@ namespace TJAPlayer3
                 //this.txスコアボード[3] = CDTXMania.tテクスチャの生成( CSkin.Path( @"Graphics\5_scoreboard_3.png" ) );
                 //this.tx文字 = CDTXMania.tテクスチャの生成( CSkin.Path( @"Graphics\5_scoreboard_number.png" ) );
 				this.t選択曲が変更された();
-				base.OnManagedリソースの作成();
+				base.OnManagedResourceLoaded();
 			}
 		}
-		public override void OnManagedリソースの解放()
+		public override void OnManagedDisposed()
 		{
-			if( !base.b活性化してない )
+			if( !base.bDeactivated )
 			{
 				//CDTXMania.tテクスチャの解放( ref this.txパネル本体 );
 				//CDTXMania.tテクスチャの解放( ref this.tx文字列パネル );
@@ -138,22 +138,22 @@ namespace TJAPlayer3
     //            CDTXMania.tテクスチャの解放( ref this.txスコアボード[2] );
     //            CDTXMania.tテクスチャの解放( ref this.txスコアボード[3] );
     //            CDTXMania.tテクスチャの解放( ref this.tx文字 );
-				base.OnManagedリソースの解放();
+				base.OnManagedDisposed();
 			}
 		}
-		public override int On進行描画()
+		public override int OnDraw()
 		{
-			if( !base.b活性化してない )
+			if( !base.bDeactivated )
 			{
 				if( base.b初めての進行描画 )
 				{
 					this.ct登場アニメ用 = new CCounter( 0, 3000, 1, TJAPlayer3.Timer );
 					base.b初めての進行描画 = false;
 				}
-				this.ct登場アニメ用.t進行();
+				this.ct登場アニメ用.tStart();
                 int x = 980;
                 int y = 350;
-                if (TJAPlayer3.stage選曲.r現在選択中のスコア != null && this.ct登場アニメ用.n現在の値 >= 2000 && TJAPlayer3.stage選曲.r現在選択中の曲.eノード種別 == C曲リストノード.Eノード種別.SCORE)
+                if (TJAPlayer3.stage選曲.r現在選択中のスコア != null && this.ct登場アニメ用.nCurrentValue >= 2000 && TJAPlayer3.stage選曲.r現在選択中の曲.eノード種別 == C曲リストノード.Eノード種別.SCORE)
                 {
                     var scoreWindowTexture = TJAPlayer3.Tx.SongSelect_ScoreWindow[TJAPlayer3.stage選曲.n現在選択中の曲の難易度];
                     if (scoreWindowTexture != null)

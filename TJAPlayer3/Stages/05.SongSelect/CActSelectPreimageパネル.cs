@@ -14,7 +14,7 @@ namespace TJAPlayer3
 
 		public CActSelectPreimageパネル()
 		{
-			base.b活性化してない = true;
+			base.bDeactivated = true;
 		}
 		public void t選択曲が変更された()
 		{
@@ -52,9 +52,9 @@ namespace TJAPlayer3
 			}
 			base.On非活性化();
 		}
-		public override void OnManagedリソースの作成()
+		public override void OnManagedResourceLoaded()
 		{
-			if( !base.b活性化してない )
+			if( !base.bDeactivated )
 			{
 				this.txパネル本体 = TJAPlayer3.tテクスチャの生成( CSkin.Path( @"Graphics\5_preimage panel.png" ), false );
 				//this.txセンサ光 = CDTXMania.tテクスチャの生成( CSkin.Path( @"Graphics\5_sensor light.png" ), false );
@@ -66,12 +66,12 @@ namespace TJAPlayer3
 				this.b動画フレームを作成した = false;
 				this.pAVIBmp = IntPtr.Zero;
 				this.tプレビュー画像_動画の変更();
-				base.OnManagedリソースの作成();
+				base.OnManagedResourceLoaded();
 			}
 		}
-		public override void OnManagedリソースの解放()
+		public override void OnManagedDisposed()
 		{
-			if( !base.b活性化してない )
+			if( !base.bDeactivated )
 			{
 				TJAPlayer3.t安全にDisposeする(ref this.txパネル本体);
 				TJAPlayer3.t安全にDisposeする(ref this.txプレビュー画像);
@@ -81,35 +81,35 @@ namespace TJAPlayer3
 					this.sfAVI画像.Dispose();
 					this.sfAVI画像 = null;
 				}
-				base.OnManagedリソースの解放();
+				base.OnManagedDisposed();
 			}
 		}
-		public override int On進行描画()
+		public override int OnDraw()
 		{
-			if( !base.b活性化してない )
+			if( !base.bDeactivated )
 			{
 				if( base.b初めての進行描画 )
 				{
 					this.ct登場アニメ用 = new CCounter( 0, 100, 5, TJAPlayer3.Timer );
 					this.ctセンサ光 = new CCounter( 0, 100, 30, TJAPlayer3.Timer );
-					this.ctセンサ光.n現在の値 = 70;
+					this.ctセンサ光.nCurrentValue = 70;
 					base.b初めての進行描画 = false;
 				}
-				this.ct登場アニメ用.t進行();
-				this.ctセンサ光.t進行Loop();
+				this.ct登場アニメ用.tStart();
+				this.ctセンサ光.tStartLoop();
 				if( ( !TJAPlayer3.stage選曲.bスクロール中 && ( this.ct遅延表示 != null ) ) && this.ct遅延表示.b進行中 )
 				{
-					this.ct遅延表示.t進行();
-					if ( ( this.ct遅延表示.n現在の値 >= 0 ) && this.b新しいプレビューファイルをまだ読み込んでいない )
+					this.ct遅延表示.tStart();
+					if ( ( this.ct遅延表示.nCurrentValue >= 0 ) && this.b新しいプレビューファイルをまだ読み込んでいない )
 					{
 						this.tプレビュー画像_動画の変更();
 						TJAPlayer3.Timer.t更新();
 						this.ct遅延表示.n現在の経過時間ms = TJAPlayer3.Timer.n現在時刻;
 						this.b新しいプレビューファイルを読み込んだ = true;
 					}
-					else if ( this.ct遅延表示.b終了値に達した && this.ct遅延表示.b進行中 )
+					else if ( this.ct遅延表示.bEnded && this.ct遅延表示.b進行中 )
 					{
-						this.ct遅延表示.t停止();
+						this.ct遅延表示.tStop();
 					}
 				}
 				else if( ( ( this.avi != null ) && ( this.sfAVI画像 != null ) ) && ( this.nAVI再生開始時刻 != -1 ) )
@@ -262,7 +262,7 @@ namespace TJAPlayer3
 		private bool tプレビュー動画の指定があれば構築する()
 		{
 			Cスコア cスコア = TJAPlayer3.stage選曲.r現在選択中のスコア;
-			if( ( TJAPlayer3.ConfigIni.bAVI有効 && ( cスコア != null ) ) && !string.IsNullOrEmpty( cスコア.譜面情報.Premovie ) )
+			if( ( TJAPlayer3.ConfigIni.bAVIEnabled && ( cスコア != null ) ) && !string.IsNullOrEmpty( cスコア.譜面情報.Premovie ) )
 			{
 				string filename = cスコア.ファイル情報.フォルダの絶対パス + cスコア.譜面情報.Premovie;
 				if( filename.Equals( this.str現在のファイル名 ) )
@@ -368,14 +368,14 @@ namespace TJAPlayer3
 
 		private void t描画処理_パネル本体()
 		{
-			if( this.ct登場アニメ用.b終了値に達した || ( this.txパネル本体 != null ) )
+			if( this.ct登場アニメ用.bEnded || ( this.txパネル本体 != null ) )
 			{
 				this.n本体X = 16;
 				this.n本体Y = 86;
 			}
 			else
 			{
-				double num = ( (double) this.ct登場アニメ用.n現在の値 ) / 100.0;
+				double num = ( (double) this.ct登場アニメ用.nCurrentValue ) / 100.0;
 				double num2 = Math.Cos( ( 1.5 + ( 0.5 * num ) ) * Math.PI );
 				this.n本体X = 8;
 				this.n本体Y = 0x39 - ( (int) ( this.txパネル本体.sz画像サイズ.Height * ( 1.0 - ( num2 * num2 ) ) ) );
@@ -387,11 +387,11 @@ namespace TJAPlayer3
 		}
 		private unsafe void t描画処理_プレビュー画像()
 		{
-			if( !TJAPlayer3.stage選曲.bスクロール中 && ( ( ( this.ct遅延表示 != null ) && ( this.ct遅延表示.n現在の値 > 0 ) ) && !this.b新しいプレビューファイルをまだ読み込んでいない ) )
+			if( !TJAPlayer3.stage選曲.bスクロール中 && ( ( ( this.ct遅延表示 != null ) && ( this.ct遅延表示.nCurrentValue > 0 ) ) && !this.b新しいプレビューファイルをまだ読み込んでいない ) )
 			{
 				int x = this.n本体X + 0x12;
 				int y = this.n本体Y + 0x10;
-				float num3 = ( (float) this.ct遅延表示.n現在の値 ) / 100f;
+				float num3 = ( (float) this.ct遅延表示.nCurrentValue ) / 100f;
 				float num4 = 0.9f + ( 0.1f * num3 );
 				if( ( this.nAVI再生開始時刻 != -1 ) && ( this.sfAVI画像 != null ) )
 				{

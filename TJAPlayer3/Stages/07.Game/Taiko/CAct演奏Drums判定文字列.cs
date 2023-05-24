@@ -14,30 +14,30 @@ namespace TJAPlayer3
 		public CAct演奏Drums判定文字列()
 		{
 			this.stレーンサイズ = new STレーンサイズ[ 12 ];
-			base.b活性化してない = true;
+			base.bDeactivated = true;
 		}
 		
 		
 		// CActivity 実装（共通クラスからの差分のみ）
-		public override int On進行描画()
+		public override int OnDraw()
 		{
 			throw new InvalidOperationException( "t進行描画(C演奏判定ライン座標共通 演奏判定ライン共通 ) のほうを使用してください。" );
 		}
 		public override int t進行描画( C演奏判定ライン座標共通 演奏判定ライン座標 )
 		{
-			if( !base.b活性化してない )
+			if( !base.bDeactivated )
 			{
 				for( int i = 0; i < 12; i++ )
 				{
 					if( !base.st状態[ i ].ct進行.b停止中 )
 					{
-						base.st状態[ i ].ct進行.t進行();
-						if( base.st状態[ i ].ct進行.b終了値に達した )
+						base.st状態[ i ].ct進行.tStart();
+						if( base.st状態[ i ].ct進行.bEnded )
 						{
-							base.st状態[ i ].ct進行.t停止();
+							base.st状態[ i ].ct進行.tStop();
                             base.st状態[ i ].b使用中 = false;
 						}
-						int num2 = base.st状態[ i ].ct進行.n現在の値;
+						int num2 = base.st状態[ i ].ct進行.nCurrentValue;
                         if( base.st状態[ i ].judge != E判定.Great )
                         {
 							base.st状態[ i ].n相対X座標 = 0;

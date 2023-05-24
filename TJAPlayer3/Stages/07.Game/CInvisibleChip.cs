@@ -65,7 +65,7 @@ namespace TJAPlayer3
 				if ( this.eInvisibleMode[ nInst ] == EInvisible.SEMI )
 				{
 					ShowChipTemporally( eInst );
-					ccounter[ nInst ].n現在の値 = nDisplayTimeMs;
+					ccounter[ nInst ].nCurrentValue = nDisplayTimeMs;
 				}
 			}
 		}
@@ -75,7 +75,7 @@ namespace TJAPlayer3
 		/// <param name="eInst">楽器パート</param>
 		public void ShowChipTemporally( E楽器パート eInst )
 		{
-			ccounter[ (int) eInst ].t開始( 0, nDisplayTimeMs + nFadeoutTimeMs + 1, 1, TJAPlayer3.Timer );
+			ccounter[ (int) eInst ].tStart( 0, nDisplayTimeMs + nFadeoutTimeMs + 1, 1, TJAPlayer3.Timer );
 		}
 
 		#region [ Dispose-Finalize パターン実装 ]
@@ -96,7 +96,7 @@ namespace TJAPlayer3
 				for ( int i = 0; i < 4; i++ )
 				{
 					// ctInvisibleTimer[ i ].Dispose();
-					ccounter[ i ].t停止();
+					ccounter[ i ].tStop();
 					ccounter[ i ] = null;
 				}
 			}

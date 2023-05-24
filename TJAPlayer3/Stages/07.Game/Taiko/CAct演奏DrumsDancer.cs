@@ -9,7 +9,7 @@ namespace TJAPlayer3
         /// </summary>
         public CAct演奏DrumsDancer()
         {
-            base.b活性化してない = true;
+            base.bDeactivated = true;
         }
 
         public override void On活性化()
@@ -24,22 +24,22 @@ namespace TJAPlayer3
             base.On非活性化();
         }
 
-        public override void OnManagedリソースの作成()
+        public override void OnManagedResourceLoaded()
         {
             this.ar踊り子モーション番号 = C変換.ar配列形式のstringをint配列に変換して返す(TJAPlayer3.Skin.Game_Dancer_Motion);
             if(this.ar踊り子モーション番号 == null) ar踊り子モーション番号 = C変換.ar配列形式のstringをint配列に変換して返す("0,0");
-            this.ct踊り子モーション = new CCounter(0, this.ar踊り子モーション番号.Length - 1, 0.01, CSound管理.rc演奏用タイマ);
-            base.OnManagedリソースの作成();
+            this.ct踊り子モーション = new CCounter(0, this.ar踊り子モーション番号.Length - 1, 0.01, CSoundManager.rPlaybackTimer);
+            base.OnManagedResourceLoaded();
         }
 
-        public override int On進行描画()
+        public override int OnDraw()
         {
             if( this.b初めての進行描画 )
             {
                 this.b初めての進行描画 = false;
             }
 
-            if (this.ct踊り子モーション != null || TJAPlayer3.Skin.Game_Dancer_Ptn != 0) this.ct踊り子モーション.t進行LoopDb();
+            if (this.ct踊り子モーション != null || TJAPlayer3.Skin.Game_Dancer_Ptn != 0) this.ct踊り子モーション.tStartLoopDb();
 
             if (TJAPlayer3.ConfigIni.ShowDancer && this.ct踊り子モーション != null && TJAPlayer3.Skin.Game_Dancer_Ptn != 0)
             {
@@ -59,7 +59,7 @@ namespace TJAPlayer3
                     }
                 }
             }
-            return base.On進行描画();
+            return base.OnDraw();
         }
 
         #region[ private ]

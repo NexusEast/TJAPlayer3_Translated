@@ -14,7 +14,7 @@ namespace TJAPlayer3
 
 		public TaikoLaneFlash()
 		{
-			base.b活性化してない = true;
+			base.bDeactivated = true;
 		}
 
 
@@ -36,16 +36,16 @@ namespace TJAPlayer3
             base.On非活性化();
 		}
 
-        public override int On進行描画()
+        public override int OnDraw()
         {
             for (int i = 0; i < TJAPlayer3.ConfigIni.nPlayerCount; i++)
             {
                 for (int j = 0; j < (int)FlashType.Total; j++)
                 {
-                    PlayerLane[i].Flash[j].On進行描画();
+                    PlayerLane[i].Flash[j].OnDraw();
                 }   
             }
-            return base.On進行描画();
+            return base.OnDraw();
         }
 
         public PlayerLane[] PlayerLane;

@@ -6,7 +6,7 @@ namespace TJAPlayer3
     {
         public CAct演奏Drumsレーン()
         {
-            base.b活性化してない = true;
+            base.bDeactivated = true;
         }
 
         public override void On非活性化()
@@ -16,7 +16,7 @@ namespace TJAPlayer3
             base.On非活性化();
         }
 
-        public override void OnManagedリソースの作成()
+        public override void OnManagedResourceLoaded()
         {
             //this.tx普通譜面[ 0 ] = CDTXMania.tテクスチャの生成(CSkin.Path(@"Graphics\7_field_normal_base.png"));
             //this.tx玄人譜面[ 0 ] = CDTXMania.tテクスチャの生成(CSkin.Path(@"Graphics\7_field_expert_base.png"));
@@ -41,20 +41,20 @@ namespace TJAPlayer3
                 laneBase0.Opacity = 255;
             }
 
-            base.OnManagedリソースの作成();
+            base.OnManagedResourceLoaded();
         }
 
-        public override int On進行描画()
+        public override int OnDraw()
         {
             for( int i = 0; i < TJAPlayer3.ConfigIni.nPlayerCount; i++ )
             {
                 if( !this.ct分岐アニメ進行[ i ].b停止中 )
                 {
-                    this.ct分岐アニメ進行[ i ].t進行();
-                    if( this.ct分岐アニメ進行[ i ].b終了値に達した )
+                    this.ct分岐アニメ進行[ i ].tStart();
+                    if( this.ct分岐アニメ進行[ i ].bEnded )
                     {
                         this.bState[ i ] = false;
-                        this.ct分岐アニメ進行[ i ].t停止();
+                        this.ct分岐アニメ進行[ i ].tStop();
                     }
                 }
             }
@@ -71,7 +71,7 @@ namespace TJAPlayer3
                         //普通→玄人
                         if( nBefore[ i ] == 0 && nAfter[ i ] == 1 )
                         {
-                            TJAPlayer3.Tx.Lane_Base[1].Opacity = this.ct分岐アニメ進行[ i ].n現在の値 > 100 ? 255 : ( ( this.ct分岐アニメ進行[ i ].n現在の値 * 0xff ) / 100 );
+                            TJAPlayer3.Tx.Lane_Base[1].Opacity = this.ct分岐アニメ進行[ i ].nCurrentValue > 100 ? 255 : ( ( this.ct分岐アニメ進行[ i ].nCurrentValue * 0xff ) / 100 );
                             TJAPlayer3.Tx.Lane_Base[0].t2D描画( TJAPlayer3.app.Device, TJAPlayer3.Skin.Game_Lane_Background_X[ i ], TJAPlayer3.Skin.Game_Lane_Background_Y[ i ] );
                             TJAPlayer3.Tx.Lane_Base[1].t2D描画( TJAPlayer3.app.Device, TJAPlayer3.Skin.Game_Lane_Background_X[ i ], TJAPlayer3.Skin.Game_Lane_Background_Y[ i ] );
                         }
@@ -79,20 +79,20 @@ namespace TJAPlayer3
                         if( nBefore[ i ] == 0 && nAfter[ i ] == 2)
                         {
                             TJAPlayer3.Tx.Lane_Base[0].t2D描画( TJAPlayer3.app.Device, TJAPlayer3.Skin.Game_Lane_Background_X[ i ], TJAPlayer3.Skin.Game_Lane_Background_Y[ i ] );
-                            if( this.ct分岐アニメ進行[ i ].n現在の値 < 100 )
+                            if( this.ct分岐アニメ進行[ i ].nCurrentValue < 100 )
                             {
-                                TJAPlayer3.Tx.Lane_Base[1].Opacity = this.ct分岐アニメ進行[ i ].n現在の値 > 100 ? 255 : ( ( this.ct分岐アニメ進行[ i ].n現在の値 * 0xff ) / 100 );
+                                TJAPlayer3.Tx.Lane_Base[1].Opacity = this.ct分岐アニメ進行[ i ].nCurrentValue > 100 ? 255 : ( ( this.ct分岐アニメ進行[ i ].nCurrentValue * 0xff ) / 100 );
                                 TJAPlayer3.Tx.Lane_Base[1].t2D描画( TJAPlayer3.app.Device, TJAPlayer3.Skin.Game_Lane_Background_X[ i ], TJAPlayer3.Skin.Game_Lane_Background_Y[ i ] );
                             }
-                            else if( this.ct分岐アニメ進行[ i ].n現在の値 >= 100 && this.ct分岐アニメ進行[ i ].n現在の値 < 150 )
+                            else if( this.ct分岐アニメ進行[ i ].nCurrentValue >= 100 && this.ct分岐アニメ進行[ i ].nCurrentValue < 150 )
                             {
                                 TJAPlayer3.Tx.Lane_Base[1].Opacity = 255;
                                 TJAPlayer3.Tx.Lane_Base[1].t2D描画( TJAPlayer3.app.Device, TJAPlayer3.Skin.Game_Lane_Background_X[ i ], TJAPlayer3.Skin.Game_Lane_Background_Y[ i ] );
                             }
-                            else if( this.ct分岐アニメ進行[ i ].n現在の値 >= 150 )
+                            else if( this.ct分岐アニメ進行[ i ].nCurrentValue >= 150 )
                             {
                                 TJAPlayer3.Tx.Lane_Base[1].t2D描画( TJAPlayer3.app.Device, TJAPlayer3.Skin.Game_Lane_Background_X[ i ], TJAPlayer3.Skin.Game_Lane_Background_Y[ i ] );
-                                TJAPlayer3.Tx.Lane_Base[2].Opacity = this.ct分岐アニメ進行[ i ].n現在の値 > 250 ? 255 : ( ( (this.ct分岐アニメ進行[ i ].n現在の値 - 150) * 0xff ) / 100 );
+                                TJAPlayer3.Tx.Lane_Base[2].Opacity = this.ct分岐アニメ進行[ i ].nCurrentValue > 250 ? 255 : ( ( (this.ct分岐アニメ進行[ i ].nCurrentValue - 150) * 0xff ) / 100 );
                                 TJAPlayer3.Tx.Lane_Base[2].t2D描画( TJAPlayer3.app.Device, TJAPlayer3.Skin.Game_Lane_Background_X[ i ], TJAPlayer3.Skin.Game_Lane_Background_Y[ i ] );
                             }
                         }
@@ -101,7 +101,7 @@ namespace TJAPlayer3
                         if( nBefore[ i ] == 1 && nAfter[ i ] == 2 )
                         {
                             TJAPlayer3.Tx.Lane_Base[1].t2D描画( TJAPlayer3.app.Device, TJAPlayer3.Skin.Game_Lane_Background_X[ i ], TJAPlayer3.Skin.Game_Lane_Background_Y[ i ] );
-                            TJAPlayer3.Tx.Lane_Base[2].Opacity = this.ct分岐アニメ進行[ i ].n現在の値 > 100 ? 255 : ( ( this.ct分岐アニメ進行[ i ].n現在の値 * 0xff ) / 100 );
+                            TJAPlayer3.Tx.Lane_Base[2].Opacity = this.ct分岐アニメ進行[ i ].nCurrentValue > 100 ? 255 : ( ( this.ct分岐アニメ進行[ i ].nCurrentValue * 0xff ) / 100 );
                             TJAPlayer3.Tx.Lane_Base[2].t2D描画( TJAPlayer3.app.Device, TJAPlayer3.Skin.Game_Lane_Background_X[ i ], TJAPlayer3.Skin.Game_Lane_Background_Y[ i ] );
                         }
                         #endregion
@@ -109,7 +109,7 @@ namespace TJAPlayer3
                         if( nBefore[ i ] == 1 && nAfter[ i ] == 0)
                         {
                             TJAPlayer3.Tx.Lane_Base[1].t2D描画( TJAPlayer3.app.Device, TJAPlayer3.Skin.Game_Lane_Background_X[ i ], TJAPlayer3.Skin.Game_Lane_Background_Y[ i ] );
-                            TJAPlayer3.Tx.Lane_Base[0].Opacity = this.ct分岐アニメ進行[ i ].n現在の値 > 100 ? 255 : ( ( this.ct分岐アニメ進行[ i ].n現在の値 * 0xff ) / 100 );
+                            TJAPlayer3.Tx.Lane_Base[0].Opacity = this.ct分岐アニメ進行[ i ].nCurrentValue > 100 ? 255 : ( ( this.ct分岐アニメ進行[ i ].nCurrentValue * 0xff ) / 100 );
                             TJAPlayer3.Tx.Lane_Base[0].t2D描画( TJAPlayer3.app.Device, TJAPlayer3.Skin.Game_Lane_Background_X[ i ], TJAPlayer3.Skin.Game_Lane_Background_Y[ i ] );
                         }
                         #endregion
@@ -117,34 +117,34 @@ namespace TJAPlayer3
                         if( nBefore[ i ] == 2 && nAfter[ i ] == 0)
                         {
                             TJAPlayer3.Tx.Lane_Base[2].t2D描画( TJAPlayer3.app.Device, TJAPlayer3.Skin.Game_Lane_Background_X[ i ], TJAPlayer3.Skin.Game_Lane_Background_Y[ i ] );
-                            if( this.ct分岐アニメ進行[ i ].n現在の値 < 100 )
+                            if( this.ct分岐アニメ進行[ i ].nCurrentValue < 100 )
                             {
-                                TJAPlayer3.Tx.Lane_Base[1].Opacity = this.ct分岐アニメ進行[ i ].n現在の値 > 100 ? 255 : ( ( this.ct分岐アニメ進行[ i ].n現在の値 * 0xff ) / 100 );
+                                TJAPlayer3.Tx.Lane_Base[1].Opacity = this.ct分岐アニメ進行[ i ].nCurrentValue > 100 ? 255 : ( ( this.ct分岐アニメ進行[ i ].nCurrentValue * 0xff ) / 100 );
                                 TJAPlayer3.Tx.Lane_Base[1].t2D描画( TJAPlayer3.app.Device, TJAPlayer3.Skin.Game_Lane_Background_X[ i ], TJAPlayer3.Skin.Game_Lane_Background_Y[ i ] );
                             }
-                            else if( this.ct分岐アニメ進行[ i ].n現在の値 >= 100 && this.ct分岐アニメ進行[ i ].n現在の値 < 150 )
+                            else if( this.ct分岐アニメ進行[ i ].nCurrentValue >= 100 && this.ct分岐アニメ進行[ i ].nCurrentValue < 150 )
                             {
                                 TJAPlayer3.Tx.Lane_Base[1].Opacity = 255;
                                 TJAPlayer3.Tx.Lane_Base[1].t2D描画( TJAPlayer3.app.Device, TJAPlayer3.Skin.Game_Lane_Background_X[ i ], TJAPlayer3.Skin.Game_Lane_Background_Y[ i ] );
                             }
-                            else if( this.ct分岐アニメ進行[ i ].n現在の値 >= 150 )
+                            else if( this.ct分岐アニメ進行[ i ].nCurrentValue >= 150 )
                             {
                                 TJAPlayer3.Tx.Lane_Base[1].t2D描画( TJAPlayer3.app.Device, TJAPlayer3.Skin.Game_Lane_Background_X[ i ], TJAPlayer3.Skin.Game_Lane_Background_Y[ i ] );
-                                TJAPlayer3.Tx.Lane_Base[0].Opacity = this.ct分岐アニメ進行[ i ].n現在の値 > 250 ? 255 : ( ( ( this.ct分岐アニメ進行[ i ].n現在の値 - 150 ) * 0xff ) / 100 );
+                                TJAPlayer3.Tx.Lane_Base[0].Opacity = this.ct分岐アニメ進行[ i ].nCurrentValue > 250 ? 255 : ( ( ( this.ct分岐アニメ進行[ i ].nCurrentValue - 150 ) * 0xff ) / 100 );
                                 TJAPlayer3.Tx.Lane_Base[0].t2D描画( TJAPlayer3.app.Device, TJAPlayer3.Skin.Game_Lane_Background_X[ i ], TJAPlayer3.Skin.Game_Lane_Background_Y[ i ] );
                             }
                         }
                         if( nBefore[ i ] == 2 && nAfter[ i ] == 1 )
                         {
                             TJAPlayer3.Tx.Lane_Base[2].t2D描画( TJAPlayer3.app.Device, TJAPlayer3.Skin.Game_Lane_Background_X[ i ], TJAPlayer3.Skin.Game_Lane_Background_Y[ i ] );
-                            TJAPlayer3.Tx.Lane_Base[2].Opacity = this.ct分岐アニメ進行[ i ].n現在の値 > 100 ? 255 : ( ( this.ct分岐アニメ進行[ i ].n現在の値 * 0xff ) / 100 );
+                            TJAPlayer3.Tx.Lane_Base[2].Opacity = this.ct分岐アニメ進行[ i ].nCurrentValue > 100 ? 255 : ( ( this.ct分岐アニメ進行[ i ].nCurrentValue * 0xff ) / 100 );
                             TJAPlayer3.Tx.Lane_Base[2].t2D描画( TJAPlayer3.app.Device, TJAPlayer3.Skin.Game_Lane_Background_X[ i ], TJAPlayer3.Skin.Game_Lane_Background_Y[ i ] );
                         }
                         #endregion
                     }
                 }
             }
-            return base.On進行描画();
+            return base.OnDraw();
         }
 
         public virtual void t分岐レイヤー_コース変化( int n現在, int n次回, int player )

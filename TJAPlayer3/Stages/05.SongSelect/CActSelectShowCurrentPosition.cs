@@ -15,7 +15,7 @@ namespace TJAPlayer3
 
 		public CActSelectShowCurrentPosition()
 		{
-			base.b活性化してない = true;
+			base.bDeactivated = true;
 		}
 
 		// CActivity 実装
@@ -31,9 +31,9 @@ namespace TJAPlayer3
 		{
 			base.On非活性化();
 		}
-		public override void OnManagedリソースの作成()
+		public override void OnManagedResourceLoaded()
 		{
-			if ( !base.b活性化してない )
+			if ( !base.bDeactivated )
 			{
 				string pathScrollBar = CSkin.Path( @"Graphics\5_scrollbar.png" );
 				string pathScrollPosition = CSkin.Path( @"Graphics\5_scrollbar.png" );
@@ -45,31 +45,31 @@ namespace TJAPlayer3
 				{
 					this.txScrollPosition = TJAPlayer3.tテクスチャの生成( pathScrollPosition, false );
 				}
-				base.OnManagedリソースの作成();
+				base.OnManagedResourceLoaded();
 			}
 		}
-		public override void OnManagedリソースの解放()
+		public override void OnManagedDisposed()
 		{
-			if ( !base.b活性化してない )
+			if ( !base.bDeactivated )
 			{
 				TJAPlayer3.t安全にDisposeする( ref this.txScrollBar );
 				TJAPlayer3.t安全にDisposeする( ref this.txScrollPosition );
 
-				base.OnManagedリソースの解放();
+				base.OnManagedDisposed();
 			}
 		}
-		public override int On進行描画()
+		public override int OnDraw()
 		{
 			if ( this.txScrollBar != null )
 			{
 			    #region [ スクロールバーの描画 #27648 ]
-                //this.txScrollBar.t2D描画( CDTXMania.app.Device, (int)(1280 - ((429.0f / 100.0f ) * CDTXMania.stage選曲.ct登場時アニメ用共通.n現在の値)), 164, new Rectangle( 0, 0, 352, 26 ) ); //移動後のxは851
+                //this.txScrollBar.t2D描画( CDTXMania.app.Device, (int)(1280 - ((429.0f / 100.0f ) * CDTXMania.stage選曲.ct登場時アニメ用共通.nCurrentValue)), 164, new Rectangle( 0, 0, 352, 26 ) ); //移動後のxは851
 			    #endregion
 			    #region [ スクロール地点の描画 (計算はCActSelect曲リストで行う。スクロール位置と選曲項目の同期のため。)#27648 ]
 				int py = TJAPlayer3.stage選曲.nスクロールバー相対y座標;
 				if( py <= 336 && py >= 0 )
 				{
-					//this.txScrollBar.t2D描画( CDTXMania.app.Device, (int)( 1280 - 4 - (( 424.0f / 100.0f ) * CDTXMania.stage選曲.ct登場時アニメ用共通.n現在の値 ) ) + py, 164, new Rectangle( 352, 0, 26, 26 ) );//856
+					//this.txScrollBar.t2D描画( CDTXMania.app.Device, (int)( 1280 - 4 - (( 424.0f / 100.0f ) * CDTXMania.stage選曲.ct登場時アニメ用共通.nCurrentValue ) ) + py, 164, new Rectangle( 352, 0, 26, 26 ) );//856
 				}
 			    #endregion
             }

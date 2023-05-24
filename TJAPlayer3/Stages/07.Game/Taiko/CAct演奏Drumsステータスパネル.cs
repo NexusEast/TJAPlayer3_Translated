@@ -17,20 +17,20 @@ namespace TJAPlayer3
             base.On活性化();
         }
 
-		public override void OnManagedリソースの作成()
+		public override void OnManagedResourceLoaded()
 		{
-            if( !base.b活性化してない )
+            if( !base.bDeactivated )
             {
 
-                base.OnManagedリソースの作成();
+                base.OnManagedResourceLoaded();
             }
 		}
-		public override void OnManagedリソースの解放()
+		public override void OnManagedDisposed()
 		{
 
-            base.OnManagedリソースの解放();
+            base.OnManagedDisposed();
 		}
-		public override int On進行描画()
+		public override int OnDraw()
 		{
             
 

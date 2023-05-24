@@ -14,7 +14,7 @@ namespace TJAPlayer3
 
         public FireWorks()
         {
-            base.b活性化してない = true;
+            base.bDeactivated = true;
         }
 
 
@@ -61,33 +61,33 @@ namespace TJAPlayer3
             }
             base.On非活性化();
         }
-        public override void OnManagedリソースの作成()
+        public override void OnManagedResourceLoaded()
         {
-            if (!base.b活性化してない)
+            if (!base.bDeactivated)
             {
-                base.OnManagedリソースの作成();
+                base.OnManagedResourceLoaded();
             }
         }
-        public override void OnManagedリソースの解放()
+        public override void OnManagedDisposed()
         {
-            if (!base.b活性化してない)
+            if (!base.bDeactivated)
             {
-                base.OnManagedリソースの解放();
+                base.OnManagedDisposed();
             }
         }
-        public override int On進行描画()
+        public override int OnDraw()
         {
-            if (!base.b活性化してない)
+            if (!base.bDeactivated)
             {
                 for (int i = 0; i < 128; i++)
                 {
                     if(FireWork[i].IsUsing)
                     {
-                        FireWork[i].Counter.t進行();
-                        TJAPlayer3.Tx.Effects_Hit_FireWorks?.t2D中心基準描画(TJAPlayer3.app.Device, (float)FireWork[i].X, (float)FireWork[i].Y, 1, new Rectangle(FireWork[i].Counter.n現在の値 * TJAPlayer3.Skin.Game_Effect_FireWorks[0], 0, TJAPlayer3.Skin.Game_Effect_FireWorks[0], TJAPlayer3.Skin.Game_Effect_FireWorks[1]));
-                        if (FireWork[i].Counter.b終了値に達した)
+                        FireWork[i].Counter.tStart();
+                        TJAPlayer3.Tx.Effects_Hit_FireWorks?.t2D中心基準描画(TJAPlayer3.app.Device, (float)FireWork[i].X, (float)FireWork[i].Y, 1, new Rectangle(FireWork[i].Counter.nCurrentValue * TJAPlayer3.Skin.Game_Effect_FireWorks[0], 0, TJAPlayer3.Skin.Game_Effect_FireWorks[0], TJAPlayer3.Skin.Game_Effect_FireWorks[1]));
+                        if (FireWork[i].Counter.bEnded)
                         {
-                            FireWork[i].Counter.t停止();
+                            FireWork[i].Counter.tStop();
                             FireWork[i].IsUsing = false;
                         }
                     }

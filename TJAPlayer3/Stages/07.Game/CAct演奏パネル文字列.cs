@@ -13,7 +13,7 @@ namespace TJAPlayer3
 
 		public CAct演奏パネル文字列()
 		{
-			base.b活性化してない = true;
+			base.bDeactivated = true;
 		}
 
 
@@ -129,17 +129,17 @@ namespace TJAPlayer3
 			this.ct進行用 = null;
 			base.On非活性化();
 		}
-		public override void OnManagedリソースの作成()
+		public override void OnManagedResourceLoaded()
 		{
-			if( !base.b活性化してない )
+			if( !base.bDeactivated )
 			{
-				base.OnManagedリソースの作成();
+				base.OnManagedResourceLoaded();
 			}
 		}
 
-        public override void OnManagedリソースの解放()
+        public override void OnManagedDisposed()
         {
-            if (!b活性化してない)
+            if (!bDeactivated)
             {
                 TJAPlayer3.t安全にDisposeする(ref txPanel);
                 TJAPlayer3.t安全にDisposeする(ref txMusicName);
@@ -149,11 +149,11 @@ namespace TJAPlayer3
                 TJAPlayer3.t安全にDisposeする(ref pfMusicName);
                 TJAPlayer3.t安全にDisposeする(ref pf歌詞フォント);
                 TJAPlayer3.t安全にDisposeする(ref tx難易度とステージ数);
-                base.OnManagedリソースの解放();
+                base.OnManagedDisposed();
             }
         }
 
-		public override int On進行描画()
+		public override int OnDraw()
 		{
 			throw new InvalidOperationException( "t進行描画(x,y)のほうを使用してください。" );
 		}
@@ -164,17 +164,17 @@ namespace TJAPlayer3
                 return;
             }
 
-            if (!base.b活性化してない)
+            if (!base.bDeactivated)
             {
                 if(this.b初めての進行描画)
                 {
                     b初めての進行描画 = false;
                 }
 
-                this.ct進行用.t進行Loop();
+                this.ct進行用.tStartLoop();
                 if( this.bFirst )
                 {
-                    this.ct進行用.n現在の値 = 300;
+                    this.ct進行用.nCurrentValue = 300;
                 }
 
                 if( TJAPlayer3.Skin.b現在のステージ数を表示しない )
@@ -194,27 +194,27 @@ namespace TJAPlayer3
                 {
                     #region[ 透明度制御 ]
 
-                    if (ct進行用.n現在の値 < 745)
+                    if (ct進行用.nCurrentValue < 745)
                     {
                         bFirst = false;
                     }
 
                     var opacity = 255;
-                    if (ct進行用.n現在の値 < 745)
+                    if (ct進行用.nCurrentValue < 745)
                     {
                         opacity = 255;
                     }
-                    else if (ct進行用.n現在の値 >= 745 && ct進行用.n現在の値 < 1000)
+                    else if (ct進行用.nCurrentValue >= 745 && ct進行用.nCurrentValue < 1000)
                     {
-                        opacity = 255 - (ct進行用.n現在の値 - 745);
+                        opacity = 255 - (ct進行用.nCurrentValue - 745);
                     }
-                    else if (ct進行用.n現在の値 >= 1000 && ct進行用.n現在の値 <= 1745)
+                    else if (ct進行用.nCurrentValue >= 1000 && ct進行用.nCurrentValue <= 1745)
                     {
                         opacity = 0;
                     }
-                    else if (ct進行用.n現在の値 >= 1745)
+                    else if (ct進行用.nCurrentValue >= 1745)
                     {
-                        opacity = ct進行用.n現在の値 - 1745;
+                        opacity = ct進行用.nCurrentValue - 1745;
                     }
 
                     if (txGENRE != null)

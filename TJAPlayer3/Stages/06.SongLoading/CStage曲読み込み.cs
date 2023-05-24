@@ -17,7 +17,7 @@ namespace TJAPlayer3
 		{
 			base.eステージID = CStage.Eステージ.曲読み込み;
 			base.eフェーズID = CStage.Eフェーズ.共通_通常状態;
-			base.b活性化してない = true;
+			base.bDeactivated = true;
 			//base.list子Activities.Add( this.actFI = new CActFIFOBlack() );	// #27787 2012.3.10 yyagi 曲読み込み画面のフェードインの省略
 			//base.list子Activities.Add( this.actFO = new CActFIFOBlack() );
 		}
@@ -102,9 +102,9 @@ namespace TJAPlayer3
 				Trace.Unindent();
 			}
 		}
-		public override void OnManagedリソースの作成()
+		public override void OnManagedResourceLoaded()
 		{
-			if( !base.b活性化してない )
+			if( !base.bDeactivated )
 			{
 				this.tx背景 = TJAPlayer3.tテクスチャの生成( this.strSTAGEFILE, false );
                 //this.txSongnamePlate = CDTXMania.tテクスチャの生成( CSkin.Path( @"Graphics\6_SongnamePlate.png" ) );
@@ -159,23 +159,23 @@ namespace TJAPlayer3
                     this.txサブタイトル = null;
                     this.tx背景 = null;
 				}
-				base.OnManagedリソースの作成();
+				base.OnManagedResourceLoaded();
 			}
 		}
-		public override void OnManagedリソースの解放()
+		public override void OnManagedDisposed()
 		{
-			if( !base.b活性化してない )
+			if( !base.bDeactivated )
 			{
 				TJAPlayer3.t安全にDisposeする(ref this.tx背景);
 				TJAPlayer3.t安全にDisposeする(ref this.txタイトル);
 				//CDTXMania.tテクスチャの解放( ref this.txSongnamePlate );
                 TJAPlayer3.t安全にDisposeする(ref this.txサブタイトル);
-				base.OnManagedリソースの解放();
+				base.OnManagedDisposed();
 			}
 		}
-		public override int On進行描画()
+		public override int OnDraw()
 		{
-			if( base.b活性化してない )
+			if( base.bDeactivated )
 				return 0;
 
 			#region [ 初めての進行描画 ]
@@ -190,13 +190,13 @@ namespace TJAPlayer3
 						CSkin.Cシステムサウンド.r最後に再生した排他システムサウンド.t停止する();
 					}
 					this.sd読み込み音.t再生を開始する();
-					this.nBGM再生開始時刻 = CSound管理.rc演奏用タイマ.n現在時刻;
+					this.nBGM再生開始時刻 = CSoundManager.rPlaybackTimer.n現在時刻;
 					this.nBGMの総再生時間ms = this.sd読み込み音.n総演奏時間ms;
 				}
 				else
 				{
 					TJAPlayer3.Skin.sound曲読込開始音.t再生する();
-					this.nBGM再生開始時刻 = CSound管理.rc演奏用タイマ.n現在時刻;
+					this.nBGM再生開始時刻 = CSoundManager.rPlaybackTimer.n現在時刻;
 					this.nBGMの総再生時間ms = TJAPlayer3.Skin.sound曲読込開始音.n長さ_現在のサウンド;
 				}
 				//this.actFI.tフェードイン開始();							// #27787 2012.3.10 yyagi 曲読み込み画面のフェードインの省略
@@ -211,7 +211,7 @@ namespace TJAPlayer3
 			}
 			//-----------------------------
 			#endregion
-            this.ct待機.t進行();
+            this.ct待機.tStart();
 
 
 
@@ -229,14 +229,14 @@ namespace TJAPlayer3
 
 			#region [ 背景、音符＋タイトル表示 ]
 			//-----------------------------
-            this.ct曲名表示.t進行();
+            this.ct曲名表示.tStart();
 			if( this.tx背景 != null )
 				this.tx背景.t2D描画( TJAPlayer3.app.Device, 0, 0 );
 
             if (TJAPlayer3.Tx.SongLoading_Plate != null)
             {
                 TJAPlayer3.Tx.SongLoading_Plate.bスクリーン合成 = TJAPlayer3.Skin.SongLoading_Plate_ScreenBlend; //あまりにも出番が無い
-                TJAPlayer3.Tx.SongLoading_Plate.Opacity = C変換.nParsentTo255((this.ct曲名表示.n現在の値 / 30.0));
+                TJAPlayer3.Tx.SongLoading_Plate.Opacity = C変換.nParsentTo255((this.ct曲名表示.nCurrentValue / 30.0));
                 TJAPlayer3.Tx.SongLoading_Plate.t2D描画(TJAPlayer3.app.Device, TJAPlayer3.Skin.SongLoading_Plate_XY[0], TJAPlayer3.Skin.SongLoading_Plate_XY[1], TJAPlayer3.Skin.SongLoadingPlateHorizontalReferencePoint, VerticalReferencePoint.Center);
             }
 
@@ -246,12 +246,12 @@ namespace TJAPlayer3
 			{
                 int nサブタイトル補正 = string.IsNullOrEmpty(TJAPlayer3.stage選曲.r確定されたスコア.譜面情報.strサブタイトル) ? 15 : 0;
 
-                this.txタイトル.Opacity = C変換.nParsentTo255( ( this.ct曲名表示.n現在の値 / 30.0 ) );
+                this.txタイトル.Opacity = C変換.nParsentTo255( ( this.ct曲名表示.nCurrentValue / 30.0 ) );
                 this.txタイトル.t2D描画(TJAPlayer3.app.Device, TJAPlayer3.Skin.SongLoading_Title_XY[0], TJAPlayer3.Skin.SongLoading_Title_XY[1] + nサブタイトル補正, TJAPlayer3.Skin.SongLoadingTitleHorizontalReferencePoint, VerticalReferencePoint.Center);
             }
 			if( this.txサブタイトル != null )
 			{
-                this.txサブタイトル.Opacity = C変換.nParsentTo255( ( this.ct曲名表示.n現在の値 / 30.0 ) );
+                this.txサブタイトル.Opacity = C変換.nParsentTo255( ( this.ct曲名表示.nCurrentValue / 30.0 ) );
                 this.txサブタイトル.t2D描画(TJAPlayer3.app.Device, TJAPlayer3.Skin.SongLoading_SubTitle_XY[0], TJAPlayer3.Skin.SongLoading_SubTitle_XY[1], TJAPlayer3.Skin.SongLoadingSubTitleHorizontalReferencePoint, VerticalReferencePoint.Center);
             }
 			//-----------------------------
@@ -260,7 +260,7 @@ namespace TJAPlayer3
 			switch( base.eフェーズID )
 			{
 				case CStage.Eフェーズ.共通_フェードイン:
-					//if( this.actFI.On進行描画() != 0 )			    // #27787 2012.3.10 yyagi 曲読み込み画面のフェードインの省略
+					//if( this.actFI.OnDraw() != 0 )			    // #27787 2012.3.10 yyagi 曲読み込み画面のフェードインの省略
 																		// 必ず一度「CStaeg.Eフェーズ.共通_フェードイン」フェーズを経由させること。
 																		// さもないと、曲読み込みが完了するまで、曲読み込み画面が描画されない。
 						base.eフェーズID = CStage.Eフェーズ.NOWLOADING_DTXファイルを読み込む;
@@ -359,7 +359,7 @@ namespace TJAPlayer3
 
                 case CStage.Eフェーズ.NOWLOADING_WAV読み込み待機:
                     {
-                        if( this.ct待機.n現在の値 > 260 )
+                        if( this.ct待機.nCurrentValue > 260 )
                         {
 						    base.eフェーズID = CStage.Eフェーズ.NOWLOADING_WAVファイルを読み込む;
                         }
@@ -411,7 +411,7 @@ namespace TJAPlayer3
 						TimeSpan span;
 						DateTime timeBeginLoadBMPAVI = DateTime.Now;
 
-						if ( TJAPlayer3.ConfigIni.bAVI有効 )
+						if ( TJAPlayer3.ConfigIni.bAVIEnabled )
 							TJAPlayer3.DTX.tAVIの読み込み();
 						span = ( TimeSpan ) ( DateTime.Now - timeBeginLoadBMPAVI );
 
@@ -440,7 +440,7 @@ namespace TJAPlayer3
 							ftFilename = null;
 						}
 						TJAPlayer3.Timer.t更新();
-                        //CSound管理.rc演奏用タイマ.t更新();
+                        //CSoundManager.rPlaybackTimer.t更新();
 						base.eフェーズID = CStage.Eフェーズ.NOWLOADING_システムサウンドBGMの完了を待つ;
 						return (int) E曲読込画面の戻り値.継続;
 					}

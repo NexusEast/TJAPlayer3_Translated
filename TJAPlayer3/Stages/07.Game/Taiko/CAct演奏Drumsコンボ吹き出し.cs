@@ -18,7 +18,7 @@ namespace TJAPlayer3
         /// </summary>
 		public CAct演奏Drumsコンボ吹き出し()
 		{
-			base.b活性化してない = true;
+			base.bDeactivated = true;
 		}
 		
 		
@@ -49,62 +49,62 @@ namespace TJAPlayer3
             }
 			base.On非活性化();
 		}
-		public override void OnManagedリソースの作成()
+		public override void OnManagedResourceLoaded()
 		{
-			if( !base.b活性化してない )
+			if( !base.bDeactivated )
 			{
                 //this.tx吹き出し本体[ 0 ] = CDTXMania.tテクスチャの生成( CSkin.Path( @"Graphics\7_combo balloon.png" ) );
                 //if (CDTXMania.stage演奏ドラム画面.bDoublePlay)
                 //    this.tx吹き出し本体[ 1 ] = CDTXMania.tテクスチャの生成( CSkin.Path( @"Graphics\7_combo balloon_2P.png" ) );
                 //this.tx数字 = CDTXMania.tテクスチャの生成( CSkin.Path( @"Graphics\7_combo balloon_number.png" ) );
-				base.OnManagedリソースの作成();
+				base.OnManagedResourceLoaded();
 			}
 		}
-		public override void OnManagedリソースの解放()
+		public override void OnManagedDisposed()
 		{
-			if( !base.b活性化してない )
+			if( !base.bDeactivated )
 			{
                 //CDTXMania.tテクスチャの解放( ref this.tx吹き出し本体[ 0 ] );
                 //if (CDTXMania.stage演奏ドラム画面.bDoublePlay)
                 //    CDTXMania.tテクスチャの解放( ref this.tx吹き出し本体[ 1 ] );
                 //CDTXMania.tテクスチャの解放( ref this.tx数字 );
-				base.OnManagedリソースの解放();
+				base.OnManagedDisposed();
 			}
 		}
-		public override int On進行描画()
+		public override int OnDraw()
 		{
-			if( !base.b活性化してない )
+			if( !base.bDeactivated )
 			{
                 for( int i = 0; i < 2; i++ )
                 {
                     if( !this.ct進行[ i ].b停止中 )
                     {
-                        this.ct進行[ i ].t進行();
-                        if( this.ct進行[ i ].b終了値に達した )
+                        this.ct進行[ i ].tStart();
+                        if( this.ct進行[ i ].bEnded )
                         {
-                            this.ct進行[ i ].t停止();
+                            this.ct進行[ i ].tStop();
                         }
                     }
 
                     if( TJAPlayer3.Tx.Balloon_Combo[ i ] != null && TJAPlayer3.Tx.Balloon_Number_Combo != null)
                     {
                         //半透明4f
-                        if( this.ct進行[ i ].n現在の値 == 1 || this.ct進行[ i ].n現在の値 == 103 )
+                        if( this.ct進行[ i ].nCurrentValue == 1 || this.ct進行[ i ].nCurrentValue == 103 )
                         {
                             TJAPlayer3.Tx.Balloon_Combo[ i ].Opacity = 64;
                             TJAPlayer3.Tx.Balloon_Number_Combo.Opacity = 64;
                         }
-                        else if( this.ct進行[ i ].n現在の値 == 2 || this.ct進行[ i ].n現在の値 == 102 )
+                        else if( this.ct進行[ i ].nCurrentValue == 2 || this.ct進行[ i ].nCurrentValue == 102 )
                         {
                             TJAPlayer3.Tx.Balloon_Combo[ i ].Opacity = 128;
                             TJAPlayer3.Tx.Balloon_Number_Combo.Opacity = 128;
                         }
-                        else if( this.ct進行[ i ].n現在の値 == 3 || this.ct進行[ i ].n現在の値 == 101 )
+                        else if( this.ct進行[ i ].nCurrentValue == 3 || this.ct進行[ i ].nCurrentValue == 101 )
                         {
                             TJAPlayer3.Tx.Balloon_Combo[ i ].Opacity = 192;
                             TJAPlayer3.Tx.Balloon_Number_Combo.Opacity = 192;
                         }
-                        else if( this.ct進行[ i ].n現在の値 >= 4 && this.ct進行[ i ].n現在の値 <= 100 )
+                        else if( this.ct進行[ i ].nCurrentValue >= 4 && this.ct進行[ i ].nCurrentValue <= 100 )
                         {
                             TJAPlayer3.Tx.Balloon_Combo[ i ].Opacity = 255;
                             TJAPlayer3.Tx.Balloon_Number_Combo.Opacity = 255;

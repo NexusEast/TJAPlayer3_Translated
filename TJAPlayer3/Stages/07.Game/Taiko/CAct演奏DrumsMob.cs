@@ -14,7 +14,7 @@ namespace TJAPlayer3
         /// </summary>
         public CAct演奏DrumsMob()
         {
-            base.b活性化してない = true;
+            base.bDeactivated = true;
         }
 
         public override void On活性化()
@@ -31,22 +31,22 @@ namespace TJAPlayer3
             base.On非活性化();
         }
 
-        public override void OnManagedリソースの作成()
+        public override void OnManagedResourceLoaded()
         {
-            base.OnManagedリソースの作成();
+            base.OnManagedResourceLoaded();
         }
 
-        public override void OnManagedリソースの解放()
+        public override void OnManagedDisposed()
         {
-            base.OnManagedリソースの解放();
+            base.OnManagedDisposed();
         }
 
-        public override int On進行描画()
+        public override int OnDraw()
         {
             if(!TJAPlayer3.stage演奏ドラム画面.bDoublePlay)
             {
-                if (ctMob != null || TJAPlayer3.Skin.Game_Mob_Ptn != 0) ctMob.t進行LoopDb();
-                if (ctMobPtn != null || TJAPlayer3.Skin.Game_Mob_Ptn != 0) ctMobPtn.t進行LoopDb();
+                if (ctMob != null || TJAPlayer3.Skin.Game_Mob_Ptn != 0) ctMob.tStartLoopDb();
+                if (ctMobPtn != null || TJAPlayer3.Skin.Game_Mob_Ptn != 0) ctMobPtn.tStartLoopDb();
 
                 //CDTXMania.act文字コンソール.tPrint(0, 0, C文字コンソール.Eフォント種別.白, ctMob.db現在の値.ToString());
                 //CDTXMania.act文字コンソール.tPrint(0, 10, C文字コンソール.Eフォント種別.白, Math.Sin((float)this.ctMob.db現在の値 * (Math.PI / 180)).ToString());
@@ -60,7 +60,7 @@ namespace TJAPlayer3
 
                 }
             }
-            return base.On進行描画();
+            return base.OnDraw();
         }
         #region[ private ]
         //-----------------

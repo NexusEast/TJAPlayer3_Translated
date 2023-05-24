@@ -55,7 +55,7 @@ namespace TJAPlayer3
 
             this.st文字位置 = st文字位置Array;
 
-            base.b活性化してない = true;
+            base.bDeactivated = true;
 
         }
 
@@ -78,7 +78,7 @@ namespace TJAPlayer3
             base.On非活性化();
         }
 
-        public override void OnManagedリソースの作成()
+        public override void OnManagedResourceLoaded()
         {
             //this.tx連打枠 = CDTXMania.tテクスチャの生成(CSkin.Path(@"Graphics\7_balloon.png"));
             //this.tx連打数字 = CDTXMania.tテクスチャの生成(CSkin.Path(@"Graphics\7_RollNumber.png"));
@@ -92,15 +92,15 @@ namespace TJAPlayer3
             //}
 
             this.ct風船ふきだしアニメ = new CCounter(0, 1, 100, TJAPlayer3.Timer);
-            base.OnManagedリソースの作成();
+            base.OnManagedResourceLoaded();
         }
 
         public int On進行描画(int n連打ノルマ, int n連打数, int player)
         {
-            this.ct風船ふきだしアニメ.t進行Loop();
-            this.ct風船アニメ[player].t進行();
+            this.ct風船ふきだしアニメ.tStartLoop();
+            this.ct風船アニメ[player].tStart();
 
-            //CDTXMania.act文字コンソール.tPrint( 0, 16, C文字コンソール.Eフォント種別.赤, this.ct風船終了.n現在の値.ToString() );
+            //CDTXMania.act文字コンソール.tPrint( 0, 16, C文字コンソール.Eフォント種別.赤, this.ct風船終了.nCurrentValue.ToString() );
             int[] n残り打数 = new int[] { 0, 0, 0, 0, 0 };
             #region[  ]
             if (n連打ノルマ > 0)
@@ -128,7 +128,7 @@ namespace TJAPlayer3
                 {
                     if (n残り打数[j] < n連打数)
                     {
-                        TJAPlayer3.Tx.Balloon_Breaking[j]?.t2D描画(TJAPlayer3.app.Device, TJAPlayer3.Skin.Game_Balloon_Balloon_X[player] + (this.ct風船ふきだしアニメ.n現在の値 == 1 ? 3 : 0), TJAPlayer3.Skin.Game_Balloon_Balloon_Y[player]);
+                        TJAPlayer3.Tx.Balloon_Breaking[j]?.t2D描画(TJAPlayer3.app.Device, TJAPlayer3.Skin.Game_Balloon_Balloon_X[player] + (this.ct風船ふきだしアニメ.nCurrentValue == 1 ? 3 : 0), TJAPlayer3.Skin.Game_Balloon_Balloon_Y[player]);
                         break;
                     }
                 }
@@ -142,13 +142,13 @@ namespace TJAPlayer3
                 TJAPlayer3.stage演奏ドラム画面.actChara.b風船連打中 = false;
                 TJAPlayer3.stage演奏ドラム画面.b連打中[player] = false;
                 //this.tEnd();
-                ////this.ct風船終了.n現在の値 = 0;
+                ////this.ct風船終了.nCurrentValue = 0;
                 //if (this.ct風船終了.b進行中db)
                 //{
-                //    this.ct風船終了.t進行db();
-                //    if (this.ct風船終了.b終了値に達したdb)
+                //    this.ct風船終了.tStartdb();
+                //    if (this.ct風船終了.bEndeddb)
                 //    {
-                //        this.ct風船終了.t停止();
+                //        this.ct風船終了.tStop();
                 //        this.ct風船終了.db現在の値 = 0D;
                 //        CDTXMania.stage演奏ドラム画面.actChara.b風船連打中 = false;
                 //        CDTXMania.stage演奏ドラム画面.b連打中[player] = false;
@@ -169,7 +169,7 @@ namespace TJAPlayer3
                 //    {
                 //        nY = 100;
                 //    }
-                //    //else if( this.ct風船終了.n現在の値 > 800 )
+                //    //else if( this.ct風船終了.nCurrentValue > 800 )
                 //    {
                 //        //nY = 100;
                 //        //nT = 0;
@@ -195,7 +195,7 @@ namespace TJAPlayer3
 
 
 
-            return base.On進行描画();
+            return base.OnDraw();
         }
 
 
@@ -249,7 +249,7 @@ namespace TJAPlayer3
                         {
                             TJAPlayer3.Tx.Balloon_Number_Roll.Opacity = 255;
                             TJAPlayer3.Tx.Balloon_Number_Roll.vc拡大縮小倍率.X = TJAPlayer3.Skin.Game_Balloon_Balloon_Number_Scale;
-                            TJAPlayer3.Tx.Balloon_Number_Roll.vc拡大縮小倍率.Y = TJAPlayer3.Skin.Game_Balloon_Balloon_Number_Scale + RollScale[this.ct風船アニメ[nPlayer].n現在の値];
+                            TJAPlayer3.Tx.Balloon_Number_Roll.vc拡大縮小倍率.Y = TJAPlayer3.Skin.Game_Balloon_Balloon_Number_Scale + RollScale[this.ct風船アニメ[nPlayer].nCurrentValue];
                             TJAPlayer3.Tx.Balloon_Number_Roll.t2D拡大率考慮下基準描画(TJAPlayer3.app.Device, x - (((TJAPlayer3.Skin.Game_Balloon_Number_Padding + 2) * n桁数) / 2), y, rectangle);
                         }
                         break;

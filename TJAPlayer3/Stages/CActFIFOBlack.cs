@@ -27,31 +27,31 @@ namespace TJAPlayer3
 
 		public override void On非活性化()
 		{
-			if( !base.b活性化してない )
+			if( !base.bDeactivated )
 			{
 				//CDTXMania.tテクスチャの解放( ref this.tx黒タイル64x64 );
 				base.On非活性化();
 			}
 		}
-		public override void OnManagedリソースの作成()
+		public override void OnManagedResourceLoaded()
 		{
-			if( !base.b活性化してない )
+			if( !base.bDeactivated )
 			{
 				//this.tx黒タイル64x64 = CDTXMania.tテクスチャの生成( CSkin.Path( @"Graphics\Tile black 64x64.png" ), false );
-				base.OnManagedリソースの作成();
+				base.OnManagedResourceLoaded();
 			}
 		}
-		public override int On進行描画()
+		public override int OnDraw()
 		{
-			if( base.b活性化してない || ( this.counter == null ) )
+			if( base.bDeactivated || ( this.counter == null ) )
 			{
 				return 0;
 			}
-			this.counter.t進行();
+			this.counter.tStart();
 			// Size clientSize = CDTXMania.app.Window.ClientSize;	// #23510 2010.10.31 yyagi: delete as of no one use this any longer.
 			if (TJAPlayer3.Tx.Tile_Black != null)
 			{
-                TJAPlayer3.Tx.Tile_Black.Opacity = ( this.mode == EFIFOモード.フェードイン ) ? ( ( ( 100 - this.counter.n現在の値 ) * 0xff ) / 100 ) : ( ( this.counter.n現在の値 * 0xff ) / 100 );
+                TJAPlayer3.Tx.Tile_Black.Opacity = ( this.mode == EFIFOモード.フェードイン ) ? ( ( ( 100 - this.counter.nCurrentValue ) * 0xff ) / 100 ) : ( ( this.counter.nCurrentValue * 0xff ) / 100 );
 				for (int i = 0; i <= (SampleFramework.GameWindowSize.Width / 64); i++)		// #23510 2010.10.31 yyagi: change "clientSize.Width" to "640" to fix FIFO drawing size
 				{
 					for (int j = 0; j <= (SampleFramework.GameWindowSize.Height / 64); j++)	// #23510 2010.10.31 yyagi: change "clientSize.Height" to "480" to fix FIFO drawing size
@@ -60,7 +60,7 @@ namespace TJAPlayer3
 					}
 				}
 			}
-			if( this.counter.n現在の値 != 100 )
+			if( this.counter.nCurrentValue != 100 )
 			{
 				return 0;
 			}

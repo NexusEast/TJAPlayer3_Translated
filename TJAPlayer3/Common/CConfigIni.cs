@@ -613,9 +613,9 @@ namespace TJAPlayer3
 		//----------------------------------------
 #endif
 		public int nBGAlpha;
-		public bool bAVI有効;
-		public bool bBGA有効;
-		public bool bBGM音を発声する;
+		public bool bAVIEnabled;
+		public bool bBGAEnabled;
+		public bool bBGMEnabled;
 		public STDGBVALUE<bool> bHidden;
 		public STDGBVALUE<bool> bLeft;
 		public STDGBVALUE<bool> bLight;
@@ -1260,13 +1260,13 @@ namespace TJAPlayer3
 			this.nBGAlpha = 100;
 			this.eダメージレベル = Eダメージレベル.普通;
 			this.bSTAGEFAILED有効 = true;
-			this.bAVI有効 = false;
-			this.bBGA有効 = true;
+			this.bAVIEnabled = false;
+			this.bBGAEnabled = true;
 			this.n曲が選択されてからプレビュー音が鳴るまでのウェイトms = 1000;
 			this.n曲が選択されてからプレビュー画像が表示開始されるまでのウェイトms = 100;
 			//this.bWave再生位置自動調整機能有効 = true;
 			this.bWave再生位置自動調整機能有効 = false;
-			this.bBGM音を発声する = true;
+			this.bBGMEnabled = true;
 			this.bScoreIniを出力する = true;
 			this.bランダムセレクトで子BOXを検索対象とする = true;
 			this.n表示可能な最小コンボ数 = new STDGBVALUE<int>();
@@ -1618,10 +1618,10 @@ namespace TJAPlayer3
 			sw.WriteLine();
 			#region [ AVI/BGA ]
 			sw.WriteLine( "; AVIの表示(0:OFF, 1:ON)" );
-			sw.WriteLine( "AVI={0}", this.bAVI有効 ? 1 : 0 );
+			sw.WriteLine( "AVI={0}", this.bAVIEnabled ? 1 : 0 );
 			sw.WriteLine();
 			sw.WriteLine( "; BGAの表示(0:OFF, 1:ON)" );
-			sw.WriteLine( "BGA={0}", this.bBGA有効 ? 1 : 0 );
+			sw.WriteLine( "BGA={0}", this.bBGAEnabled ? 1 : 0 );
 			sw.WriteLine();
 			sw.WriteLine( "; 動画表示モード( 0:表示しない, 1:背景のみ, 2:窓表示のみ, 3:両方)" );
 			sw.WriteLine( "ClipDispType={0}", (int) this.eClipDispType );
@@ -1639,7 +1639,7 @@ namespace TJAPlayer3
 			//sw.WriteLine( "AdjustWaves={0}", this.bWave再生位置自動調整機能有効 ? 1 : 0 );
 			#region [ BGM/ドラムヒット音の再生 ]
 			sw.WriteLine( "; BGM の再生(0:OFF, 1:ON)" );
-			sw.WriteLine( "BGMSound={0}", this.bBGM音を発声する ? 1 : 0 );
+			sw.WriteLine( "BGMSound={0}", this.bBGMEnabled ? 1 : 0 );
 			sw.WriteLine();
 			#endregion
 			sw.WriteLine( "; 演奏記録（～.score.ini）の出力 (0:OFF, 1:ON)" );
@@ -2256,11 +2256,11 @@ namespace TJAPlayer3
 											#region [ AVI/BGA ]
 											else if( str3.Equals( "AVI" ) )
 											{
-												this.bAVI有効 = C変換.bONorOFF( str4[ 0 ] );
+												this.bAVIEnabled = C変換.bONorOFF( str4[ 0 ] );
 											}
 											else if( str3.Equals( "BGA" ) )
 											{
-												this.bBGA有効 = C変換.bONorOFF( str4[ 0 ] );
+												this.bBGAEnabled = C変換.bONorOFF( str4[ 0 ] );
 											}
 											else if( str3.Equals( "ClipDispType" ) )
 											{
@@ -2284,7 +2284,7 @@ namespace TJAPlayer3
 											#region [ BGM/ドラムのヒット音 ]
 											else if( str3.Equals( "BGMSound" ) )
 											{
-												this.bBGM音を発声する = C変換.bONorOFF( str4[ 0 ] );
+												this.bBGMEnabled = C変換.bONorOFF( str4[ 0 ] );
 											}
 											#endregion
 											else if( str3.Equals( "SaveScoreIni" ) )

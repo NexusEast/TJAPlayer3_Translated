@@ -1288,7 +1288,7 @@ namespace TJAPlayer3
                 {
                     if ((wc.rSound[i] != null) && (wc.rSound[i].b再生中))
                     {
-                        long nCurrentTime = CSound管理.rc演奏用タイマ.nシステム時刻ms;
+                        long nCurrentTime = CSoundManager.rPlaybackTimer.nシステム時刻ms;
                         if (nCurrentTime > wc.n再生開始時刻[i])
                         {
                             long nAbsTimeFromStartPlaying = nCurrentTime - wc.n再生開始時刻[i];
@@ -1338,7 +1338,7 @@ namespace TJAPlayer3
                 #region [ 同時発音数を、チャンネルによって変える ]
 
                 int nPoly = nPolyphonicSounds;
-                if (CSound管理.GetCurrentSoundDeviceType() != "DirectSound") // DShowでの再生の場合はミキシング負荷が高くないため、
+                if (CSoundManager.GetCurrentSoundDeviceType() != "DirectSound") // DShowでの再生の場合はミキシング負荷が高くないため、
                 {
                     // チップのライフタイム管理を行わない
                     if (cwav.bIsBassSound) nPoly = (nPolyphonicSounds >= 2) ? 2 : 1;
@@ -1616,7 +1616,7 @@ namespace TJAPlayer3
                     if ((cwav.rSound[i] != null) && cwav.rSound[i].b再生中)
                     {
                         cwav.rSound[i].t再生を一時停止する();
-                        cwav.n一時停止時刻[i] = CSound管理.rc演奏用タイマ.nシステム時刻ms;
+                        cwav.n一時停止時刻[i] = CSoundManager.rPlaybackTimer.nシステム時刻ms;
                     }
                 }
             }
@@ -1632,7 +1632,7 @@ namespace TJAPlayer3
                         //long num1 = cwav.n一時停止時刻[ i ];
                         //long num2 = cwav.n再生開始時刻[ i ];
                         cwav.rSound[i].t再生を再開する(cwav.n一時停止時刻[i] - cwav.n再生開始時刻[i]);
-                        cwav.n再生開始時刻[i] += CSound管理.rc演奏用タイマ.nシステム時刻ms - cwav.n一時停止時刻[i];
+                        cwav.n再生開始時刻[i] += CSoundManager.rPlaybackTimer.nシステム時刻ms - cwav.n一時停止時刻[i];
                     }
                 }
             }
@@ -5304,7 +5304,7 @@ namespace TJAPlayer3
         /// </summary>
         public void PlanToAddMixerChannel()
         {
-            if (CSound管理.GetCurrentSoundDeviceType() == "DirectSound") // DShowでの再生の場合はミキシング負荷が高くないため、
+            if (CSoundManager.GetCurrentSoundDeviceType() == "DirectSound") // DShowでの再生の場合はミキシング負荷が高くないため、
             {                                                                       // チップのライフタイム管理を行わない
                 return;
             }
@@ -5672,17 +5672,17 @@ namespace TJAPlayer3
 
             base.On非活性化();
         }
-        public override void OnManagedリソースの作成()
+        public override void OnManagedResourceLoaded()
         {
-            if (!base.b活性化してない)
+            if (!base.bDeactivated)
             {
                 this.tAVIの読み込み();
-                base.OnManagedリソースの作成();
+                base.OnManagedResourceLoaded();
             }
         }
-        public override void OnManagedリソースの解放()
+        public override void OnManagedDisposed()
         {
-            if (!base.b活性化してない)
+            if (!base.bDeactivated)
             {
                 if (this.listAVI != null)
                 {
@@ -5698,7 +5698,7 @@ namespace TJAPlayer3
                         cds.Dispose();
                     }
                 }
-                base.OnManagedリソースの解放();
+                base.OnManagedDisposed();
             }
         }
 

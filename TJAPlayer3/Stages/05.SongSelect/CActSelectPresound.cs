@@ -10,7 +10,7 @@ namespace TJAPlayer3
 
 		public CActSelectPresound()
 		{
-			base.b活性化してない = true;
+			base.bDeactivated = true;
 		}
 		public void tサウンド停止()
 		{
@@ -33,7 +33,7 @@ namespace TJAPlayer3
 				if( ( cスコア.譜面情報.strBGMファイル名 != null ) && ( cスコア.譜面情報.strBGMファイル名.Length > 0 ) )
 				{
 					//this.ct再生待ちウェイト = new CCounter( 0, CDTXMania.ConfigIni.n曲が選択されてからプレビュー音が鳴るまでのウェイトms, 1, CDTXMania.Timer );
-                    if(CSound管理.GetCurrentSoundDeviceType() != "DirectSound")
+                    if(CSoundManager.GetCurrentSoundDeviceType() != "DirectSound")
                     {
                         this.ct再生待ちウェイト = new CCounter(0, 1, 270, TJAPlayer3.Timer);
                     } else
@@ -76,26 +76,26 @@ namespace TJAPlayer3
 			this.ctBGMフェードアウト用 = null;
 			base.On非活性化();
 		}
-		public override int On進行描画()
+		public override int OnDraw()
 		{
-			if( !base.b活性化してない )
+			if( !base.bDeactivated )
 			{
 				if( ( this.ctBGMフェードイン用 != null ) && this.ctBGMフェードイン用.b進行中 )
 				{
-					this.ctBGMフェードイン用.t進行();
-					TJAPlayer3.Skin.bgm選曲画面.nAutomationLevel_現在のサウンド = this.ctBGMフェードイン用.n現在の値;
-					if( this.ctBGMフェードイン用.b終了値に達した )
+					this.ctBGMフェードイン用.tStart();
+					TJAPlayer3.Skin.bgm選曲画面.nAutomationLevel_現在のサウンド = this.ctBGMフェードイン用.nCurrentValue;
+					if( this.ctBGMフェードイン用.bEnded )
 					{
-						this.ctBGMフェードイン用.t停止();
+						this.ctBGMフェードイン用.tStop();
 					}
 				}
 				if( ( this.ctBGMフェードアウト用 != null ) && this.ctBGMフェードアウト用.b進行中 )
 				{
-					this.ctBGMフェードアウト用.t進行();
-					TJAPlayer3.Skin.bgm選曲画面.nAutomationLevel_現在のサウンド = CSound.MaximumAutomationLevel - this.ctBGMフェードアウト用.n現在の値;
-					if( this.ctBGMフェードアウト用.b終了値に達した )
+					this.ctBGMフェードアウト用.tStart();
+					TJAPlayer3.Skin.bgm選曲画面.nAutomationLevel_現在のサウンド = CSound.MaximumAutomationLevel - this.ctBGMフェードアウト用.nCurrentValue;
+					if( this.ctBGMフェードアウト用.bEnded )
 					{
-						this.ctBGMフェードアウト用.t停止();
+						this.ctBGMフェードアウト用.tStop();
 					}
 				}
 				this.t進行処理_プレビューサウンド();
@@ -105,13 +105,13 @@ namespace TJAPlayer3
                     Cスコア cスコア = TJAPlayer3.stage選曲.r現在選択中のスコア;
                     if (long再生位置 == -1)
                     {
-                        this.long再生開始時のシステム時刻 = CSound管理.rc演奏用タイマ.nシステム時刻ms;
+                        this.long再生開始時のシステム時刻 = CSoundManager.rPlaybackTimer.nシステム時刻ms;
                         this.long再生位置 = cスコア.譜面情報.nデモBGMオフセット;
                         this.sound.t再生位置を変更する(cスコア.譜面情報.nデモBGMオフセット);
                     }
                     else
                     {
-                        this.long再生位置 = CSound管理.rc演奏用タイマ.nシステム時刻ms - this.long再生開始時のシステム時刻;
+                        this.long再生位置 = CSoundManager.rPlaybackTimer.nシステム時刻ms - this.long再生開始時のシステム時刻;
                     }
                     if (this.long再生位置 >= (this.sound.n総演奏時間ms - cスコア.譜面情報.nデモBGMオフセット) - 1 && this.long再生位置 <= (this.sound.n総演奏時間ms - cスコア.譜面情報.nデモBGMオフセット) + 0)
                         this.long再生位置 = -1;
@@ -141,19 +141,19 @@ namespace TJAPlayer3
 		{
 			if( this.ctBGMフェードイン用 != null )
 			{
-				this.ctBGMフェードイン用.t停止();
+				this.ctBGMフェードイン用.tStop();
 			}
 			this.ctBGMフェードアウト用 = new CCounter( 0, 100, 10, TJAPlayer3.Timer );
-			this.ctBGMフェードアウト用.n現在の値 = 100 - TJAPlayer3.Skin.bgm選曲画面.nAutomationLevel_現在のサウンド;
+			this.ctBGMフェードアウト用.nCurrentValue = 100 - TJAPlayer3.Skin.bgm選曲画面.nAutomationLevel_現在のサウンド;
 		}
 		private void tBGMフェードイン開始()
 		{
 			if( this.ctBGMフェードアウト用 != null )
 			{
-				this.ctBGMフェードアウト用.t停止();
+				this.ctBGMフェードアウト用.tStop();
 			}
 			this.ctBGMフェードイン用 = new CCounter( 0, 100, 20, TJAPlayer3.Timer );
-			this.ctBGMフェードイン用.n現在の値 = TJAPlayer3.Skin.bgm選曲画面.nAutomationLevel_現在のサウンド;
+			this.ctBGMフェードイン用.nCurrentValue = TJAPlayer3.Skin.bgm選曲画面.nAutomationLevel_現在のサウンド;
 		}
 		private void tプレビューサウンドの作成()
 		{
@@ -177,10 +177,10 @@ namespace TJAPlayer3
                     this.sound.t再生を開始する( true );
                     if( long再生位置 == -1 )
                     {
-                        this.long再生開始時のシステム時刻 = CSound管理.rc演奏用タイマ.nシステム時刻ms;
+                        this.long再生開始時のシステム時刻 = CSoundManager.rPlaybackTimer.nシステム時刻ms;
                         this.long再生位置 = cスコア.譜面情報.nデモBGMオフセット;
                         this.sound.t再生位置を変更する( cスコア.譜面情報.nデモBGMオフセット );
-                        this.long再生位置 = CSound管理.rc演奏用タイマ.nシステム時刻ms - this.long再生開始時のシステム時刻;
+                        this.long再生位置 = CSoundManager.rPlaybackTimer.nシステム時刻ms - this.long再生開始時のシステム時刻;
                     }
                     //if( long再生位置 == this.sound.n総演奏時間ms - 10 )
                     //    this.long再生位置 = -1;
@@ -212,10 +212,10 @@ namespace TJAPlayer3
 		{
 			if( ( this.ct再生待ちウェイト != null ) && !this.ct再生待ちウェイト.b停止中 )
 			{
-				this.ct再生待ちウェイト.t進行();
+				this.ct再生待ちウェイト.tStart();
 				if( !this.ct再生待ちウェイト.b終了値に達してない )
 				{
-					this.ct再生待ちウェイト.t停止();
+					this.ct再生待ちウェイト.tStop();
 					if( !TJAPlayer3.stage選曲.bスクロール中 )
 					{
                         this.tプレビューサウンドの作成();

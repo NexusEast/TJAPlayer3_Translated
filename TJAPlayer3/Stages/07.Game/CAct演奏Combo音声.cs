@@ -14,7 +14,7 @@ namespace TJAPlayer3
 
 		public CAct演奏Combo音声()
 		{
-			base.b活性化してない = true;
+			base.bDeactivated = true;
 		}
 		
 		// メソッド
@@ -53,9 +53,9 @@ namespace TJAPlayer3
             VoiceIndex = new int[] { 0, 0 };
 			base.On活性化();
 		}
-		public override void OnManagedリソースの作成()
+		public override void OnManagedResourceLoaded()
 		{
-			if( !base.b活性化してない )
+			if( !base.bDeactivated )
 			{
                 // フォルダ内を走査してコンボボイスをListに入れていく
                 // 1P、2P コンボボイス
@@ -80,12 +80,12 @@ namespace TJAPlayer3
                         }
                     }
                 }
-    			base.OnManagedリソースの作成();
+    			base.OnManagedResourceLoaded();
 			}
 		}
-		public override void OnManagedリソースの解放()
+		public override void OnManagedDisposed()
 		{
-			if( !base.b活性化してない )
+			if( !base.bDeactivated )
 			{
                 for (int i = 0; i < 2; i++)
                 {
@@ -96,7 +96,7 @@ namespace TJAPlayer3
                     ListCombo[i].Clear();
                 }
 
-				base.OnManagedリソースの解放();
+				base.OnManagedDisposed();
 			}
 		}
 

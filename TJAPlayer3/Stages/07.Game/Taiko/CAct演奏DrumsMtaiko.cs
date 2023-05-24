@@ -8,7 +8,7 @@ namespace TJAPlayer3
     {
         public CAct演奏DrumsMtaiko()
         {
-            base.b活性化してない = true;
+            base.bDeactivated = true;
         }
 
         public override void On活性化()
@@ -22,7 +22,7 @@ namespace TJAPlayer3
             base.On活性化();
         }
 
-        public override void OnManagedリソースの作成()
+        public override void OnManagedResourceLoaded()
         {
             this.ctレベルアップダウン = new CCounter[ 4 ];
             this.After = new int[ 4 ];
@@ -32,25 +32,25 @@ namespace TJAPlayer3
                 this.ctレベルアップダウン[ i ] = new CCounter();
             }
 
-            base.OnManagedリソースの作成();
+            base.OnManagedResourceLoaded();
         }
 
-        public override void OnManagedリソースの解放()
+        public override void OnManagedDisposed()
         {
             this.ctレベルアップダウン = null;
 
-            base.OnManagedリソースの解放();
+            base.OnManagedDisposed();
         }
 
-        public override int On進行描画()
+        public override int OnDraw()
         {
             if( base.b初めての進行描画 )
 			{
-				this.nフラッシュ制御タイマ = FDK.CSound管理.rc演奏用タイマ.n現在時刻;
+				this.nフラッシュ制御タイマ = FDK.CSoundManager.rPlaybackTimer.n現在時刻;
 				base.b初めての進行描画 = false;
             }
             
-            long num = FDK.CSound管理.rc演奏用タイマ.n現在時刻;
+            long num = FDK.CSoundManager.rPlaybackTimer.n現在時刻;
 			if( num < this.nフラッシュ制御タイマ )
 			{
 				this.nフラッシュ制御タイマ = num;
@@ -121,9 +121,9 @@ namespace TJAPlayer3
             {
                 if( !this.ctレベルアップダウン[ i ].b停止中 )
                 {
-                    this.ctレベルアップダウン[ i ].t進行();
-                    if( this.ctレベルアップダウン[ i ].b終了値に達した ) {
-                        this.ctレベルアップダウン[ i ].t停止();
+                    this.ctレベルアップダウン[ i ].tStart();
+                    if( this.ctレベルアップダウン[ i ].bEnded ) {
+                        this.ctレベルアップダウン[ i ].tStop();
                     }
                 }
                 if( ( this.ctレベルアップダウン[ i ].b進行中 && ( TJAPlayer3.Tx.Taiko_LevelUp != null && TJAPlayer3.Tx.Taiko_LevelDown != null ) ) && !TJAPlayer3.ConfigIni.bNoInfo )
@@ -132,32 +132,32 @@ namespace TJAPlayer3
                     float fScale = 1.0f;
                     int nAlpha = 255;
                     float[] fY = new float[] { 206, -206, 0, 0 };
-                    if( this.ctレベルアップダウン[ i ].n現在の値 >= 0 && this.ctレベルアップダウン[ i ].n現在の値 <= 20 )
+                    if( this.ctレベルアップダウン[ i ].nCurrentValue >= 0 && this.ctレベルアップダウン[ i ].nCurrentValue <= 20 )
                     {
                         nAlpha = 60;
                         fScale = 1.14f;
                     }
-                    else if( this.ctレベルアップダウン[ i ].n現在の値 >= 21 && this.ctレベルアップダウン[ i ].n現在の値 <= 40 )
+                    else if( this.ctレベルアップダウン[ i ].nCurrentValue >= 21 && this.ctレベルアップダウン[ i ].nCurrentValue <= 40 )
                     {
                         nAlpha = 60;
                         fScale = 1.19f;
                     }
-                    else if( this.ctレベルアップダウン[ i ].n現在の値 >= 41 && this.ctレベルアップダウン[ i ].n現在の値 <= 60 )
+                    else if( this.ctレベルアップダウン[ i ].nCurrentValue >= 41 && this.ctレベルアップダウン[ i ].nCurrentValue <= 60 )
                     {
                         nAlpha = 220;
                         fScale = 1.23f;
                     }
-                    else if( this.ctレベルアップダウン[ i ].n現在の値 >= 61 && this.ctレベルアップダウン[ i ].n現在の値 <= 80 )
+                    else if( this.ctレベルアップダウン[ i ].nCurrentValue >= 61 && this.ctレベルアップダウン[ i ].nCurrentValue <= 80 )
                     {
                         nAlpha = 230;
                         fScale = 1.19f;
                     }
-                    else if( this.ctレベルアップダウン[ i ].n現在の値 >= 81 && this.ctレベルアップダウン[ i ].n現在の値 <= 100 )
+                    else if( this.ctレベルアップダウン[ i ].nCurrentValue >= 81 && this.ctレベルアップダウン[ i ].nCurrentValue <= 100 )
                     {
                         nAlpha = 240;
                         fScale = 1.14f;
                     }
-                    else if( this.ctレベルアップダウン[ i ].n現在の値 >= 101 && this.ctレベルアップダウン[ i ].n現在の値 <= 120 )
+                    else if( this.ctレベルアップダウン[ i ].nCurrentValue >= 101 && this.ctレベルアップダウン[ i ].nCurrentValue <= 120 )
                     {
                         nAlpha = 255;
                         fScale = 1.04f;
@@ -217,7 +217,7 @@ namespace TJAPlayer3
                 TJAPlayer3.Tx.Taiko_PlayerNumber[1]?.t2D描画(TJAPlayer3.app.Device, TJAPlayer3.Skin.Game_Taiko_PlayerNumber_X[1], TJAPlayer3.Skin.Game_Taiko_PlayerNumber_Y[1]);
             }
 
-            return base.On進行描画();
+            return base.OnDraw();
         }
 
         public void tMtaikoEvent( int nChannel, int nHand, int nPlayer )

@@ -26,7 +26,7 @@ namespace TJAPlayer3
 
         public CActSelect難易度選択画面()
         {
-			base.b活性化してない = true;
+			base.bDeactivated = true;
 		}
 
 
@@ -62,7 +62,7 @@ namespace TJAPlayer3
                 {
                     this.n現在の選択行 = this.t指定した方向に近い難易度番号を返す( 0, this.n現在の選択行 );
                 }
-                this.ct移動 = new CCounter( 1, 710, 1, CSound管理.rc演奏用タイマ );
+                this.ct移動 = new CCounter( 1, 710, 1, CSoundManager.rPlaybackTimer );
 			}
 		}
 		public void t前に移動()
@@ -101,7 +101,7 @@ namespace TJAPlayer3
 		}
 		public override void On非活性化()
 		{
-			if( this.b活性化してない )
+			if( this.bDeactivated )
 				return;
 
 			for( int i = 0; i < 13; i++ )
@@ -112,9 +112,9 @@ namespace TJAPlayer3
 
 			base.On非活性化();
 		}
-		public override void OnManagedリソースの作成()
+		public override void OnManagedResourceLoaded()
 		{
-			if( this.b活性化してない )
+			if( this.bDeactivated )
 				return;
 
             this.tx背景 = TJAPlayer3.tテクスチャの生成( CSkin.Path( @"Graphics\5_diffselect_background.png" ) );
@@ -131,11 +131,11 @@ namespace TJAPlayer3
                 this.tx踏み台[ i ] = TJAPlayer3.tテクスチャの生成( CSkin.Path( @"Graphics\5_diffSelect_table" + i.ToString() + @".png" ) );
             }
 
-			base.OnManagedリソースの作成();
+			base.OnManagedResourceLoaded();
 		}
-		public override void OnManagedリソースの解放()
+		public override void OnManagedDisposed()
 		{
-			if( this.b活性化してない )
+			if( this.bDeactivated )
 				return;
 
             TJAPlayer3.t安全にDisposeする(ref this.tx背景);
@@ -149,11 +149,11 @@ namespace TJAPlayer3
 
             TJAPlayer3.t安全にDisposeする(tx踏み台);
 
-			base.OnManagedリソースの解放();
+			base.OnManagedDisposed();
 		}
-		public override int On進行描画()
+		public override int OnDraw()
 		{
-			if( this.b活性化してない )
+			if( this.bDeactivated )
 				return 0;
 
 			#region [ 初めての進行描画 ]
@@ -162,11 +162,11 @@ namespace TJAPlayer3
 			{
 				for( int i = 0; i < 13; i++ )
 					this.ct登場アニメ用[ i ] = new CCounter( -i * 10, 100, 3, TJAPlayer3.Timer );
-				this.nスクロールタイマ = CSound管理.rc演奏用タイマ.n現在時刻;
+				this.nスクロールタイマ = CSoundManager.rPlaybackTimer.n現在時刻;
 				TJAPlayer3.stage選曲.t選択曲変更通知();
 
-                this.n矢印スクロール用タイマ値 = CSound管理.rc演奏用タイマ.n現在時刻;
-				this.ct三角矢印アニメ.t開始( 0, 19, 40, TJAPlayer3.Timer );
+                this.n矢印スクロール用タイマ値 = CSoundManager.rPlaybackTimer.n現在時刻;
+				this.ct三角矢印アニメ.tStart( 0, 19, 40, TJAPlayer3.Timer );
 				
                 this.soundSelectAnnounce.tサウンドを再生する();
 				base.b初めての進行描画 = false;
@@ -179,7 +179,7 @@ namespace TJAPlayer3
 
 			
 			// 進行。
-            //this.ct三角矢印アニメ.t進行Loop();
+            //this.ct三角矢印アニメ.tStartLoop();
 
             if( this.tx背景 != null )
                 this.tx背景.t2D描画( TJAPlayer3.app.Device, 0, 0 );
@@ -190,10 +190,10 @@ namespace TJAPlayer3
 				//-----------------
 				for( int i = 0; i < 13; i++ )	// パネルは全13枚。
 				{
-					this.ct登場アニメ用[ i ].t進行();
+					this.ct登場アニメ用[ i ].tStart();
 
-					if( this.ct登場アニメ用[ i ].b終了値に達した )
-						this.ct登場アニメ用[ i ].t停止();
+					if( this.ct登場アニメ用[ i ].bEnded )
+						this.ct登場アニメ用[ i ].tStop();
 				}
 
 				// 全部の進行が終わったら、this.b登場アニメ全部完了 を true にする。

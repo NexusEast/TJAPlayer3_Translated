@@ -28,7 +28,7 @@ namespace TJAPlayer3
 			base.list子Activities.Add( this.actList = new CActConfigList() );
 			base.list子Activities.Add( this.actKeyAssign = new CActConfigKeyAssign() );
 			base.list子Activities.Add( this.actオプションパネル = new CActオプションパネル() );
-			base.b活性化してない = true;
+			base.bDeactivated = true;
 		}
 		
 		
@@ -109,9 +109,9 @@ namespace TJAPlayer3
 			}
 		}
 
-        public override void OnManagedリソースの作成()
+        public override void OnManagedResourceLoaded()
         {
-            if (!b活性化してない)
+            if (!bDeactivated)
             {
                 string[] strMenuItem = {"System", "Drums", "Exit"};
                 txMenuItemLeft = new CTexture[strMenuItem.Length, 2];
@@ -140,13 +140,13 @@ namespace TJAPlayer3
                     t説明文パネルに現在選択されている項目の説明を描画する();
                 }
 
-                base.OnManagedリソースの作成();
+                base.OnManagedResourceLoaded();
             }
         }
 
-		public override void OnManagedリソースの解放()											// OPTIONと同じ(COnfig.iniの書き出しタイミングのみ異なるが、無視して良い)
+		public override void OnManagedDisposed()											// OPTIONと同じ(COnfig.iniの書き出しタイミングのみ異なるが、無視して良い)
 		{
-			if( !base.b活性化してない )
+			if( !base.bDeactivated )
 			{
 				//CDTXMania.tテクスチャの解放( ref this.tx背景 );
 				//CDTXMania.tテクスチャの解放( ref this.tx上部パネル );
@@ -161,12 +161,12 @@ namespace TJAPlayer3
 					txMenuItemLeft[ i, 1 ] = null;
 				}
 				txMenuItemLeft = null;
-				base.OnManagedリソースの解放();
+				base.OnManagedDisposed();
 			}
 		}
-		public override int On進行描画()
+		public override int OnDraw()
 		{
-			if( base.b活性化してない )
+			if( base.bDeactivated )
 				return 0;
 
 			if( base.b初めての進行描画 )
@@ -241,7 +241,7 @@ namespace TJAPlayer3
 					break;
 
 				case EItemPanelモード.キーコード一覧:
-					this.actKeyAssign.On進行描画();
+					this.actKeyAssign.OnDraw();
 					break;
 			}
 			//---------------------
@@ -260,7 +260,7 @@ namespace TJAPlayer3
 			//#endregion
 			#region [ オプションパネル ]
 			//---------------------
-            //this.actオプションパネル.On進行描画();
+            //this.actオプションパネル.OnDraw();
 			//---------------------
 			#endregion
 			#region [ フェードイン_アウト ]
@@ -268,7 +268,7 @@ namespace TJAPlayer3
 			switch( base.eフェーズID )
 			{
 				case CStage.Eフェーズ.共通_フェードイン:
-					if( this.actFIFO.On進行描画() != 0 )
+					if( this.actFIFO.OnDraw() != 0 )
 					{
 						TJAPlayer3.Skin.bgmコンフィグ画面.t再生する();
 						base.eフェーズID = CStage.Eフェーズ.共通_通常状態;
@@ -276,7 +276,7 @@ namespace TJAPlayer3
 					break;
 
 				case CStage.Eフェーズ.共通_フェードアウト:
-					if( this.actFIFO.On進行描画() == 0 )
+					if( this.actFIFO.OnDraw() == 0 )
 					{
 						break;
 					}

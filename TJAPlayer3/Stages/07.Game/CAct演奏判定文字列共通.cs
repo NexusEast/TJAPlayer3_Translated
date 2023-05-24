@@ -72,7 +72,7 @@ namespace TJAPlayer3
 				this.stLag数値[ i      ].rc = new Rectangle( ( i % 4 ) * 15     , ( i / 4 ) * 19     , 15, 19 );	// plus numbers
 				this.stLag数値[ i + 12 ].rc = new Rectangle( ( i % 4 ) * 15 + 64, ( i / 4 ) * 19 + 64, 15, 19 );	// minus numbers
 			}
-			base.b活性化してない = true;
+			base.bDeactivated = true;
 		}
 
 
@@ -139,20 +139,20 @@ namespace TJAPlayer3
 			}
 			base.On非活性化();
 		}
-		public override void OnManagedリソースの作成()
+		public override void OnManagedResourceLoaded()
 		{
-			if( !base.b活性化してない )
+			if( !base.bDeactivated )
 			{
 				//this.tx判定文字列 = CDTXMania.tテクスチャの生成( CSkin.Path( @"Graphics\7_judgement.png" ) );
-				base.OnManagedリソースの作成();
+				base.OnManagedResourceLoaded();
 			}
 		}
-		public override void OnManagedリソースの解放()
+		public override void OnManagedDisposed()
 		{
-			if( !base.b活性化してない )
+			if( !base.bDeactivated )
 			{
 				//CDTXMania.tテクスチャの解放( ref this.tx判定文字列 );
-				base.OnManagedリソースの解放();
+				base.OnManagedDisposed();
 			}
 		}
 

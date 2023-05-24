@@ -39,7 +39,7 @@ namespace TJAPlayer3
 			this.nチャンネル0Atoレーン07 = new int[] { 1, 2, 3, 4, 5, 7, 6, 1, 7, 0 };
 			base.eステージID = CStage.Eステージ.結果;
 			base.eフェーズID = CStage.Eフェーズ.共通_通常状態;
-			base.b活性化してない = true;
+			base.bDeactivated = true;
 			base.list子Activities.Add( this.actResultImage = new CActResultImage() );
 			base.list子Activities.Add( this.actParameterPanel = new CActResultParameterPanel() );
 			base.list子Activities.Add( this.actRank = new CActResultRank() );
@@ -244,20 +244,20 @@ namespace TJAPlayer3
 			}
 			base.On非活性化();
 		}
-		public override void OnManagedリソースの作成()
+		public override void OnManagedResourceLoaded()
 		{
-			if( !base.b活性化してない )
+			if( !base.bDeactivated )
 			{
 				//this.tx背景 = CDTXMania.tテクスチャの生成( CSkin.Path( @"Graphics\8_background.png" ) );
 				//this.tx上部パネル = CDTXMania.tテクスチャの生成( CSkin.Path( @"Graphics\8_header.png" ) );
 				//this.tx下部パネル = CDTXMania.tテクスチャの生成( CSkin.Path( @"Graphics\8_footer panel.png" ), true );
 				//this.txオプションパネル = CDTXMania.tテクスチャの生成( CSkin.Path( @"Graphics\Screen option panels.png" ) );
-				base.OnManagedリソースの作成();
+				base.OnManagedResourceLoaded();
 			}
 		}
-		public override void OnManagedリソースの解放()
+		public override void OnManagedDisposed()
 		{
-			if( !base.b活性化してない )
+			if( !base.bDeactivated )
 			{
 				if( this.ct登場用 != null )
 				{
@@ -267,12 +267,12 @@ namespace TJAPlayer3
 				//CDTXMania.tテクスチャの解放( ref this.tx上部パネル );
 				//CDTXMania.tテクスチャの解放( ref this.tx下部パネル );
 				//CDTXMania.tテクスチャの解放( ref this.txオプションパネル );
-				base.OnManagedリソースの解放();
+				base.OnManagedDisposed();
 			}
 		}
-		public override int On進行描画()
+		public override int OnDraw()
 		{
-			if( !base.b活性化してない )
+			if( !base.bDeactivated )
 			{
 				if( base.b初めての進行描画 )
 				{
@@ -288,10 +288,10 @@ namespace TJAPlayer3
 				this.bアニメが完了 = true;
 				if( this.ct登場用.b進行中 )
 				{
-					this.ct登場用.t進行();
-					if( this.ct登場用.b終了値に達した )
+					this.ct登場用.tStart();
+					if( this.ct登場用.bEnded )
 					{
-						this.ct登場用.t停止();
+						this.ct登場用.tStop();
 					}
 					else
 					{
@@ -305,16 +305,16 @@ namespace TJAPlayer3
 
                 TJAPlayer3.Tx.Result_Header?.t2D描画(TJAPlayer3.app.Device, 0, 0);
 
-                if ( this.actResultImage.On進行描画() == 0 )
+                if ( this.actResultImage.OnDraw() == 0 )
 				{
 					this.bアニメが完了 = false;
 				}
-				if ( this.actParameterPanel.On進行描画() == 0 )
+				if ( this.actParameterPanel.OnDraw() == 0 )
 				{
 					this.bアニメが完了 = false;
 				}
 
-				if ( this.actSongBar.On進行描画() == 0 )
+				if ( this.actSongBar.OnDraw() == 0 )
 				{
 					this.bアニメが完了 = false;
 				}
@@ -328,13 +328,13 @@ namespace TJAPlayer3
 
                 if ( base.eフェーズID == CStage.Eフェーズ.共通_フェードイン )
 				{
-					if( this.actFI.On進行描画() != 0 )
+					if( this.actFI.OnDraw() != 0 )
 					{
 						base.eフェーズID = CStage.Eフェーズ.共通_通常状態;
                         TJAPlayer3.Skin.bgm結果画面.t再生する();
 					}
 				}
-				else if( ( base.eフェーズID == CStage.Eフェーズ.共通_フェードアウト ) )			//&& ( this.actFO.On進行描画() != 0 ) )
+				else if( ( base.eフェーズID == CStage.Eフェーズ.共通_フェードアウト ) )			//&& ( this.actFO.OnDraw() != 0 ) )
 				{
 					return (int) this.eフェードアウト完了時の戻り値;
 				}
@@ -356,7 +356,7 @@ namespace TJAPlayer3
 					this.actResultImage.tアニメを完了させる();
 					this.actParameterPanel.tアニメを完了させる();
 					this.actSongBar.tアニメを完了させる();
-					this.ct登場用.t停止();
+					this.ct登場用.tStop();
 				}
 				#region [ #24609 2011.4.7 yyagi リザルト画面で[F12]を押下すると、リザルト画像をpngで保存する機能は、CDTXManiaに移管。 ]
 //					if ( CDTXMania.Input管理.Keyboard.bキーが押された( (int) SlimDX.DirectInput.Key.F12 ) &&

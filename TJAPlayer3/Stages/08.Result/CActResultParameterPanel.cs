@@ -104,7 +104,7 @@ namespace TJAPlayer3
 
 
 			this.ptFullCombo位置 = new Point[] { new Point( 0x80, 0xed ), new Point( 0xdf, 0xed ), new Point( 0x141, 0xed ) };
-			base.b活性化してない = true;
+			base.bDeactivated = true;
 		}
 
 
@@ -112,7 +112,7 @@ namespace TJAPlayer3
 
 		public void tアニメを完了させる()
 		{
-			this.ct表示用.n現在の値 = this.ct表示用.n終了値;
+			this.ct表示用.nCurrentValue = this.ct表示用.n終了値;
 		}
 
 
@@ -137,25 +137,25 @@ namespace TJAPlayer3
 			}
 			base.On非活性化();
 		}
-		public override void OnManagedリソースの作成()
+		public override void OnManagedResourceLoaded()
 		{
-			if( !base.b活性化してない )
+			if( !base.bDeactivated )
 			{
                 Dan_Plate = TJAPlayer3.tテクスチャの生成(Path.GetDirectoryName(TJAPlayer3.DTX.strファイル名の絶対パス) + @"\Dan_Plate.png");
-                base.OnManagedリソースの作成();
+                base.OnManagedResourceLoaded();
 			}
 		}
-		public override void OnManagedリソースの解放()
+		public override void OnManagedDisposed()
 		{
-			if( !base.b活性化してない )
+			if( !base.bDeactivated )
 			{
                 Dan_Plate?.Dispose();
-                base.OnManagedリソースの解放();
+                base.OnManagedDisposed();
 			}
 		}
-		public override int On進行描画()
+		public override int OnDraw()
 		{
-			if( base.b活性化してない )
+			if( base.bDeactivated )
 			{
 				return 0;
 			}
@@ -164,7 +164,7 @@ namespace TJAPlayer3
 				this.ct表示用 = new CCounter( 0, 0x3e7, 2, TJAPlayer3.Timer );
 				base.b初めての進行描画 = false;
 			}
-			this.ct表示用.t進行();
+			this.ct表示用.tStart();
             
             TJAPlayer3.Tx.Result_Panel?.t2D描画(TJAPlayer3.app.Device, TJAPlayer3.Skin.nResultPanelP1X, TJAPlayer3.Skin.nResultPanelP1Y);
             TJAPlayer3.Tx.Result_Score_Text?.t2D描画(TJAPlayer3.app.Device, 753, 249); //点
@@ -331,7 +331,7 @@ namespace TJAPlayer3
             //CDTXMania.act文字コンソール.tPrint( 960, 276, C文字コンソール.Eフォント種別.白, string.Format( "{0,4:###0}",CDTXMania.stage結果.st演奏記録.Drums.nMiss数.ToString()) );
 
             //CDTXMania.act文字コンソール.tPrint( 1150, 200, C文字コンソール.Eフォント種別.白, string.Format( "{0,4:###0}",CDTXMania.stage結果.st演奏記録.Drums.n最大コンボ数.ToString()) );
-			int num = this.ct表示用.n現在の値;
+			int num = this.ct表示用.nCurrentValue;
 
             //this.txプレイヤーナンバー.t2D描画(CDTXMania.app.Device, 254, 93);
             //this.txネームプレート.t2D描画( CDTXMania.app.Device, 254, 93 );
@@ -360,7 +360,7 @@ namespace TJAPlayer3
             #endregion
 
 
-            if ( !this.ct表示用.b終了値に達した )
+            if ( !this.ct表示用.bEnded )
 			{
 				return 0;
 			}

@@ -20,7 +20,7 @@ namespace TJAPlayer3
 		public CStageChangeSkin()
 		{
 			base.eステージID = CStage.Eステージ.ChangeSkin;
-			base.b活性化してない = true;
+			base.bDeactivated = true;
 		}
 
 
@@ -54,23 +54,23 @@ namespace TJAPlayer3
 				Trace.Unindent();
 			}
 		}
-		public override void OnManagedリソースの作成()
+		public override void OnManagedResourceLoaded()
 		{
-			if( !base.b活性化してない )
+			if( !base.bDeactivated )
 			{
-				base.OnManagedリソースの作成();
+				base.OnManagedResourceLoaded();
 			}
 		}
-		public override void OnManagedリソースの解放()
+		public override void OnManagedDisposed()
 		{
-			if( !base.b活性化してない )
+			if( !base.bDeactivated )
 			{
-				base.OnManagedリソースの解放();
+				base.OnManagedDisposed();
 			}
 		}
-		public override int On進行描画()
+		public override int OnDraw()
 		{
-			if( !base.b活性化してない )
+			if( !base.bDeactivated )
 			{
 				if ( base.b初めての進行描画 )
 				{

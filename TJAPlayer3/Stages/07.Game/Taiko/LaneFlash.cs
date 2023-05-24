@@ -12,7 +12,7 @@ namespace TJAPlayer3
         {
             Texture = texture;
             Player = player;
-            base.b活性化してない = true;
+            base.bDeactivated = true;
         }
 
         public void Start()
@@ -32,18 +32,18 @@ namespace TJAPlayer3
             base.On非活性化();
         }
 
-        public override int On進行描画()
+        public override int OnDraw()
         {
-            if (Texture == null || Counter == null) return base.On進行描画();
+            if (Texture == null || Counter == null) return base.OnDraw();
             if (!Counter.b停止中)
             {
-                Counter.t進行();
-                if (Counter.b終了値に達した) Counter.t停止();
-                int opacity = (((150 - Counter.n現在の値) * 255) / 100);
+                Counter.tStart();
+                if (Counter.bEnded) Counter.tStop();
+                int opacity = (((150 - Counter.nCurrentValue) * 255) / 100);
                 Texture.Opacity = opacity;
                 Texture.t2D描画(TJAPlayer3.app.Device, TJAPlayer3.Skin.Game_Lane_Background_X[Player], TJAPlayer3.Skin.Game_Lane_Background_Y[Player]);
             }
-            return base.On進行描画();
+            return base.OnDraw();
         }
 
         private CTexture Texture;

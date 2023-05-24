@@ -93,25 +93,25 @@ namespace TJAPlayer3
 		}
 		public override void On非活性化()
 		{
-			if( !base.b活性化してない )
+			if( !base.bDeactivated )
 			{
 				//CDTXMania.tテクスチャの解放( ref this.txカーソル );
 				//CDTXMania.tテクスチャの解放( ref this.txHitKeyダイアログ );
 				base.On非活性化();
 			}
 		}
-		public override void OnManagedリソースの作成()
+		public override void OnManagedResourceLoaded()
 		{
-			if( !base.b活性化してない )
+			if( !base.bDeactivated )
 			{
 				//this.txカーソル = CDTXMania.tテクスチャの生成( CSkin.Path( @"Graphics\ScreenConfig menu cursor.png" ), false );
 				//this.txHitKeyダイアログ = CDTXMania.tテクスチャの生成( CSkin.Path( @"Graphics\ScreenConfig hit key to assign dialog.png" ), false );
-				base.OnManagedリソースの作成();
+				base.OnManagedResourceLoaded();
 			}
 		}
-		public override int On進行描画()
+		public override int OnDraw()
 		{
-			if( !base.b活性化してない )
+			if( !base.bDeactivated )
 			{
 				if( this.bキー入力待ち )
 				{

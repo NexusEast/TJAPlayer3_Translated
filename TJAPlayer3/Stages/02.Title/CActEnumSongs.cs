@@ -27,7 +27,7 @@ namespace TJAPlayer3
 		}
 		private void Init( bool _bコマンドでの曲データ取得 )
 		{
-			base.b活性化してない = true;
+			base.bDeactivated = true;
 			bコマンドでの曲データ取得 = _bコマンドでの曲データ取得;
 		}
 
@@ -42,7 +42,7 @@ namespace TJAPlayer3
 			try
 			{
 				this.ctNowEnumeratingSongs = new CCounter();	// 0, 1000, 17, CDTXMania.Timer );
-				this.ctNowEnumeratingSongs.t開始( 0, 100, 17, TJAPlayer3.Timer );
+				this.ctNowEnumeratingSongs.tStart( 0, 100, 17, TJAPlayer3.Timer );
 			}
 			finally
 			{
@@ -50,14 +50,14 @@ namespace TJAPlayer3
 		}
 		public override void On非活性化()
 		{
-			if ( this.b活性化してない )
+			if ( this.bDeactivated )
 				return;
 			base.On非活性化();
 			this.ctNowEnumeratingSongs = null;
 		}
-		public override void OnManagedリソースの作成()
+		public override void OnManagedResourceLoaded()
 		{
-			if ( this.b活性化してない )
+			if ( this.bDeactivated )
 				return;
 			//string pathNowEnumeratingSongs = CSkin.Path( @"Graphics\ScreenTitle NowEnumeratingSongs.png" );
 			//if ( File.Exists( pathNowEnumeratingSongs ) )
@@ -118,29 +118,29 @@ namespace TJAPlayer3
 				this.txMessage = null;
 			}
 	
-			base.OnManagedリソースの作成();
+			base.OnManagedResourceLoaded();
 		}
-		public override void OnManagedリソースの解放()
+		public override void OnManagedDisposed()
 		{
-			if ( this.b活性化してない )
+			if ( this.bDeactivated )
 				return;
 
 			//CDTXMania.t安全にDisposeする( ref this.txDialogNowEnumeratingSongs );
 			//CDTXMania.t安全にDisposeする( ref this.txNowEnumeratingSongs );
 			TJAPlayer3.t安全にDisposeする( ref this.txMessage );
-			base.OnManagedリソースの解放();
+			base.OnManagedDisposed();
 		}
 
-		public override int On進行描画()
+		public override int OnDraw()
 		{
-			if ( this.b活性化してない )
+			if ( this.bDeactivated )
 			{
 				return 0;
 			}
-			this.ctNowEnumeratingSongs.t進行Loop();
+			this.ctNowEnumeratingSongs.tStartLoop();
 			if ( TJAPlayer3.Tx.Enum_Song != null )
 			{
-                TJAPlayer3.Tx.Enum_Song.Opacity = (int) ( 176.0 + 80.0 * Math.Sin( (double) (2 * Math.PI * this.ctNowEnumeratingSongs.n現在の値 * 2 / 100.0 ) ) );
+                TJAPlayer3.Tx.Enum_Song.Opacity = (int) ( 176.0 + 80.0 * Math.Sin( (double) (2 * Math.PI * this.ctNowEnumeratingSongs.nCurrentValue * 2 / 100.0 ) ) );
                 TJAPlayer3.Tx.Enum_Song.t2D描画( TJAPlayer3.app.Device, 18, 7 );
 			}
 			if ( bコマンドでの曲データ取得 && TJAPlayer3.Tx.Config_Enum_Song != null )

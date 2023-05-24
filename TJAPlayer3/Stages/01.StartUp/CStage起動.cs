@@ -12,7 +12,7 @@ namespace TJAPlayer3
 		public CStage起動()
 		{
 			base.eステージID = CStage.Eステージ.起動;
-			base.b活性化してない = true;
+			base.bDeactivated = true;
 		}
 
 		public List<string> list進行文字列;
@@ -59,25 +59,25 @@ namespace TJAPlayer3
 				Trace.Unindent();
 			}
 		}
-		public override void OnManagedリソースの作成()
+		public override void OnManagedResourceLoaded()
 		{
-			if( !base.b活性化してない )
+			if( !base.bDeactivated )
 			{
 				this.tx背景 = TJAPlayer3.tテクスチャの生成( CSkin.Path( @"Graphics\1_Title\Background.png" ), false );
-				base.OnManagedリソースの作成();
+				base.OnManagedResourceLoaded();
 			}
 		}
-		public override void OnManagedリソースの解放()
+		public override void OnManagedDisposed()
 		{
-			if( !base.b活性化してない )
+			if( !base.bDeactivated )
 			{
 				TJAPlayer3.t安全にDisposeする(ref this.tx背景);
-				base.OnManagedリソースの解放();
+				base.OnManagedDisposed();
 			}
 		}
-		public override int On進行描画()
+		public override int OnDraw()
 		{
-			if( !base.b活性化してない )
+			if( !base.bDeactivated )
 			{
 				if( base.b初めての進行描画 )
 				{

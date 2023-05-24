@@ -14,7 +14,7 @@ namespace TJAPlayer3
 
 		public FlyingNotes()
 		{
-            base.b活性化してない = true;
+            base.bDeactivated = true;
         }
 		
 		
@@ -81,51 +81,51 @@ namespace TJAPlayer3
             }
 			base.On非活性化();
 		}
-		public override void OnManagedリソースの作成()
+		public override void OnManagedResourceLoaded()
 		{
-			if( !base.b活性化してない )
+			if( !base.bDeactivated )
 			{
-				base.OnManagedリソースの作成();
+				base.OnManagedResourceLoaded();
 			}
 		}
-		public override void OnManagedリソースの解放()
+		public override void OnManagedDisposed()
 		{
-			if( !base.b活性化してない )
+			if( !base.bDeactivated )
 			{
-				base.OnManagedリソースの解放();
+				base.OnManagedDisposed();
 			}
 		}
-		public override int On進行描画()
+		public override int OnDraw()
 		{
-			if( !base.b活性化してない )
+			if( !base.bDeactivated )
 			{
                 for (int i = 0; i < 128; i++)
                 {
                     if (Flying[i].IsUsing)
                     {
-                        Flying[i].OldValue = Flying[i].Counter.n現在の値;
-                        Flying[i].Counter.t進行();
-                        if (Flying[i].Counter.b終了値に達した)
+                        Flying[i].OldValue = Flying[i].Counter.nCurrentValue;
+                        Flying[i].Counter.tStart();
+                        if (Flying[i].Counter.bEnded)
                         {
-                            Flying[i].Counter.t停止();
+                            Flying[i].Counter.tStop();
                             Flying[i].IsUsing = false;
                             TJAPlayer3.stage演奏ドラム画面.actGauge.Start(Flying[i].Lane, E判定.Perfect, Flying[i].
                                 Player);
                             TJAPlayer3.stage演奏ドラム画面.actChipEffects.Start(Flying[i].Player, Flying[i].Lane);
                         }
-                        for (int n = Flying[i].OldValue; n < Flying[i].Counter.n現在の値; n++)
+                        for (int n = Flying[i].OldValue; n < Flying[i].Counter.nCurrentValue; n++)
                         {
                             if(TJAPlayer3.Skin.Game_Effect_FlyingNotes_IsUsingEasing)
                             {
-                                Flying[i].X = Flying[i].StartPointX + Flying[i].Width + ((-Math.Cos(Flying[i].Counter.n現在の値 * (Math.PI / 180)) * Flying[i].Width));
-                                //Flying[i].X += (Math.Cos(Flying[i].Counter.n現在の値 * (Math.PI / 180))) * Flying[i].Increase;
+                                Flying[i].X = Flying[i].StartPointX + Flying[i].Width + ((-Math.Cos(Flying[i].Counter.nCurrentValue * (Math.PI / 180)) * Flying[i].Width));
+                                //Flying[i].X += (Math.Cos(Flying[i].Counter.nCurrentValue * (Math.PI / 180))) * Flying[i].Increase;
                             }
                             else
                             {
                                 Flying[i].X += Flying[i].IncreaseX;
                             }
 
-                            if (n % TJAPlayer3.Skin.Game_Effect_FireWorks_Timing == 0 && !Flying[i].IsRoll && Flying[i].Counter.n現在の値 > 18)
+                            if (n % TJAPlayer3.Skin.Game_Effect_FireWorks_Timing == 0 && !Flying[i].IsRoll && Flying[i].Counter.nCurrentValue > 18)
                             {
                                 if (Flying[i].Lane == 3 || Flying[i].Lane == 4)
                                 {
@@ -136,17 +136,17 @@ namespace TJAPlayer3
 
                             if (Flying[i].Player == 0)
                             {
-                                Flying[i].Y = (TJAPlayer3.Skin.Game_Effect_FlyingNotes_StartPoint_Y[Flying[i].Player]) + -Math.Sin(Flying[i].Counter.n現在の値 * (Math.PI / 180)) * TJAPlayer3.Skin.Game_Effect_FlyingNotes_Sine;
-                                Flying[i].Y -= Flying[i].IncreaseY * Flying[i].Counter.n現在の値;
+                                Flying[i].Y = (TJAPlayer3.Skin.Game_Effect_FlyingNotes_StartPoint_Y[Flying[i].Player]) + -Math.Sin(Flying[i].Counter.nCurrentValue * (Math.PI / 180)) * TJAPlayer3.Skin.Game_Effect_FlyingNotes_Sine;
+                                Flying[i].Y -= Flying[i].IncreaseY * Flying[i].Counter.nCurrentValue;
                             }
                             else
                             {
-                                Flying[i].Y = (TJAPlayer3.Skin.Game_Effect_FlyingNotes_StartPoint_Y[Flying[i].Player]) + Math.Sin(Flying[i].Counter.n現在の値 * (Math.PI / 180)) * TJAPlayer3.Skin.Game_Effect_FlyingNotes_Sine;
-                                Flying[i].Y += Flying[i].IncreaseY * Flying[i].Counter.n現在の値;
+                                Flying[i].Y = (TJAPlayer3.Skin.Game_Effect_FlyingNotes_StartPoint_Y[Flying[i].Player]) + Math.Sin(Flying[i].Counter.nCurrentValue * (Math.PI / 180)) * TJAPlayer3.Skin.Game_Effect_FlyingNotes_Sine;
+                                Flying[i].Y += Flying[i].IncreaseY * Flying[i].Counter.nCurrentValue;
                             }
 
                         }
-                        //Flying[i].OldValue = Flying[i].Counter.n現在の値;
+                        //Flying[i].OldValue = Flying[i].Counter.nCurrentValue;
 
                         if (Flying[i].Player == 0)
                         {
@@ -160,7 +160,7 @@ namespace TJAPlayer3
                     }
                 }
 			}
-            return base.On進行描画();
+            return base.OnDraw();
         }
 		
 

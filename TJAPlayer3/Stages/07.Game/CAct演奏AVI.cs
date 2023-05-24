@@ -15,7 +15,7 @@ namespace TJAPlayer3
 
 		public CAct演奏AVI()
 		{
-			base.b活性化してない = true;
+			base.bDeactivated = true;
 		}
 
 
@@ -23,7 +23,7 @@ namespace TJAPlayer3
 
 		public void Start( int nチャンネル番号, CDTX.CAVI rAVI, CDTX.CDirectShow dsBGV, int n開始サイズW, int n開始サイズH, int n終了サイズW, int n終了サイズH, int n画像側開始位置X, int n画像側開始位置Y, int n画像側終了位置X, int n画像側終了位置Y, int n表示側開始位置X, int n表示側開始位置Y, int n表示側終了位置X, int n表示側終了位置Y, int n総移動時間ms, int n移動開始時刻ms )
 		{
-            if ( ( nチャンネル番号 == 0x54 || nチャンネル番号 == 0x5A ) && TJAPlayer3.ConfigIni.bAVI有効 )
+            if ( ( nチャンネル番号 == 0x54 || nチャンネル番号 == 0x5A ) && TJAPlayer3.ConfigIni.bAVIEnabled )
             {
                 this.rAVI = rAVI;
                 this.dsBGV = dsBGV;
@@ -51,7 +51,7 @@ namespace TJAPlayer3
                         this.n表示側終了位置X = n表示側終了位置X;
                         this.n表示側終了位置Y = n表示側終了位置Y;
                         this.n総移動時間ms = n総移動時間ms;
-                        this.n移動開始時刻ms = (n移動開始時刻ms != -1) ? n移動開始時刻ms : CSound管理.rc演奏用タイマ.n現在時刻;
+                        this.n移動開始時刻ms = (n移動開始時刻ms != -1) ? n移動開始時刻ms : CSoundManager.rPlaybackTimer.n現在時刻;
                         this.n前回表示したフレーム番号 = -1;
 
                         this.vclip = new Vector3(1.42f, 1.42f, 1f);
@@ -181,7 +181,7 @@ namespace TJAPlayer3
 
 		public unsafe int t進行描画( int x, int y )
 		{
-			if ( !base.b活性化してない )
+			if ( !base.bDeactivated )
 			{
 				Rectangle rectangle;
 				Rectangle rectangle2;
@@ -196,7 +196,7 @@ namespace TJAPlayer3
 				{
 					return 0;
 				}
-				int time = (int) ( ( CSound管理.rc演奏用タイマ.n現在時刻 - this.n移動開始時刻ms ) * ( ( (double) TJAPlayer3.ConfigIni.n演奏速度 ) / 20.0 ) );
+				int time = (int) ( ( CSoundManager.rPlaybackTimer.n現在時刻 - this.n移動開始時刻ms ) * ( ( (double) TJAPlayer3.ConfigIni.n演奏速度 ) / 20.0 ) );
                 int frameNoFromTime = 0;
 
                 #region[ frameNoFromTime ]
@@ -273,11 +273,11 @@ namespace TJAPlayer3
 				Point point4 = new Point( this.n表示側終了位置X, this.n表示側終了位置Y );
 				long num3 = this.n総移動時間ms;
 				long num4 = this.n移動開始時刻ms;
-				if ( CSound管理.rc演奏用タイマ.n現在時刻 < num4 )
+				if ( CSoundManager.rPlaybackTimer.n現在時刻 < num4 )
 				{
-					num4 = CSound管理.rc演奏用タイマ.n現在時刻;
+					num4 = CSoundManager.rPlaybackTimer.n現在時刻;
 				}
-				time = (int) ( ( CSound管理.rc演奏用タイマ.n現在時刻 - num4 ) * ( ( (double) TJAPlayer3.ConfigIni.n演奏速度 ) / 20.0 ) );
+				time = (int) ( ( CSoundManager.rPlaybackTimer.n現在時刻 - num4 ) * ( ( (double) TJAPlayer3.ConfigIni.n演奏速度 ) / 20.0 ) );
 				if ( num3 == 0 )
 				{
 					rectangle = new Rectangle( location, size3 );
@@ -538,18 +538,18 @@ namespace TJAPlayer3
 			this.pBmp = IntPtr.Zero;
 			base.On活性化();
 		}
-		public override void OnManagedリソースの作成()
+		public override void OnManagedResourceLoaded()
 		{
-			if ( !base.b活性化してない )
+			if ( !base.bDeactivated )
 			{
 				this.tx描画用 = new CTexture( TJAPlayer3.app.Device, 1280, 720, TJAPlayer3.app.GraphicsDeviceManager.CurrentSettings.BackBufferFormat, Pool.Managed );
 				this.tx窓描画用 = new CTexture( TJAPlayer3.app.Device, 1280, 720, TJAPlayer3.app.GraphicsDeviceManager.CurrentSettings.BackBufferFormat, Pool.Managed );
-				base.OnManagedリソースの作成();
+				base.OnManagedResourceLoaded();
 			}
 		}
-		public override void OnManagedリソースの解放()
+		public override void OnManagedDisposed()
 		{
-			if ( !base.b活性化してない )
+			if ( !base.bDeactivated )
 			{
 				if ( this.tx描画用 != null )
 				{
@@ -561,10 +561,10 @@ namespace TJAPlayer3
                     this.tx窓描画用.Dispose();
                     this.tx窓描画用 = null;
                 }
-				base.OnManagedリソースの解放();
+				base.OnManagedDisposed();
 			}
 		}
-		public override int On進行描画()
+		public override int OnDraw()
 		{
 			throw new InvalidOperationException( "t進行描画(int,int)のほうを使用してください。" );
 		}
