@@ -64,7 +64,7 @@ namespace TJAPlayer3
 				Drums.eDark = TJAPlayer3.ConfigIni.eDark;
 				Drums.n演奏速度分子 = TJAPlayer3.ConfigIni.n演奏速度;
 				Drums.n演奏速度分母 = 20;
-				Drums.bSTAGEFAILED有効 = TJAPlayer3.ConfigIni.bSTAGEFAILED有効;
+				Drums.bSTAGEFAILED有効 = TJAPlayer3.ConfigIni.bSTAGEFAILEDEnabled;
 				Drums.eダメージレベル = TJAPlayer3.ConfigIni.eダメージレベル;
 				Drums.b演奏にキーボードを使用した = this.b演奏にキーボードを使った.Drums;
 				Drums.b演奏にMIDI入力を使用した = this.b演奏にMIDI入力を使った.Drums;
@@ -161,7 +161,7 @@ namespace TJAPlayer3
 
 				//this.nJudgeLinePosY_delta[ k ] = CDTXMania.ConfigIni.nJudgeLinePosOffset[ k ];		// #31602 2013.6.23 yyagi
 
-				this.演奏判定ライン座標.n判定位置[ k ] = TJAPlayer3.ConfigIni.e判定位置[ k ];
+				this.演奏判定ライン座標.n判定位置[ k ] = TJAPlayer3.ConfigIni.eJudgeLocation[ k ];
 				this.演奏判定ライン座標.nJudgeLinePosY_delta[ k ] = TJAPlayer3.ConfigIni.nJudgeLinePosOffset[ k ];
 				this.bReverse[ k ]             = TJAPlayer3.ConfigIni.bReverse[ k ];					//
 
@@ -214,7 +214,7 @@ namespace TJAPlayer3
 //			this.nRisky = CDTXMania.ConfigIni.nRisky;											// #23559 2011.7.28 yyagi
 			actGauge.Init( TJAPlayer3.ConfigIni.nRisky );									// #23559 2011.7.28 yyagi
 			this.nPolyphonicSounds = TJAPlayer3.ConfigIni.nPoliphonicSounds;
-			e判定表示優先度 = TJAPlayer3.ConfigIni.e判定表示優先度;
+			e判定表示優先度 = TJAPlayer3.ConfigIni.eJudgeDisplayPriority;
 
 			TJAPlayer3.Skin.tRemoveMixerAll();	// 効果音のストリームをミキサーから解除しておく
 
@@ -475,7 +475,7 @@ namespace TJAPlayer3
 		protected Dictionary<int, CDTX.CWAV> listWAV;
 		protected CInvisibleChip cInvisibleChip;
 		protected bool bUseOSTimer;
-		protected E判定表示優先度 e判定表示優先度;
+		protected EJudgeDisplayPriority e判定表示優先度;
 
         public bool[] bIsGOGOTIME = new bool[ 4 ];
         public bool[] bUseBranch = new bool[ 4 ];
@@ -570,7 +570,7 @@ namespace TJAPlayer3
 				b演奏終了後も再生が続くチップである = _b演奏終了後も再生が続くチップである
 			};
 			queueMixerSound.Enqueue( stm );
-//		Debug.WriteLine( "★Queue: add " + Path.GetFileName( stm.csound.strファイル名 ));
+//		Debug.WriteLine( "★Queue: add " + Path.GetFileName( stm.csound.strFileName ));
 		}
 		public void RemoveMixer( CSound cs )
 		{
@@ -581,7 +581,7 @@ namespace TJAPlayer3
 				b演奏終了後も再生が続くチップである = false
 			};
 			queueMixerSound.Enqueue( stm );
-//		Debug.WriteLine( "★Queue: remove " + Path.GetFileName( stm.csound.strファイル名 ));
+//		Debug.WriteLine( "★Queue: remove " + Path.GetFileName( stm.csound.strFileName ));
 		}
 		public void ManageMixerQueue()
 		{
@@ -2539,7 +2539,7 @@ namespace TJAPlayer3
 		protected abstract void t進行描画_AVI();
 		protected void t進行描画_AVI(int x, int y)
 		{
-			if ( ( ( base.eフェーズID != CStage.Eフェーズ.演奏_STAGE_FAILED ) && ( base.eフェーズID != CStage.Eフェーズ.演奏_STAGE_FAILED_フェードアウト ) ) && ( !TJAPlayer3.ConfigIni.bストイックモード && TJAPlayer3.ConfigIni.bAVIEnabled ) )
+			if ( ( ( base.eフェーズID != CStage.Eフェーズ.演奏_STAGE_FAILED ) && ( base.eフェーズID != CStage.Eフェーズ.演奏_STAGE_FAILED_フェードアウト ) ) && ( !TJAPlayer3.ConfigIni.bStoicMode && TJAPlayer3.ConfigIni.bAVIEnabled ) )
 			{
 				this.actAVI.t進行描画( x, y );
 			}

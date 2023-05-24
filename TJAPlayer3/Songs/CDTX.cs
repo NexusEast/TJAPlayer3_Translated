@@ -17,33 +17,33 @@ namespace TJAPlayer3
     {
         // 定数
 
-        public enum E種別 { DTX, GDA, G2D, BMS, BME, SMF }
+        public enum EType { DTX, GDA, G2D, BMS, BME, SMF }
 
         // クラス
 
         public class CAVI : IDisposable
         {
             public CAvi avi;
-            private bool bDispose済み;
-            public int n番号;
-            public string strコメント文 = "";
-            public string strファイル名 = "";
+            private bool bDisposed;
+            public int nNumber;
+            public string strCommentText = "";
+            public string strFileName = "";
 
             public void OnDeviceCreated()
             {
                 #region [ strAVIファイル名の作成。]
                 //-----------------
-                string strAVIファイル名;
+                string strAVIFileName;
                 if (!string.IsNullOrEmpty(TJAPlayer3.DTX.PATH_WAV))
-                    strAVIファイル名 = TJAPlayer3.DTX.PATH_WAV + this.strファイル名;
+                    strAVIFileName = TJAPlayer3.DTX.PATH_WAV + this.strFileName;
                 else
-                    strAVIファイル名 = TJAPlayer3.DTX.strフォルダ名 + this.strファイル名;
+                    strAVIFileName = TJAPlayer3.DTX.strFileName + this.strFileName;
                 //-----------------
                 #endregion
 
-                if (!File.Exists(strAVIファイル名))
+                if (!File.Exists(strAVIFileName))
                 {
-                    Trace.TraceWarning("ファイルが存在しません。({0})({1})", this.strコメント文, strAVIファイル名);
+                    Trace.TraceWarning("ファイルが存在しません。({0})({1})", this.strCommentText, strAVIFileName);
                     this.avi = null;
                     return;
                 }
@@ -52,56 +52,56 @@ namespace TJAPlayer3
 
                 try
                 {
-                    this.avi = new CAvi(strAVIファイル名);
-                    Trace.TraceInformation("動画を生成しました。({0})({1})({2}frames)", this.strコメント文, strAVIファイル名, this.avi.GetMaxFrameCount());
+                    this.avi = new CAvi(strAVIFileName);
+                    Trace.TraceInformation("動画を生成しました。({0})({1})({2}frames)", this.strCommentText, strAVIFileName, this.avi.GetMaxFrameCount());
                 }
                 catch (Exception e)
                 {
                     Trace.TraceError(e.ToString());
-                    Trace.TraceError("動画の生成に失敗しました。({0})({1})", this.strコメント文, strAVIファイル名);
+                    Trace.TraceError("動画の生成に失敗しました。({0})({1})", this.strCommentText, strAVIFileName);
                     this.avi = null;
                 }
             }
             public override string ToString()
             {
-                return string.Format("CAVI{0}: File:{1}, Comment:{2}", CDTX.tZZ(this.n番号), this.strファイル名, this.strコメント文);
+                return string.Format("CAVI{0}: File:{1}, Comment:{2}", CDTX.tZZ(this.nNumber), this.strFileName, this.strCommentText);
             }
 
             #region [ IDisposable 実装 ]
             //-----------------
             public void Dispose()
             {
-                if (this.bDispose済み)
+                if (this.bDisposed)
                     return;
 
                 if (this.avi != null)
                 {
                     #region [ strAVIファイル名 の作成。 ]
                     //-----------------
-                    string strAVIファイル名;
+                    string strAVIFileName;
                     if (!string.IsNullOrEmpty(TJAPlayer3.DTX.PATH_WAV))
-                        strAVIファイル名 = TJAPlayer3.DTX.PATH_WAV + this.strファイル名;
+                        strAVIFileName = TJAPlayer3.DTX.PATH_WAV + this.strFileName;
                     else
-                        strAVIファイル名 = TJAPlayer3.DTX.strフォルダ名 + this.strファイル名;
+                        strAVIFileName = TJAPlayer3.DTX.strFileName + this.strFileName;
                     //-----------------
                     #endregion
 
                     this.avi.Dispose();
                     this.avi = null;
 
-                    Trace.TraceInformation("動画を解放しました。({0})({1})", this.strコメント文, strAVIファイル名);
+                    Trace.TraceInformation("動画を解放しました。({0})({1})", this.strCommentText, strAVIFileName);
                 }
 
-                this.bDispose済み = true;
+                this.bDisposed = true;
             }
             //-----------------
             #endregion
         }
         public class CAVIPAN
         {
-            public int nAVI番号;
-            public int n移動時間ct;
-            public int n番号;
+            public int nAVINumber;
+            public int nMoveTimect;
+            public int nNumber;
             public Point pt動画側開始位置 = new Point(0, 0);
             public Point pt動画側終了位置 = new Point(0, 0);
             public Point pt表示側開始位置 = new Point(0, 0);
@@ -112,15 +112,15 @@ namespace TJAPlayer3
             public override string ToString()
             {
                 return string.Format("CAVIPAN{0}: AVI:{14}, 開始サイズ:{1}x{2}, 終了サイズ:{3}x{4}, 動画側開始位置:{5}x{6}, 動画側終了位置:{7}x{8}, 表示側開始位置:{9}x{10}, 表示側終了位置:{11}x{12}, 移動時間:{13}ct",
-                    CDTX.tZZ(this.n番号),
+                    CDTX.tZZ(this.nNumber),
                     this.sz開始サイズ.Width, this.sz開始サイズ.Height,
                     this.sz終了サイズ.Width, this.sz終了サイズ.Height,
                     this.pt動画側開始位置.X, this.pt動画側開始位置.Y,
                     this.pt動画側終了位置.X, this.pt動画側終了位置.Y,
                     this.pt表示側開始位置.X, this.pt表示側開始位置.Y,
                     this.pt表示側終了位置.X, this.pt表示側終了位置.Y,
-                    this.n移動時間ct,
-                    CDTX.tZZ(this.nAVI番号));
+                    this.nMoveTimect,
+                    CDTX.tZZ(this.nAVINumber));
             }
         }
         public class CDirectShow : IDisposable
@@ -139,7 +139,7 @@ namespace TJAPlayer3
                 if (!string.IsNullOrEmpty(TJAPlayer3.DTX.PATH_WAV))
                     str動画ファイル名 = TJAPlayer3.DTX.PATH_WAV + this.strファイル名;
                 else
-                    str動画ファイル名 = TJAPlayer3.DTX.strフォルダ名 + this.strファイル名;
+                    str動画ファイル名 = TJAPlayer3.DTX.strFileName + this.strファイル名;
                 //-----------------
                 #endregion
 
@@ -183,7 +183,7 @@ namespace TJAPlayer3
                     if (!string.IsNullOrEmpty(TJAPlayer3.DTX.PATH_WAV))
                         str動画ファイル名 = TJAPlayer3.DTX.PATH_WAV + this.strファイル名;
                     else
-                        str動画ファイル名 = TJAPlayer3.DTX.strフォルダ名 + this.strファイル名;
+                        str動画ファイル名 = TJAPlayer3.DTX.strFileName + this.strファイル名;
                     //-----------------
                     #endregion
 
@@ -691,7 +691,7 @@ namespace TJAPlayer3
                             TJAPlayer3.Sound管理.tサウンドを破棄する(this.rSound[i]);
                         this.rSound[i] = null;
 
-                        if ((i == 0) && TJAPlayer3.ConfigIni.bLog作成解放ログ出力)
+                        if ((i == 0) && TJAPlayer3.ConfigIni.bLogCreatedDisposed)
                             Trace.TraceInformation("サウンドを解放しました。({0})({1})", this.strコメント文, this.strファイル名);
                     }
                 }
@@ -937,7 +937,7 @@ namespace TJAPlayer3
         public double BPM;
         public STチップがある bチップがある;
         public double db再生速度;
-        public E種別 e種別;
+        public EType e種別;
         public string GENRE;
         public bool HIDDENLEVEL;
         public STDGBVALUE<int> LEVEL;
@@ -977,7 +977,7 @@ namespace TJAPlayer3
         public string strハッシュofDTXファイル;
         public string strファイル名;
         public string strファイル名の絶対パス;
-        public string strフォルダ名;
+        public string strFileName;
         public string SUBTITLE;
         public string TITLE;
         public double dbScrollSpeed;
@@ -1131,7 +1131,7 @@ namespace TJAPlayer3
             this.bチップがある.OpenGuitar = false;
             this.bチップがある.OpenBass = false;
             this.strファイル名 = "";
-            this.strフォルダ名 = "";
+            this.strFileName = "";
             this.strファイル名の絶対パス = "";
             this.n無限管理WAV = new int[36 * 36];
             this.n無限管理BPM = new int[36 * 36];
@@ -1249,12 +1249,12 @@ namespace TJAPlayer3
                         chip.rAVIPan = null;
                         if (this.listAVIPAN.TryGetValue(chip.n整数値, out CAVIPAN cavipan))
                         {
-                            if (this.listAVI.TryGetValue(cavipan.nAVI番号, out CAVI cavi) && (cavi.avi != null))
+                            if (this.listAVI.TryGetValue(cavipan.nAVINumber, out CAVI cavi) && (cavi.avi != null))
                             {
                                 chip.eAVI種別 = EAVI種別.AVIPAN;
                                 chip.rAVI = cavi;
                                 //if( CDTXMania.ConfigIni.bDirectShowMode == true )
-                                chip.rDShow = this.listDS[cavipan.nAVI番号];
+                                chip.rDShow = this.listDS[cavipan.nAVINumber];
                                 chip.rAVIPan = cavipan;
                                 continue;
                             }
@@ -1293,7 +1293,7 @@ namespace TJAPlayer3
                         {
                             long nAbsTimeFromStartPlaying = nCurrentTime - wc.n再生開始時刻[i];
                             //Trace.TraceInformation( "再生位置自動補正: {0}, seek先={1}ms, 全音長={2}ms",
-                            //    Path.GetFileName( wc.rSound[ 0 ].strファイル名 ),
+                            //    Path.GetFileName( wc.rSound[ 0 ].strFileName ),
                             //    nAbsTimeFromStartPlaying,
                             //    wc.rSound[ 0 ].n総演奏時間ms
                             //);
@@ -1330,7 +1330,7 @@ namespace TJAPlayer3
         }
         public void tWAVの読み込み(CWAV cwav)
         {
-            string str = string.IsNullOrEmpty(this.PATH_WAV) ? this.strフォルダ名 : this.PATH_WAV;
+            string str = string.IsNullOrEmpty(this.PATH_WAV) ? this.strFileName : this.PATH_WAV;
             str = str + cwav.strファイル名;
 
             try
@@ -1362,7 +1362,7 @@ namespace TJAPlayer3
                             cwav.rSound[i].tBASSサウンドをミキサーに追加する();
                         }
 
-                        if (TJAPlayer3.ConfigIni.bLog作成解放ログ出力)
+                        if (TJAPlayer3.ConfigIni.bLogCreatedDisposed)
                         {
                             Trace.TraceInformation("サウンドを作成しました。({3})({0})({1})({2}bytes)", cwav.strコメント文, str,
                                 cwav.rSound[0].nサウンドバッファサイズ, cwav.rSound[0].bストリーム再生する ? "Stream" : "OnMemory");
@@ -1658,8 +1658,8 @@ namespace TJAPlayer3
             this.bヘッダのみ = bヘッダのみ;
             this.strファイル名の絶対パス = Path.GetFullPath(strファイル名);
             this.strファイル名 = Path.GetFileName(this.strファイル名の絶対パス);
-            this.strフォルダ名 = Path.GetDirectoryName(this.strファイル名の絶対パス) + @"\";
-            //if ( this.e種別 != E種別.SMF )
+            this.strFileName = Path.GetDirectoryName(this.strファイル名の絶対パス) + @"\";
+            //if ( this.e種別 != EType.SMF )
             {
                 try
                 {
@@ -1671,13 +1671,13 @@ namespace TJAPlayer3
 
                         //DateTime timeBeginLoad = DateTime.Now;
                         //TimeSpan span;
-                        string[] files = Directory.GetFiles(this.strフォルダ名, "*.tja");
+                        string[] files = Directory.GetFiles(this.strFileName, "*.tja");
 
                         StreamReader reader = new StreamReader(strファイル名, Encoding.GetEncoding("Shift_JIS"));
                         string str2 = reader.ReadToEnd();
                         reader.Close();
 
-                        //StreamReader reader2 = new StreamReader( this.strフォルダ名 + "test.tja", Encoding.GetEncoding( "Shift_JIS" ) );
+                        //StreamReader reader2 = new StreamReader( this.strFileName + "test.tja", Encoding.GetEncoding( "Shift_JIS" ) );
                         StreamReader reader2 = new StreamReader(files[0], Encoding.GetEncoding("Shift_JIS"));
                         string str3 = reader2.ReadToEnd();
                         reader2.Close();
@@ -1698,8 +1698,8 @@ namespace TJAPlayer3
                         string str2 = reader.ReadToEnd();
                         reader.Close();
 
-                        //StreamReader reader2 = new StreamReader( this.strフォルダ名 + "test.tja", Encoding.GetEncoding( "Shift_JIS" ) );
-                        //StreamReader reader2 = new StreamReader( strファイル名, Encoding.GetEncoding( "Shift_JIS" ) );
+                        //StreamReader reader2 = new StreamReader( this.strFileName + "test.tja", Encoding.GetEncoding( "Shift_JIS" ) );
+                        //StreamReader reader2 = new StreamReader( strFileName, Encoding.GetEncoding( "Shift_JIS" ) );
                         //string str3 = reader2.ReadToEnd();
                         //reader2.Close();
                         string str3 = str2;
@@ -2033,7 +2033,7 @@ namespace TJAPlayer3
 
                             //chip.n発声時刻ms += nDELAY;
                             //chip.nノーツ終了時刻ms += nDELAY;
-                            if (((this.e種別 == E種別.BMS) || (this.e種別 == E種別.BME)) && ((this.dbBarLength != 1.0) && ((chip.n発声位置 / 384) != nBar)))
+                            if (((this.e種別 == EType.BMS) || (this.e種別 == EType.BME)) && ((this.dbBarLength != 1.0) && ((chip.n発声位置 / 384) != nBar)))
                             {
                                 n発声位置 = chip.n発声位置;
                                 ms = chip.n発声時刻ms;
@@ -2188,7 +2188,7 @@ namespace TJAPlayer3
                                         if (this.listAVIPAN.TryGetValue(chip.n整数値, out CAVIPAN cavipan))
                                         {
                                             int num21 = ms + ((int)(((0x271 * (chip.n発声位置 - n発声位置)) * this.dbBarLength) / bpm));
-                                            int num22 = ms + ((int)(((0x271 * ((chip.n発声位置 + cavipan.n移動時間ct) - n発声位置)) * this.dbBarLength) / bpm));
+                                            int num22 = ms + ((int)(((0x271 * ((chip.n発声位置 + cavipan.nMoveTimect) - n発声位置)) * this.dbBarLength) / bpm));
                                             chip.n総移動時間 = num22 - num21;
                                         }
                                         continue;
@@ -2433,7 +2433,7 @@ namespace TJAPlayer3
 
                         #endregion
                         #region [ bLogDTX詳細ログ出力 ]
-                        if (TJAPlayer3.ConfigIni.bLogDTX詳細ログ出力)
+                        if (TJAPlayer3.ConfigIni.bLogDTXDVerboseOutput)
                         {
                             foreach (CWAV cwav in this.listWAV.Values)
                             {
@@ -3623,7 +3623,7 @@ namespace TJAPlayer3
                     n位置 = this.n無限管理PAN[this.n内部番号WAV1to],
                     SongVol = this.SongVol,
                     SongLoudnessMetadata = this.SongLoudnessMetadata,
-                    strファイル名 = CDTXCompanionFileFinder.FindFileName(this.strフォルダ名, strファイル名, dansongs.FileName),
+                    strファイル名 = CDTXCompanionFileFinder.FindFileName(this.strFileName, strファイル名, dansongs.FileName),
                     strコメント文 = "TJA BGM"
                 };
                 dansongs.Wave.SongLoudnessMetadata = LoudnessMetadataScanner.LoadForAudioPath(dansongs.Wave.strファイル名);
@@ -4322,7 +4322,7 @@ namespace TJAPlayer3
                 }
                 else
                 {
-                    this.strBGM_PATH = CDTXCompanionFileFinder.FindFileName(this.strフォルダ名, strファイル名, strCommandParam);
+                    this.strBGM_PATH = CDTXCompanionFileFinder.FindFileName(this.strFileName, strファイル名, strCommandParam);
                     //tbWave.Text = strCommandParam;
                     if (this.listWAV != null)
                     {
@@ -4330,7 +4330,7 @@ namespace TJAPlayer3
                         //                           TJAP3 is either launching, enumerating songs, or is about to
                         //                           begin playing a song. If metadata is available, we want it now.
                         //                           If is not yet available then we wish to queue scanning.
-                        var absoluteBgmPath = Path.Combine(this.strフォルダ名, this.strBGM_PATH);
+                        var absoluteBgmPath = Path.Combine(this.strFileName, this.strBGM_PATH);
                         this.SongLoudnessMetadata = LoudnessMetadataScanner.LoadForAudioPath(absoluteBgmPath);
 
                         var wav = new CWAV()
@@ -4528,14 +4528,14 @@ namespace TJAPlayer3
                 if (!string.IsNullOrEmpty(strCommandParam))
                 {
                     this.strBGVIDEO_PATH =
-                        CDTXCompanionFileFinder.FindFileName(this.strフォルダ名, strファイル名, strCommandParam);
+                        CDTXCompanionFileFinder.FindFileName(this.strFileName, strファイル名, strCommandParam);
                 }
 
                 var avi = new CAVI()
                 {
-                    n番号 = 1,
-                    strファイル名 = this.strBGVIDEO_PATH,
-                    strコメント文 = "BGMOVIE命令",
+                    nNumber = 1,
+                    strFileName = this.strBGVIDEO_PATH,
+                    strCommentText = "BGMOVIE命令",
                 };
 
                 if (this.listAVI.ContainsKey(1))	// 既にリスト中に存在しているなら削除。後のものが有効。
@@ -6089,9 +6089,9 @@ namespace TJAPlayer3
             //-----------------
             var avi = new CAVI()
             {
-                n番号 = zz,
-                strファイル名 = strパラメータ,
-                strコメント文 = strコメント,
+                nNumber = zz,
+                strFileName = strパラメータ,
+                strCommentText = strコメント,
             };
 
             if (this.listAVI.ContainsKey(zz))   // 既にリスト中に存在しているなら削除。後のものが有効。
@@ -6146,7 +6146,7 @@ namespace TJAPlayer3
 
             var avipan = new CAVIPAN()
             {
-                n番号 = zz,
+                nNumber = zz,
             };
 
             // パラメータ引数（14個）を取得し、avipan に登録していく。
@@ -6173,8 +6173,8 @@ namespace TJAPlayer3
                 Trace.TraceError("AVIPAN: {2}番目の数（AVI番号）が異常です。[{0}: {1}行]", this.strファイル名の絶対パス, this.n現在の行数, i + 1);
                 return false;
             }
-            avipan.nAVI番号 = C変換.n36進数2桁の文字列を数値に変換して返す(strParams[i]);
-            if (avipan.nAVI番号 < 1 || avipan.nAVI番号 >= 36 * 36)
+            avipan.nAVINumber = C変換.n36進数2桁の文字列を数値に変換して返す(strParams[i]);
+            if (avipan.nAVINumber < 1 || avipan.nAVINumber >= 36 * 36)
             {
                 Trace.TraceError("AVIPAN: {2}番目の数（AVI番号）が異常です。[{0}: {1}行]", this.strファイル名の絶対パス, this.n現在の行数, i + 1);
                 return false;
@@ -6338,7 +6338,7 @@ namespace TJAPlayer3
             if (n値 < 0)
                 n値 = 0;
 
-            avipan.n移動時間ct = n値;
+            avipan.nMoveTimect = n値;
             i++;
             //-----------------
             #endregion
@@ -6491,7 +6491,7 @@ namespace TJAPlayer3
 
             // ファイルフォーマットによって処理が異なる。
 
-            if (this.e種別 == E種別.GDA || this.e種別 == E種別.G2D)
+            if (this.e種別 == EType.GDA || this.e種別 == EType.G2D)
             {
                 #region [ (A) GDA, G2D の場合：チャンネル文字列をDTXのチャンネル番号へ置き換える。]
                 //-----------------

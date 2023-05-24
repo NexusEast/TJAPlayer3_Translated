@@ -1676,7 +1676,7 @@ namespace TJAPlayer3
 
 			if ( !pChip.bHit && pChip.n発声時刻ms > CSoundManager.rPlaybackTimer.n現在時刻 )
 			{
-				if ( configIni.bWave再生位置自動調整機能有効 && ( bIsDirectSound || bUseOSTimer ) )
+				if ( configIni.bWavePlaybackAutoOffset && ( bIsDirectSound || bUseOSTimer ) )
 				{
 					dTX.tWave再生位置自動補正();
 				}

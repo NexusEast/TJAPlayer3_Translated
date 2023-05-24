@@ -891,7 +891,7 @@ namespace TJAPlayer3
 				{
 					song.stackランダム演奏番号.Push( numArray[ k ] );
 				}
-				if( TJAPlayer3.ConfigIni.bLogDTX詳細ログ出力 )
+				if( TJAPlayer3.ConfigIni.bLogDTXDVerboseOutput )
 				{
 					StringBuilder builder = new StringBuilder( 0x400 );
 					builder.Append( string.Format( "ランダムインデックスリストを作成しました: {0}曲: ", song.stackランダム演奏番号.Count ) );
@@ -909,7 +909,7 @@ namespace TJAPlayer3
 			this.eフェードアウト完了時の戻り値 = E戻り値.選曲した;
 			this.actFOtoNowLoading.tフェードアウト開始();					// #27787 2012.3.10 yyagi 曲決定時の画面フェードアウトの省略
 			base.eフェーズID = CStage.Eフェーズ.選曲_NowLoading画面へのフェードアウト;
-			if( TJAPlayer3.ConfigIni.bLogDTX詳細ログ出力 )
+			if( TJAPlayer3.ConfigIni.bLogDTXDVerboseOutput )
 			{
 				int[] numArray2 = song.stackランダム演奏番号.ToArray();
 				StringBuilder builder2 = new StringBuilder( 0x400 );

@@ -282,7 +282,7 @@ namespace TJAPlayer3
 						    TJAPlayer3.DTX = new CDTX( str, false, ( (double) TJAPlayer3.ConfigIni.n演奏速度 ) / 20.0, ini.stファイル.BGMAdjust, 0, 0, true );
                             if( TJAPlayer3.ConfigIni.nPlayerCount == 2 )
 						        TJAPlayer3.DTX_2P = new CDTX( str, false, ( (double) TJAPlayer3.ConfigIni.n演奏速度 ) / 20.0, ini.stファイル.BGMAdjust, 0, 1, true );
-                            if( File.Exists( TJAPlayer3.DTX.strフォルダ名 + @"\\set.def" ) )
+                            if( File.Exists( TJAPlayer3.DTX.strFileName + @"\\set.def" ) )
                             {
 						        TJAPlayer3.DTX = new CDTX( str, false, ( (double) TJAPlayer3.ConfigIni.n演奏速度 ) / 20.0, ini.stファイル.BGMAdjust, 0, 1, true );
                                 if( TJAPlayer3.ConfigIni.nPlayerCount == 2 )

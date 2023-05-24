@@ -26,7 +26,7 @@ namespace TJAPlayer3
 		/// 判定ライン表示位置を、Vシリーズ互換にするかどうか。
 		/// 設定は外部から行うこと。
 		/// </summary>
-		public STDGBVALUE<E判定位置> n判定位置;
+		public STDGBVALUE<EJudgeLocation> n判定位置;
 
 		/// <summary>
 		/// コンストラクタ(座標値の初期化)
@@ -107,10 +107,10 @@ namespace TJAPlayer3
 			n演奏RGBボタンY座標元データ[ 1, 1, 1 ].Bass   = 44;
 			#endregion
 
-			n判定位置 = new STDGBVALUE<E判定位置>();
-			n判定位置.Drums  = E判定位置.標準;
-			n判定位置.Guitar = E判定位置.標準;
-			n判定位置.Bass   = E判定位置.標準;
+			n判定位置 = new STDGBVALUE<EJudgeLocation>();
+			n判定位置.Drums  = EJudgeLocation.標準;
+			n判定位置.Guitar = EJudgeLocation.標準;
+			n判定位置.Bass   = EJudgeLocation.標準;
 
 			// 補正値は、Normal/Reverse, Drums/GR画面共通
 			nJudgeLinePosY_delta.Drums  = 0;

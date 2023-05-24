@@ -182,13 +182,13 @@ namespace TJAPlayer3
                     }
                     //---------------------------------------------------------------------/
 				}
-                if( TJAPlayer3.ConfigIni.bScoreIniを出力する )
+                if( TJAPlayer3.ConfigIni.bOutputToScoreIni )
 				    ini.t書き出し( str );
 				//---------------------
 				#endregion
 
 				#region [ リザルト画面への演奏回数の更新 #24281 2011.1.30 yyagi]
-                if( TJAPlayer3.ConfigIni.bScoreIniを出力する )
+                if( TJAPlayer3.ConfigIni.bOutputToScoreIni )
                 {
                     this.n演奏回数.Drums = ini.stファイル.PlayCountDrums;
                     this.n演奏回数.Guitar = ini.stファイル.PlayCountGuitar;
@@ -340,7 +340,7 @@ namespace TJAPlayer3
 				}
 				#region [ #24609 2011.3.14 yyagi ランク更新or演奏型スキル更新時、リザルト画像をpngで保存する ]
 				if ( this.bアニメが完了 == true && this.bIsCheckedWhetherResultScreenShouldSaveOrNot == false	// #24609 2011.3.14 yyagi; to save result screen in case BestRank or HiSkill.
-					&& TJAPlayer3.ConfigIni.bScoreIniを出力する
+					&& TJAPlayer3.ConfigIni.bOutputToScoreIni
 					&& TJAPlayer3.ConfigIni.bIsAutoResultCapture)												// #25399 2011.6.9 yyagi
 				{
 					CheckAndSaveResultScreen(true);
@@ -360,7 +360,7 @@ namespace TJAPlayer3
 				}
 				#region [ #24609 2011.4.7 yyagi リザルト画面で[F12]を押下すると、リザルト画像をpngで保存する機能は、CDTXManiaに移管。 ]
 //					if ( CDTXMania.Input管理.Keyboard.bキーが押された( (int) SlimDX.DirectInput.Key.F12 ) &&
-//						CDTXMania.ConfigIni.bScoreIniを出力する )
+//						CDTXMania.ConfigIni.bOutputToScoreIni )
 //					{
 //						CheckAndSaveResultScreen(false);
 //						this.bIsCheckedWhetherResultScreenShouldSaveOrNot = true;

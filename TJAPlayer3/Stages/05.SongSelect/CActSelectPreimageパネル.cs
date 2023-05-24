@@ -212,7 +212,7 @@ namespace TJAPlayer3
 			}
 			this.pAVIBmp = IntPtr.Zero;
 			this.nAVI再生開始時刻 = -1;
-			if( !TJAPlayer3.ConfigIni.bストイックモード )
+			if( !TJAPlayer3.ConfigIni.bStoicMode )
 			{
 				if( this.tプレビュー動画の指定があれば構築する() )
 				{

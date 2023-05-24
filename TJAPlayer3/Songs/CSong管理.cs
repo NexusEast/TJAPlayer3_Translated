@@ -139,7 +139,7 @@ namespace TJAPlayer3
 
 			DirectoryInfo info = new DirectoryInfo( str基点フォルダ );
 
-			if( TJAPlayer3.ConfigIni.bLog曲検索ログ出力 )
+			if( TJAPlayer3.ConfigIni.bLogSongSearchOutput )
 				Trace.TraceInformation( "基点フォルダ: " + str基点フォルダ );
 
             var rawFileInfos = info.GetFiles();
@@ -157,7 +157,7 @@ namespace TJAPlayer3
             if( File.Exists( path ) )
 			{
 				new FileInfo( path );
-				if( TJAPlayer3.ConfigIni.bLog曲検索ログ出力 )
+				if( TJAPlayer3.ConfigIni.bLogSongSearchOutput )
 				{
 					Trace.TraceInformation( "set.def検出 : {0}", path );
 					Trace.Indent();
@@ -280,7 +280,7 @@ namespace TJAPlayer3
 				}
 				finally
 				{
-					if( TJAPlayer3.ConfigIni.bLog曲検索ログ出力 )
+					if( TJAPlayer3.ConfigIni.bLogSongSearchOutput )
 					{
 						Trace.Unindent();
 					}
@@ -402,7 +402,7 @@ namespace TJAPlayer3
                                     b = true;
                                 }
 
-                                if( TJAPlayer3.ConfigIni.bLog曲検索ログ出力 )
+                                if( TJAPlayer3.ConfigIni.bLogSongSearchOutput )
                                 {
                                 //    Trace.Indent();
                                 //    try
@@ -486,7 +486,7 @@ namespace TJAPlayer3
                             c曲リストノード.BackColor = dtxfilesBoxdef.BackColor.Value;
                         }
                     }
-					if( TJAPlayer3.ConfigIni.bLog曲検索ログ出力 )
+					if( TJAPlayer3.ConfigIni.bLogSongSearchOutput )
 					{
 						Trace.Indent();
 						try
@@ -593,7 +593,7 @@ namespace TJAPlayer3
 					
 					c曲リストノード.list子リスト = new List<C曲リストノード>();
 					listノードリスト.Add( c曲リストノード );
-					if( TJAPlayer3.ConfigIni.bLog曲検索ログ出力 )
+					if( TJAPlayer3.ConfigIni.bLogSongSearchOutput )
 					{
 						Trace.TraceInformation( "box.def検出 : {0}", infoDir.FullName + @"\box.def" );
 						Trace.Indent();
@@ -709,7 +709,7 @@ namespace TJAPlayer3
 								if( nMatched == -1 )
 								{
 //Trace.TraceInformation( "songs.db に存在しません。({0})", node.arスコア[ lv ].ファイル情報.ファイルの絶対パス );
-									if ( TJAPlayer3.ConfigIni.bLog曲検索ログ出力 )
+									if ( TJAPlayer3.ConfigIni.bLogSongSearchOutput )
 									{
 										Trace.TraceInformation( "songs.db に存在しません。({0})", node.arスコア[ lv ].ファイル情報.ファイルの絶対パス );
 									}
@@ -718,7 +718,7 @@ namespace TJAPlayer3
 								{
 									node.arスコア[ lv ].譜面情報 = this.listSongsDB[ nMatched ].譜面情報;
 									node.arスコア[ lv ].bSongDBにキャッシュがあった = true;
-									if( TJAPlayer3.ConfigIni.bLog曲検索ログ出力 )
+									if( TJAPlayer3.ConfigIni.bLogSongSearchOutput )
 									{
 										Trace.TraceInformation( "songs.db から転記しました。({0})", node.arスコア[ lv ].ファイル情報.ファイルの絶対パス );
 									}
@@ -767,7 +767,7 @@ namespace TJAPlayer3
 			cスコア.譜面情報.演奏履歴.行6 = br.ReadString();
 			cスコア.譜面情報.演奏履歴.行7 = br.ReadString();
 			cスコア.譜面情報.レベルを非表示にする = br.ReadBoolean();
-			cスコア.譜面情報.曲種別 = (CDTX.E種別) br.ReadInt32();
+			cスコア.譜面情報.曲種別 = (CDTX.EType) br.ReadInt32();
 			cスコア.譜面情報.Bpm = br.ReadDouble();
 			cスコア.譜面情報.Duration = br.ReadInt32();
             cスコア.譜面情報.strBGMファイル名 = br.ReadString();
@@ -890,7 +890,7 @@ namespace TJAPlayer3
 //Debug.WriteLine( "★" + this.nファイルから反映できたスコア数 + " " + c曲リストノード.arスコア[ i ].譜面情報.タイトル );
 									#region [ 曲検索ログ出力 ]
 									//-----------------
-									if( TJAPlayer3.ConfigIni.bLog曲検索ログ出力 )
+									if( TJAPlayer3.ConfigIni.bLogSongSearchOutput )
 									{
 										StringBuilder sb = new StringBuilder( 0x400 );
 										sb.Append( string.Format( "曲データファイルから譜面情報を転記しました。({0})", path ) );
@@ -1011,7 +1011,7 @@ namespace TJAPlayer3
 
 				#region [ ログ出力 ]
 				//-----------------------------
-				if( TJAPlayer3.ConfigIni.bLog曲検索ログ出力 )
+				if( TJAPlayer3.ConfigIni.bLogSongSearchOutput )
 				{
 					StringBuilder sb = new StringBuilder( 0x100 );
 					sb.Append( string.Format( "nID#{0:D3}", itemRandom.nID ) );
@@ -1065,7 +1065,7 @@ namespace TJAPlayer3
 
 					#region [ ログ出力 ]
 					//-----------------------------
-					if( TJAPlayer3.ConfigIni.bLog曲検索ログ出力 )
+					if( TJAPlayer3.ConfigIni.bLogSongSearchOutput )
 					{
 						StringBuilder sb = new StringBuilder( 0x100 );
 						sb.Append( string.Format( "nID#{0:D3}", itemBack.nID ) );
@@ -1099,7 +1099,7 @@ namespace TJAPlayer3
 						{
 							c曲リストノード.strタイトル = c曲リストノード.arスコア[ j ].譜面情報.タイトル;
 
-							if( TJAPlayer3.ConfigIni.bLog曲検索ログ出力 )
+							if( TJAPlayer3.ConfigIni.bLogSongSearchOutput )
 								Trace.TraceInformation( "タイトルを設定しました。(nID#{0:D3}, title={1})", c曲リストノード.nID, c曲リストノード.strタイトル );
 
 							break;

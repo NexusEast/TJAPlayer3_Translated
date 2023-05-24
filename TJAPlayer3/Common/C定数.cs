@@ -181,7 +181,7 @@ namespace TJAPlayer3
 		UNKNOWN	= E楽器パート.UNKNOWN
 	}
 
-	internal enum E入力デバイス
+	internal enum EInputDevice
 	{
 		キーボード		= 0,
 		MIDI入力		= 1,
@@ -206,13 +206,13 @@ namespace TJAPlayer3
 		判定ライン上,
 		コンボ下
 	}
-	internal enum E判定位置
+	internal enum EJudgeLocation
 	{
 		標準	= 0,
 		Lower,
 		MAX
 	}
-	internal enum E判定表示優先度
+	internal enum EJudgeDisplayPriority
 	{
 		Chipより下,
 		Chipより上

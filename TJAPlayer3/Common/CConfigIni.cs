@@ -526,12 +526,12 @@ namespace TJAPlayer3
 			[StructLayout( LayoutKind.Sequential )]
 			public struct STKEYASSIGN
 			{
-				public E入力デバイス 入力デバイス;
+				public EInputDevice InputDevice;
 				public int ID;
 				public int コード;
-				public STKEYASSIGN( E入力デバイス DeviceType, int nID, int nCode )
+				public STKEYASSIGN( EInputDevice DeviceType, int nID, int nCode )
 				{
-					this.入力デバイス = DeviceType;
+					this.InputDevice = DeviceType;
 					this.ID = nID;
 					this.コード = nCode;
 				}
@@ -619,20 +619,20 @@ namespace TJAPlayer3
 		public STDGBVALUE<bool> bHidden;
 		public STDGBVALUE<bool> bLeft;
 		public STDGBVALUE<bool> bLight;
-		public bool bLogDTX詳細ログ出力;
-		public bool bLog曲検索ログ出力;
-		public bool bLog作成解放ログ出力;
+		public bool bLogDTXDVerboseOutput;
+		public bool bLogSongSearchOutput;
+		public bool bLogCreatedDisposed;
 		public STDGBVALUE<bool> bReverse;
-		//public STDGBVALUE<E判定表示優先度> e判定表示優先度;
-		public E判定表示優先度 e判定表示優先度;
-		public STDGBVALUE<E判定位置> e判定位置;			// #33891 2014.6.26 yyagi
-		public bool bScoreIniを出力する;
-		public bool bSTAGEFAILED有効;
+		//public STDGBVALUE<EJudgeDisplayPriority> eJudgeDisplayPriority;
+		public EJudgeDisplayPriority eJudgeDisplayPriority;
+		public STDGBVALUE<EJudgeLocation> eJudgeLocation;			// #33891 2014.6.26 yyagi
+		public bool bOutputToScoreIni;
+		public bool bSTAGEFAILEDEnabled;
 		public STDGBVALUE<bool> bSudden;
 		public bool bTight;
 		public STDGBVALUE<bool> bGraph;     // #24074 2011.01.23 add ikanick
-		public bool bWave再生位置自動調整機能有効;
-		public bool bストイックモード;
+		public bool bWavePlaybackAutoOffset;
+		public bool bStoicMode;
 		public bool bランダムセレクトで子BOXを検索対象とする;
 		public bool bログ出力;
 		public bool b演奏情報を表示する;
@@ -794,7 +794,7 @@ namespace TJAPlayer3
 					{
 						for( int k = 0; k < 0x10; k++ )
 						{
-							if( ( this.KeyAssign[ i ][ j ][ k ].入力デバイス == E入力デバイス.キーボード ) && ( this.KeyAssign[ i ][ j ][ k ].コード == (int) SlimDX.DirectInput.Key.Return ) )
+							if( ( this.KeyAssign[ i ][ j ][ k ].InputDevice == EInputDevice.キーボード ) && ( this.KeyAssign[ i ][ j ][ k ].コード == (int) SlimDX.DirectInput.Key.Return ) )
 							{
 								return false;
 							}
@@ -1259,15 +1259,15 @@ namespace TJAPlayer3
 			this._bDrums有効 = true;
 			this.nBGAlpha = 100;
 			this.eダメージレベル = Eダメージレベル.普通;
-			this.bSTAGEFAILED有効 = true;
+			this.bSTAGEFAILEDEnabled = true;
 			this.bAVIEnabled = false;
 			this.bBGAEnabled = true;
 			this.n曲が選択されてからプレビュー音が鳴るまでのウェイトms = 1000;
 			this.n曲が選択されてからプレビュー画像が表示開始されるまでのウェイトms = 100;
-			//this.bWave再生位置自動調整機能有効 = true;
-			this.bWave再生位置自動調整機能有効 = false;
+			//this.bWavePlaybackAutoOffset = true;
+			this.bWavePlaybackAutoOffset = false;
 			this.bBGMEnabled = true;
-			this.bScoreIniを出力する = true;
+			this.bOutputToScoreIni = true;
 			this.bランダムセレクトで子BOXを検索対象とする = true;
 			this.n表示可能な最小コンボ数 = new STDGBVALUE<int>();
 			this.n表示可能な最小コンボ数.Drums = 3;
@@ -1307,12 +1307,12 @@ namespace TJAPlayer3
 			this.eRandom = new STDGBVALUE<Eランダムモード>();
 			this.bLight = new STDGBVALUE<bool>();
 			this.bLeft = new STDGBVALUE<bool>();
-			this.e判定位置 = new STDGBVALUE<E判定位置>();		// #33891 2014.6.26 yyagi
+			this.eJudgeLocation = new STDGBVALUE<EJudgeLocation>();		// #33891 2014.6.26 yyagi
 			this.判定文字表示位置 = new STDGBVALUE<E判定文字表示位置>();
 			this.n譜面スクロール速度 = new STDGBVALUE<int>();
 			this.nInputAdjustTimeMs = 0;
 			this.nJudgeLinePosOffset = new STDGBVALUE<int>();	// #31602 2013.6.23 yyagi
-			this.e判定表示優先度 = E判定表示優先度.Chipより下;
+			this.eJudgeDisplayPriority = EJudgeDisplayPriority.Chipより下;
 			for ( int i = 0; i < 3; i++ )
 			{
 				this.bSudden[ i ] = false;
@@ -1325,8 +1325,8 @@ namespace TJAPlayer3
 				this.n譜面スクロール速度[ i ] = 1;
 				this.nJudgeLinePosOffset[ i ] = 0;
 				this.eInvisible[ i ] = EInvisible.OFF;
-				this.e判定位置[ i ] = E判定位置.標準;
-				//this.e判定表示優先度[ i ] = E判定表示優先度.Chipより下;
+				this.eJudgeLocation[ i ] = EJudgeLocation.標準;
+				//this.eJudgeDisplayPriority[ i ] = EJudgeDisplayPriority.Chipより下;
 			}
 			this.n演奏速度 = 20;
 			#region [ AutoPlay ]
@@ -1421,7 +1421,7 @@ namespace TJAPlayer3
 
 		// メソッド
 
-		public void t指定した入力が既にアサイン済みである場合はそれを全削除する( E入力デバイス DeviceType, int nID, int nCode )
+		public void t指定した入力が既にアサイン済みである場合はそれを全削除する( EInputDevice DeviceType, int nID, int nCode )
 		{
 			for( int i = 0; i <= (int)EKeyConfigPart.SYSTEM; i++ )
 			{
@@ -1429,13 +1429,13 @@ namespace TJAPlayer3
 				{
 					for( int k = 0; k < 0x10; k++ )
 					{
-						if( ( ( this.KeyAssign[ i ][ j ][ k ].入力デバイス == DeviceType ) && ( this.KeyAssign[ i ][ j ][ k ].ID == nID ) ) && ( this.KeyAssign[ i ][ j ][ k ].コード == nCode ) )
+						if( ( ( this.KeyAssign[ i ][ j ][ k ].InputDevice == DeviceType ) && ( this.KeyAssign[ i ][ j ][ k ].ID == nID ) ) && ( this.KeyAssign[ i ][ j ][ k ].コード == nCode ) )
 						{
 							for( int m = k; m < 15; m++ )
 							{
 								this.KeyAssign[ i ][ j ][ m ] = this.KeyAssign[ i ][ j ][ m + 1 ];
 							}
-							this.KeyAssign[ i ][ j ][ 15 ].入力デバイス = E入力デバイス.不明;
+							this.KeyAssign[ i ][ j ][ 15 ].InputDevice = EInputDevice.不明;
 							this.KeyAssign[ i ][ j ][ 15 ].ID = 0;
 							this.KeyAssign[ i ][ j ][ 15 ].コード = 0;
 							k--;
@@ -1614,7 +1614,7 @@ namespace TJAPlayer3
 			sw.WriteLine( "BGAlpha={0}", this.nBGAlpha );
 			sw.WriteLine();
 			sw.WriteLine( "; ゲージゼロでSTAGE FAILED (0:OFF, 1:ON)" );
-			sw.WriteLine( "StageFailed={0}", this.bSTAGEFAILED有効 ? 1 : 0 );
+			sw.WriteLine( "StageFailed={0}", this.bSTAGEFAILEDEnabled ? 1 : 0 );
 			sw.WriteLine();
 			#region [ AVI/BGA ]
 			sw.WriteLine( "; AVIの表示(0:OFF, 1:ON)" );
@@ -1636,14 +1636,14 @@ namespace TJAPlayer3
 			sw.WriteLine();
 			#endregion
 			//sw.WriteLine( "; Waveの再生位置自動補正(0:OFF, 1:ON)" );
-			//sw.WriteLine( "AdjustWaves={0}", this.bWave再生位置自動調整機能有効 ? 1 : 0 );
+			//sw.WriteLine( "AdjustWaves={0}", this.bWavePlaybackAutoOffset ? 1 : 0 );
 			#region [ BGM/ドラムヒット音の再生 ]
 			sw.WriteLine( "; BGM の再生(0:OFF, 1:ON)" );
 			sw.WriteLine( "BGMSound={0}", this.bBGMEnabled ? 1 : 0 );
 			sw.WriteLine();
 			#endregion
 			sw.WriteLine( "; 演奏記録（～.score.ini）の出力 (0:OFF, 1:ON)" );
-			sw.WriteLine( "SaveScoreIni={0}", this.bScoreIniを出力する ? 1 : 0 );
+			sw.WriteLine( "SaveScoreIni={0}", this.bOutputToScoreIni ? 1 : 0 );
 			sw.WriteLine();
             sw.WriteLine("; 最小表示コンボ数");
             sw.WriteLine("MinComboDrums={0}", this.n表示可能な最小コンボ数.Drums);
@@ -1693,7 +1693,7 @@ namespace TJAPlayer3
             sw.WriteLine();
             sw.WriteLine( "; ストイックモード(0:OFF, 1:ON)" );
 			sw.WriteLine( "; Stoic mode. (0:OFF, 1:ON)" );
-			sw.WriteLine( "StoicMode={0}", this.bストイックモード ? 1 : 0 );
+			sw.WriteLine( "StoicMode={0}", this.bStoicMode ? 1 : 0 );
 			sw.WriteLine();
 			sw.WriteLine( "; バッファ入力モード(0:OFF, 1:ON)" );
 			sw.WriteLine( "; Using Buffered input (0:OFF, 1:ON)" );
@@ -1774,13 +1774,13 @@ namespace TJAPlayer3
 			sw.WriteLine( "OutputLog={0}", this.bログ出力 ? 1 : 0 );
 			sw.WriteLine();
 			sw.WriteLine( "; 曲データ検索に関するLog出力(0:OFF, 1:ON)" );
-			sw.WriteLine( "TraceSongSearch={0}", this.bLog曲検索ログ出力 ? 1 : 0 );
+			sw.WriteLine( "TraceSongSearch={0}", this.bLogSongSearchOutput ? 1 : 0 );
 			sw.WriteLine();
 			sw.WriteLine( "; 画像やサウンドの作成_解放に関するLog出力(0:OFF, 1:ON)" );
-			sw.WriteLine( "TraceCreatedDisposed={0}", this.bLog作成解放ログ出力 ? 1 : 0 );
+			sw.WriteLine( "TraceCreatedDisposed={0}", this.bLogCreatedDisposed ? 1 : 0 );
 			sw.WriteLine();
 			sw.WriteLine( "; DTX読み込み詳細に関するLog出力(0:OFF, 1:ON)" );
-			sw.WriteLine( "TraceDTXDetails={0}", this.bLogDTX詳細ログ出力 ? 1 : 0 );
+			sw.WriteLine( "TraceDTXDetails={0}", this.bLogDTXDVerboseOutput ? 1 : 0 );
 			sw.WriteLine();
 			sw.WriteLine( ";-------------------" );
 			#endregion
@@ -2251,7 +2251,7 @@ namespace TJAPlayer3
 											}
 											else if ( str3.Equals( "StageFailed" ) )
 											{
-												this.bSTAGEFAILED有効 = C変換.bONorOFF( str4[ 0 ] );
+												this.bSTAGEFAILEDEnabled = C変換.bONorOFF( str4[ 0 ] );
 											}
 											#region [ AVI/BGA ]
 											else if( str3.Equals( "AVI" ) )
@@ -2279,7 +2279,7 @@ namespace TJAPlayer3
 											#endregion
 											//else if( str3.Equals( "AdjustWaves" ) )
 											//{
-											//	this.bWave再生位置自動調整機能有効 = C変換.bONorOFF( str4[ 0 ] );
+											//	this.bWavePlaybackAutoOffset = C変換.bONorOFF( str4[ 0 ] );
 											//}
 											#region [ BGM/ドラムのヒット音 ]
 											else if( str3.Equals( "BGMSound" ) )
@@ -2289,7 +2289,7 @@ namespace TJAPlayer3
 											#endregion
 											else if( str3.Equals( "SaveScoreIni" ) )
 											{
-												this.bScoreIniを出力する = C変換.bONorOFF( str4[ 0 ] );
+												this.bOutputToScoreIni = C変換.bONorOFF( str4[ 0 ] );
 											}
 											else if( str3.Equals( "RandomFromSubBox" ) )
 											{
@@ -2343,11 +2343,11 @@ namespace TJAPlayer3
                                             }
 											else if( str3.Equals( "StoicMode" ) )
 											{
-												this.bストイックモード = C変換.bONorOFF( str4[ 0 ] );
+												this.bStoicMode = C変換.bONorOFF( str4[ 0 ] );
 											}
 											else if ( str3.Equals( "JudgeDispPriority" ) )
 											{
-												this.e判定表示優先度 = (E判定表示優先度) C変換.n値を文字列から取得して範囲内に丸めて返す( str4, 0, 1, (int) this.e判定表示優先度 );
+												this.eJudgeDisplayPriority = (EJudgeDisplayPriority) C変換.n値を文字列から取得して範囲内に丸めて返す( str4, 0, 1, (int) this.eJudgeDisplayPriority );
 											}
 											else if ( str3.Equals( "AutoResultCapture" ) )			// #25399 2011.6.9 yyagi
 											{
@@ -2380,11 +2380,11 @@ namespace TJAPlayer3
 											}
 											else if ( str3.Equals( "JudgeLinePosModeGuitar" ) )	// #33891 2014.6.26 yyagi
 											{
-												this.e判定位置.Guitar = (E判定位置) C変換.n値を文字列から取得して範囲内に丸めて返す( str4, 0, 2, (int) this.e判定位置.Guitar );
+												this.eJudgeLocation.Guitar = (EJudgeLocation) C変換.n値を文字列から取得して範囲内に丸めて返す( str4, 0, 2, (int) this.eJudgeLocation.Guitar );
 											}
 											else if ( str3.Equals( "JudgeLinePosModeBass" ) )		// #33891 2014.6.26 yyagi
 											{
-												this.e判定位置.Bass = (E判定位置) C変換.n値を文字列から取得して範囲内に丸めて返す( str4, 0, 2, (int) this.e判定位置.Bass );
+												this.eJudgeLocation.Bass = (EJudgeLocation) C変換.n値を文字列から取得して範囲内に丸めて返す( str4, 0, 2, (int) this.eJudgeLocation.Bass );
 											}
 											#endregion
 											else if( str3.Equals( "BufferedInput" ) )
@@ -2507,15 +2507,15 @@ namespace TJAPlayer3
 											}
 											else if( str3.Equals( "TraceCreatedDisposed" ) )
 											{
-												this.bLog作成解放ログ出力 = C変換.bONorOFF( str4[ 0 ] );
+												this.bLogCreatedDisposed = C変換.bONorOFF( str4[ 0 ] );
 											}
 											else if( str3.Equals( "TraceDTXDetails" ) )
 											{
-												this.bLogDTX詳細ログ出力 = C変換.bONorOFF( str4[ 0 ] );
+												this.bLogDTXDVerboseOutput = C変換.bONorOFF( str4[ 0 ] );
 											}
 											else if( str3.Equals( "TraceSongSearch" ) )
 											{
-												this.bLog曲検索ログ出力 = C変換.bONorOFF( str4[ 0 ] );
+												this.bLogSongSearchOutput = C変換.bONorOFF( str4[ 0 ] );
 											}
 											continue;
 										}
@@ -2612,15 +2612,15 @@ namespace TJAPlayer3
 											}
 											//else if ( str3.Equals( "JudgeDispPriorityDrums" ) )
 											//{
-											//    this.e判定表示優先度.Drums = (E判定表示優先度) C変換.n値を文字列から取得して範囲内に丸めて返す( str4, 0, 1, (int) this.e判定表示優先度.Drums );
+											//    this.eJudgeDisplayPriority.Drums = (EJudgeDisplayPriority) C変換.n値を文字列から取得して範囲内に丸めて返す( str4, 0, 1, (int) this.eJudgeDisplayPriority.Drums );
 											//}
 											//else if ( str3.Equals( "JudgeDispPriorityGuitar" ) )
 											//{
-											//    this.e判定表示優先度.Guitar = (E判定表示優先度) C変換.n値を文字列から取得して範囲内に丸めて返す( str4, 0, 1, (int) this.e判定表示優先度.Guitar );
+											//    this.eJudgeDisplayPriority.Guitar = (EJudgeDisplayPriority) C変換.n値を文字列から取得して範囲内に丸めて返す( str4, 0, 1, (int) this.eJudgeDisplayPriority.Guitar );
 											//}
 											//else if ( str3.Equals( "JudgeDispPriorityBass" ) )
 											//{
-											//    this.e判定表示優先度.Bass = (E判定表示優先度) C変換.n値を文字列から取得して範囲内に丸めて返す( str4, 0, 1, (int) this.e判定表示優先度.Bass );
+											//    this.eJudgeDisplayPriority.Bass = (EJudgeDisplayPriority) C変換.n値を文字列から取得して範囲内に丸めて返す( str4, 0, 1, (int) this.eJudgeDisplayPriority.Bass );
 											//}
 											else if ( str3.Equals( "Risky" ) )					// #23559 2011.6.23  yyagi
 											{
@@ -2846,7 +2846,7 @@ namespace TJAPlayer3
 					this.KeyAssign[ i ][ j ] = new CKeyAssign.STKEYASSIGN[ 16 ];
 					for( int k = 0; k < 16; k++ )
 					{
-						this.KeyAssign[ i ][ j ][ k ] = new CKeyAssign.STKEYASSIGN( E入力デバイス.不明, 0, 0 );
+						this.KeyAssign[ i ][ j ][ k ] = new CKeyAssign.STKEYASSIGN( EInputDevice.不明, 0, 0 );
 					}
 				}
 			}
@@ -2856,7 +2856,7 @@ namespace TJAPlayer3
 			bool flag = true;
 			for( int i = 0; i < 0x10; i++ )
 			{
-				if( assign[ i ].入力デバイス == E入力デバイス.不明 )
+				if( assign[ i ].InputDevice == EInputDevice.不明 )
 				{
 					continue;
 				}
@@ -2865,21 +2865,21 @@ namespace TJAPlayer3
 					sw.Write( ',' );
 				}
 				flag = false;
-				switch( assign[ i ].入力デバイス )
+				switch( assign[ i ].InputDevice )
 				{
-					case E入力デバイス.キーボード:
+					case EInputDevice.キーボード:
 						sw.Write( 'K' );
 						break;
 
-					case E入力デバイス.MIDI入力:
+					case EInputDevice.MIDI入力:
 						sw.Write( 'M' );
 						break;
 
-					case E入力デバイス.ジョイパッド:
+					case EInputDevice.ジョイパッド:
 						sw.Write( 'J' );
 						break;
 
-					case E入力デバイス.マウス:
+					case EInputDevice.マウス:
 						sw.Write( 'N' );
 						break;
 				}
@@ -2891,32 +2891,32 @@ namespace TJAPlayer3
 			string[] strArray = strキー記述.Split( new char[] { ',' } );
 			for( int i = 0; ( i < strArray.Length ) && ( i < 0x10 ); i++ )
 			{
-				E入力デバイス e入力デバイス;
+				EInputDevice e入力デバイス;
 				int id;
 				int code;
 				string str = strArray[ i ].Trim().ToUpper();
 				if ( str.Length >= 3 )
 				{
-					e入力デバイス = E入力デバイス.不明;
+					e入力デバイス = EInputDevice.不明;
 					switch ( str[ 0 ] )
 					{
 						case 'J':
-							e入力デバイス = E入力デバイス.ジョイパッド;
+							e入力デバイス = EInputDevice.ジョイパッド;
 							break;
 
 						case 'K':
-							e入力デバイス = E入力デバイス.キーボード;
+							e入力デバイス = EInputDevice.キーボード;
 							break;
 
 						case 'L':
 							continue;
 
 						case 'M':
-							e入力デバイス = E入力デバイス.MIDI入力;
+							e入力デバイス = EInputDevice.MIDI入力;
 							break;
 
 						case 'N':
-							e入力デバイス = E入力デバイス.マウス;
+							e入力デバイス = EInputDevice.マウス;
 							break;
 					}
 				}
@@ -2928,7 +2928,7 @@ namespace TJAPlayer3
 				if( ( ( id >= 0 ) && int.TryParse( str.Substring( 2 ), out code ) ) && ( ( code >= 0 ) && ( code <= 0xff ) ) )
 				{
 					this.t指定した入力が既にアサイン済みである場合はそれを全削除する( e入力デバイス, id, code );
-					assign[ i ].入力デバイス = e入力デバイス;
+					assign[ i ].InputDevice = e入力デバイス;
 					assign[ i ].ID = id;
 					assign[ i ].コード = code;
 				}

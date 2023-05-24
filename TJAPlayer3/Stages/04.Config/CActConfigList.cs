@@ -138,7 +138,7 @@ namespace TJAPlayer3
 				"画面モード設定：\nON で全画面モード、OFF でウィンド\nウモードになります。",
 				"Fullscreen mode or window mode." );
 			this.list項目リスト.Add( this.iSystemFullscreen );
-			this.iSystemStageFailed = new CItemToggle( "StageFailed", TJAPlayer3.ConfigIni.bSTAGEFAILED有効,
+			this.iSystemStageFailed = new CItemToggle( "StageFailed", TJAPlayer3.ConfigIni.bSTAGEFAILEDEnabled,
 				"STAGE FAILED 有効：\nON にすると、ゲージがなくなった時\nに STAGE FAILED となり演奏が中断\nされます。OFF の場合は、ゲージが\nなくなっても最後まで演奏できます。",
 				"Turn OFF if you don't want to encount\n GAME OVER." );
 			this.list項目リスト.Add( this.iSystemStageFailed );
@@ -149,7 +149,7 @@ namespace TJAPlayer3
 
 
 	
-			//this.iSystemAdjustWaves = new CItemToggle( "AdjustWaves", CDTXMania.ConfigIni.bWave再生位置自動調整機能有効,
+			//this.iSystemAdjustWaves = new CItemToggle( "AdjustWaves", CDTXMania.ConfigIni.bWavePlaybackAutoOffset,
 			//    "サウンド再生位置自動補正：\n" +
 			//	"ハードウェアやOSに起因するサウン\n" +
 			//	"ドのずれを強制的に補正します。\n" +
@@ -208,7 +208,7 @@ namespace TJAPlayer3
             //    "Damage level at missing (and\n recovering level) at playing.\nThis setting is ignored when Risky >= 1.",
             //    new string[] { "Small", "Normal", "Large" } );
             //this.list項目リスト.Add( this.iSystemDamageLevel );
-			this.iSystemSaveScore = new CItemToggle( "SaveScore", TJAPlayer3.ConfigIni.bScoreIniを出力する,
+			this.iSystemSaveScore = new CItemToggle( "SaveScore", TJAPlayer3.ConfigIni.bOutputToScoreIni,
 				"演奏記録の保存：\nON で演奏記録を ～.score.ini ファイ\nルに保存します。\n",
 				"To save high-scores/skills, turn it ON.\nTurn OFF in case your song data are\n in read-only media (CD-ROM etc).\nNote that the score files also contain\n 'BGM Adjust' parameter. So if you\n want to keep adjusting parameter,\n you need to set SaveScore=ON." );
 			this.list項目リスト.Add( this.iSystemSaveScore );
@@ -258,7 +258,7 @@ namespace TJAPlayer3
                 "Blank time before music source to play. (ms)\n");
             this.list項目リスト.Add(this.MusicPreTimeMs);
 
-            //this.iSystemStoicMode = new CItemToggle( "StoicMode", CDTXMania.ConfigIni.bストイックモード,
+            //this.iSystemStoicMode = new CItemToggle( "StoicMode", CDTXMania.ConfigIni.bStoicMode,
             //    "ストイック（禁欲）モード：\n以下をまとめて表示ON/OFFします。\n_プレビュー画像/動画\n_リザルト画像/動画\n_NowLoading画像\n_演奏画面の背景画像\n_BGA 画像 / AVI 動画\n_グラフ画像\n",
             //    "Turn ON to disable drawing\n * preview image / movie\n * result image / movie\n * nowloading image\n * wallpaper (in playing screen)\n * BGA / AVI (in playing screen)" );
             //this.list項目リスト.Add( this.iSystemStoicMode );
@@ -278,7 +278,7 @@ namespace TJAPlayer3
                 "Share Playing .tja file infomation on Discord.");
             list項目リスト.Add(SendDiscordPlayingInformation);
 
-            //this.iSystemJudgeDispPriority = new CItemList( "JudgePriority", CItemBase.Eパネル種別.通常, (int) CDTXMania.ConfigIni.e判定表示優先度,
+            //this.iSystemJudgeDispPriority = new CItemList( "JudgePriority", CItemBase.Eパネル種別.通常, (int) CDTXMania.ConfigIni.eJudgeDisplayPriority,
             //    "判定文字列とコンボ表示の優先順位を\n" +
             //    "指定します。\n" +
             //    "\n" +
@@ -2236,10 +2236,10 @@ namespace TJAPlayer3
                 //this.iSystemDrums.bON;
 
 			TJAPlayer3.ConfigIni.b全画面モード = this.iSystemFullscreen.bON;
-			TJAPlayer3.ConfigIni.bSTAGEFAILED有効 = this.iSystemStageFailed.bON;
+			TJAPlayer3.ConfigIni.bSTAGEFAILEDEnabled = this.iSystemStageFailed.bON;
 			TJAPlayer3.ConfigIni.bランダムセレクトで子BOXを検索対象とする = this.iSystemRandomFromSubBox.bON;
 
-			//CDTXMania.ConfigIni.bWave再生位置自動調整機能有効 = this.iSystemAdjustWaves.bON;
+			//CDTXMania.ConfigIni.bWavePlaybackAutoOffset = this.iSystemAdjustWaves.bON;
 			TJAPlayer3.ConfigIni.b垂直帰線待ちを行う = this.iSystemVSyncWait.bON;
 			TJAPlayer3.ConfigIni.bバッファ入力を行う = this.iSystemBufferedInput.bON;
 			TJAPlayer3.ConfigIni.bAVIEnabled = this.iSystemAVI.bON;
@@ -2252,7 +2252,7 @@ namespace TJAPlayer3
 			TJAPlayer3.ConfigIni.bBGMEnabled = this.iSystemBGMSound.bON;
 			//CDTXMania.ConfigIni.b歓声を発声する = this.iSystemAudienceSound.bON;
 			//CDTXMania.ConfigIni.eダメージレベル = (Eダメージレベル) this.iSystemDamageLevel.n現在選択されている項目番号;
-			TJAPlayer3.ConfigIni.bScoreIniを出力する = this.iSystemSaveScore.bON;
+			TJAPlayer3.ConfigIni.bOutputToScoreIni = this.iSystemSaveScore.bON;
 
 		    TJAPlayer3.ConfigIni.ApplyLoudnessMetadata = this.iSystemApplyLoudnessMetadata.bON;
 		    TJAPlayer3.ConfigIni.TargetLoudness = this.iSystemTargetLoudness.n現在の値 / 10.0;
@@ -2265,7 +2265,7 @@ namespace TJAPlayer3
             TJAPlayer3.ConfigIni.MusicPreTimeMs = this.MusicPreTimeMs.n現在の値;
 
 			TJAPlayer3.ConfigIni.bログ出力 = this.iLogOutputLog.bON;
-			//CDTXMania.ConfigIni.bストイックモード = this.iSystemStoicMode.bON;
+			//CDTXMania.ConfigIni.bStoicMode = this.iSystemStoicMode.bON;
 
 			//CDTXMania.ConfigIni.nShowLagType = this.iSystemShowLag.n現在選択されている項目番号;				// #25370 2011.6.3 yyagi
 			TJAPlayer3.ConfigIni.bIsAutoResultCapture = this.iSystemAutoResultCapture.bON;					// #25399 2011.6.9 yyagi
@@ -2288,7 +2288,7 @@ namespace TJAPlayer3
 //Trace.TraceInformation( "Skin現在System  : " + CSkin.strSystemSkinSubfolderFullName );
 //Trace.TraceInformation( "Skin現在BoxDef  : " + CSkin.strBoxDefSkinSubfolderFullName );
 			//CDTXMania.ConfigIni.nMasterVolume = this.iSystemMasterVolume.nCurrentValue;							// #33700 2014.4.26 yyagi
-			//CDTXMania.ConfigIni.e判定表示優先度 = (E判定表示優先度) this.iSystemJudgeDispPriority.n現在選択されている項目番号;
+			//CDTXMania.ConfigIni.eJudgeDisplayPriority = (EJudgeDisplayPriority) this.iSystemJudgeDispPriority.n現在選択されている項目番号;
             TJAPlayer3.ConfigIni.ShowChara = this.ShowChara.bON;
             TJAPlayer3.ConfigIni.ShowDancer = this.ShowDancer.bON;
             TJAPlayer3.ConfigIni.ShowRunner = this.ShowRunner.bON;
@@ -2324,7 +2324,7 @@ namespace TJAPlayer3
 
 			TJAPlayer3.ConfigIni.n表示可能な最小コンボ数.Drums = this.iSystemMinComboDrums.n現在の値;
 			TJAPlayer3.ConfigIni.nRisky = this.iSystemRisky.n現在の値;						// #23559 2911.7.27 yyagi
-			//CDTXMania.ConfigIni.e判定表示優先度.Drums = (E判定表示優先度) this.iDrumsJudgeDispPriority.n現在選択されている項目番号;
+			//CDTXMania.ConfigIni.eJudgeDisplayPriority.Drums = (EJudgeDisplayPriority) this.iDrumsJudgeDispPriority.n現在選択されている項目番号;
 
             TJAPlayer3.ConfigIni.bBranchGuide = this.iTaikoBranchGuide.bON;
             TJAPlayer3.ConfigIni.nDefaultCourse = this.iTaikoDefaultCourse.n現在選択されている項目番号;

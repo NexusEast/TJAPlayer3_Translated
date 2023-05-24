@@ -2246,7 +2246,7 @@ for (int i = 0; i < 3; i++) {
 					stage選曲.r現在選択中のスコア.譜面情報.演奏履歴[ j ] = ini.stファイル.History[ j ];
 				}
 			}
-			if( ConfigIni.bScoreIniを出力する )
+			if( ConfigIni.bOutputToScoreIni )
 			{
 				ini.t書き出し( strFilename );
 			}
