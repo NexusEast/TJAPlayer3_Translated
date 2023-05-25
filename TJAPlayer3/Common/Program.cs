@@ -55,12 +55,12 @@ namespace TJAPlayer3
         [STAThread]
         private static void Main()
         {
-            ErrorReporter.WithErrorReporting(MainImpl);
+			MainImpl();
         }
 
         private static void MainImpl()
 		{
-            UpdateChecker.CheckForAndOfferUpdate();
+            //UpdateChecker.CheckForAndOfferUpdate();
 
 			mutex二重起動防止用 = new Mutex( false, "DTXManiaMutex" );
 
@@ -88,12 +88,13 @@ namespace TJAPlayer3
 					Thread.CurrentThread.CurrentCulture = new CultureInfo( "en-US" );
 #endif
 
-                    using (var mania = new TJAPlayer3())
+                    using (var mania = new TJAPlayer3(true))
                     {
-                        mania.Run();
+                        CourseSelect.GetSelectedCourse();
+						return;
                     }
 
-					Trace.WriteLine( "" );
+                    Trace.WriteLine( "" );
 					Trace.WriteLine( "遊んでくれてありがとう！" );
 
 					if ( Trace.Listeners.Count > 1 )

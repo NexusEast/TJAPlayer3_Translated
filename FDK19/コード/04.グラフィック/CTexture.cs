@@ -230,7 +230,6 @@ namespace FDK
                 this.szテクスチャサイズ = this.t指定されたサイズを超えない最適なテクスチャサイズを返す(device, this.sz画像サイズ);
 
                 int colorKey = (b黒を透過する) ? unchecked((int)0xFF000000) : 0;
-                this.texture = Texture.FromMemory(device.UnderlyingDevice, txData, this.sz画像サイズ.Width, this.sz画像サイズ.Height, 1, Usage.None, format, pool, Filter.Point, Filter.None, colorKey);
             }
             catch
             {
@@ -255,16 +254,6 @@ namespace FDK
                 int colorKey = (b黒を透過する) ? unchecked((int)0xFF000000) : 0;
                 this.szテクスチャサイズ = this.t指定されたサイズを超えない最適なテクスチャサイズを返す(device, this.sz画像サイズ);
                 //Trace.TraceInformation( "CTExture() start: " );
-                unsafe  // Bitmapの内部データ(a8r8g8b8)を自前でゴリゴリコピーする
-                {
-                    this.texture = new Texture(device.UnderlyingDevice, this.sz画像サイズ.Width, this.sz画像サイズ.Height, 1, Usage.None, format, pool);
-                    BitmapData srcBufData = bitmap.LockBits(new Rectangle(0, 0, this.sz画像サイズ.Width, this.sz画像サイズ.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
-                    DataRectangle destDataRectangle = texture.LockRectangle(0, LockFlags.Discard);  // None
-                    IntPtr src_scan0 = (IntPtr)((Int64)srcBufData.Scan0);
-                    destDataRectangle.Data.WriteRange(src_scan0, this.sz画像サイズ.Width * 4 * this.sz画像サイズ.Height);
-                    texture.UnlockRectangle(0);
-                    bitmap.UnlockBits(srcBufData);
-                }
                 //Trace.TraceInformation( "CTExture() End: " );
             }
             catch
@@ -865,56 +854,8 @@ namespace FDK
         }
         private Size t指定されたサイズを超えない最適なテクスチャサイズを返す(Device device, Size sz指定サイズ)
         {
-            var deviceCapabilities = device.Capabilities;
-            var deviceCapabilitiesTextureCaps = deviceCapabilities.TextureCaps;
-
-            bool b条件付きでサイズは２の累乗でなくてもOK = (deviceCapabilitiesTextureCaps & TextureCaps.NonPow2Conditional) != 0;
-            bool bサイズは２の累乗でなければならない = (deviceCapabilitiesTextureCaps & TextureCaps.Pow2) != 0;
-            bool b正方形でなければならない = (deviceCapabilitiesTextureCaps & TextureCaps.SquareOnly) != 0;
-            int n最大幅 = deviceCapabilities.MaxTextureWidth;
-            int n最大高 = deviceCapabilities.MaxTextureHeight;
-            var szサイズ = new Size(sz指定サイズ.Width, sz指定サイズ.Height);
-
-            if (bサイズは２の累乗でなければならない && !b条件付きでサイズは２の累乗でなくてもOK)
-            {
-                // 幅を２の累乗にする
-                int n = 1;
-                do
-                {
-                    n *= 2;
-                }
-                while (n <= sz指定サイズ.Width);
-                sz指定サイズ.Width = n;
-
-                // 高さを２の累乗にする
-                n = 1;
-                do
-                {
-                    n *= 2;
-                }
-                while (n <= sz指定サイズ.Height);
-                sz指定サイズ.Height = n;
-            }
-
-            if (sz指定サイズ.Width > n最大幅)
-                sz指定サイズ.Width = n最大幅;
-
-            if (sz指定サイズ.Height > n最大高)
-                sz指定サイズ.Height = n最大高;
-
-            if (b正方形でなければならない)
-            {
-                if (szサイズ.Width > szサイズ.Height)
-                {
-                    szサイズ.Height = szサイズ.Width;
-                }
-                else if (szサイズ.Width < szサイズ.Height)
-                {
-                    szサイズ.Width = szサイズ.Height;
-                }
-            }
-
-            return szサイズ;
+           
+            return new Size(sz指定サイズ.Width, sz指定サイズ.Height);
         }
 
 

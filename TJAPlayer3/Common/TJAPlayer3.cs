@@ -340,8 +340,9 @@ namespace TJAPlayer3
 
         // コンストラクタ
 
-        public TJAPlayer3()
+        public TJAPlayer3(bool bHeadless)
 		{
+			this.bHeadless = bHeadless;
 			TJAPlayer3.app = this;
 			this.t起動処理();
 		}
@@ -1455,7 +1456,7 @@ for (int i = 0; i < 3; i++) {
             get;
             private set;
         }
-
+		private bool bHeadless;
         private void t起動処理()
 		{
 			#region [ strEXEのあるフォルダを決定する ]
@@ -1578,8 +1579,11 @@ for (int i = 0; i < 3; i++) {
 			
 			try
 			{
-				base.GraphicsDeviceManager.ChangeDevice(settings);
-			}
+                if (!bHeadless)
+				{
+                    base.GraphicsDeviceManager.ChangeDevice(settings);
+                }
+            }
 			catch (DeviceCreationException e)
 			{
 				Trace.TraceError(e.ToString());
@@ -1767,14 +1771,18 @@ for (int i = 0; i < 3; i++) {
 						soundDeviceType = ESoundDeviceType.Unknown;
 						break;
 				}
-				Sound管理 = new CSoundManager(base.Window.Handle,
-											soundDeviceType,
-											TJAPlayer3.ConfigIni.nWASAPIBufferSizeMs,
-					// CDTXMania.ConfigIni.nASIOBufferSizeMs,
-											0,
-											TJAPlayer3.ConfigIni.nASIODevice,
-											TJAPlayer3.ConfigIni.bUseOSTimer
-				);
+				if (!bHeadless)
+				{
+
+                    Sound管理 = new CSoundManager(base.Window.Handle,
+                                                soundDeviceType,
+                                                TJAPlayer3.ConfigIni.nWASAPIBufferSizeMs,
+                                                // CDTXMania.ConfigIni.nASIOBufferSizeMs,
+                                                0,
+                                                TJAPlayer3.ConfigIni.nASIODevice,
+                                                TJAPlayer3.ConfigIni.bUseOSTimer
+                    );
+                }
 				//Sound管理 = FDK.CSoundManager.Instance;
 				//Sound管理.t初期化( soundDeviceType, 0, 0, CDTXMania.ConfigIni.nASIODevice, base.Window.Handle );
 
@@ -1803,9 +1811,12 @@ for (int i = 0; i < 3; i++) {
 
 				ShowWindowTitleWithSoundType();
 				FDK.CSoundManager.bIsTimeStretch = TJAPlayer3.ConfigIni.bTimeStretch;
-				Sound管理.nMasterVolume = TJAPlayer3.ConfigIni.nMasterVolume;
-				//FDK.CSoundManager.bIsMP3DecodeByWindowsCodec = CDTXMania.ConfigIni.bNoMP3Streaming;
-				Trace.TraceInformation( "サウンドデバイスの初期化を完了しました。" );
+				if (Sound管理 != null)
+				{
+                    Sound管理.nMasterVolume = TJAPlayer3.ConfigIni.nMasterVolume;
+                }
+                //FDK.CSoundManager.bIsMP3DecodeByWindowsCodec = CDTXMania.ConfigIni.bNoMP3Streaming;
+                Trace.TraceInformation( "サウンドデバイスの初期化を完了しました。" );
 			}
 			catch (Exception e)
 			{
@@ -1906,7 +1917,7 @@ for (int i = 0; i < 3; i++) {
 		public void ShowWindowTitleWithSoundType()
 		{
 			string delay = "";
-			if ( CSoundManager.GetCurrentSoundDeviceType() != "DirectSound" )
+			if ( CSoundManager.GetCurrentSoundDeviceType() != "DirectSound" && Sound管理!= null)
 			{
 				delay = " (" + Sound管理.GetSoundDelay() + "ms)";
 			}

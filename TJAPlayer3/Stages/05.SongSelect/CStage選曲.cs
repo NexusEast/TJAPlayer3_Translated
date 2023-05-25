@@ -53,7 +53,7 @@ namespace TJAPlayer3
         public int n確定された曲の難易度
         {
             get;
-            private set;
+            set;
         }
         public string str確定された曲のジャンル
         {

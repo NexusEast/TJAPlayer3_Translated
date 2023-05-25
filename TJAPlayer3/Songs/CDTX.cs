@@ -504,9 +504,9 @@ namespace TJAPlayer3
                     "0xF0", "歌詞", "??", "SUDDEN", "??", "??", "??", "??",
                     "??", "??", "??", "??", "??", "??", "??", "??", "譜面終了"
                 };
-                return string.Format("CChip: 位置:{0:D4}.{1:D3}, 時刻{2:D6}, Ch:{3:X2}({4}), Pn:{5}({11})(内部{6}), Pd:{7}, Sz:{8}, BMScroll:{9}, Auto:{10}, コース:{11}",
+                return string.Format("CChip: 位置:{0:D4}.{1:D3}, 時刻{2}, Ch:{3:X2}({4}), Pn:{5}({11})(内部{6}), Pd:{7}, Sz:{8}, BMScroll:{9}, Auto:{10}, コース:{11}",
                     this.n発声位置 / 384, this.n発声位置 % 384,
-                    this.n発声時刻ms,
+                    ((float)this.n発声時刻ms * 0.001f),
                     this.nチャンネル番号, chToStr[this.nチャンネル番号],
                     this.n整数値, this.n整数値_内部番号,
                     this.db実数値,
