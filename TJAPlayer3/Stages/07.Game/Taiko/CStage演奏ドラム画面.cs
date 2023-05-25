@@ -1081,7 +1081,7 @@ namespace TJAPlayer3
                     }
 
 
-                    if ( pChip.nノーツ出現時刻ms != 0 && ( nPlayTime < pChip.nNoiseTimems - pChip.nノーツ出現時刻ms ) )
+                    if ( pChip.nNodeAppearTimems != 0 && ( nPlayTime < pChip.nNoiseTimems - pChip.nNodeAppearTimems ) )
                         pChip.bShow = false;
                     else
                         pChip.bShow = true;
@@ -1103,9 +1103,9 @@ namespace TJAPlayer3
                     int x = 0;
                     int y = TJAPlayer3.Skin.Game_Lane_Field_Y[nPlayer];
 
-                    if ( pChip.nノーツ移動開始時刻ms != 0 && ( nPlayTime < pChip.nNoiseTimems - pChip.nノーツ移動開始時刻ms ) )
+                    if ( pChip.nMovementStandbyTimems != 0 && ( nPlayTime < pChip.nNoiseTimems - pChip.nMovementStandbyTimems ) )
                     {
-                        x = (int)( ( ( ( pChip.nNoiseTimems ) - ( pChip.nNoiseTimems - pChip.nノーツ移動開始時刻ms ) ) * pChip.dbBPM * pChip.dbSCROLL * ( this.act譜面スクロール速度.db現在の譜面スクロール速度.Drums + 1 ) ) / 502.8594 );
+                        x = (int)( ( ( ( pChip.nNoiseTimems ) - ( pChip.nNoiseTimems - pChip.nMovementStandbyTimems ) ) * pChip.dbBPM * pChip.dbSCROLL * ( this.act譜面スクロール速度.db現在の譜面スクロール速度.Drums + 1 ) ) / 502.8594 );
                     }
                     else
                     {
@@ -1368,15 +1368,15 @@ namespace TJAPlayer3
             {
                 if( pChip.nChannelNumber >= 0x15 && pChip.nChannelNumber <= 0x18 )
                 {
-                    if( pChip.nノーツ出現時刻ms != 0 && ( CSoundManager.rPlaybackTimer.n現在時刻ms < pChip.nNoiseTimems - pChip.nノーツ出現時刻ms ) )
+                    if( pChip.nNodeAppearTimems != 0 && ( CSoundManager.rPlaybackTimer.n現在時刻ms < pChip.nNoiseTimems - pChip.nNodeAppearTimems ) )
                         pChip.bShow = false;
-                    else if( pChip.nノーツ出現時刻ms != 0 && pChip.nノーツ移動開始時刻ms != 0 )
+                    else if( pChip.nNodeAppearTimems != 0 && pChip.nMovementStandbyTimems != 0 )
                         pChip.bShow = true;
 
-                    if( pChip.nノーツ移動開始時刻ms != 0 && ( CSoundManager.rPlaybackTimer.n現在時刻ms < pChip.nNoiseTimems - pChip.nノーツ移動開始時刻ms ) )
+                    if( pChip.nMovementStandbyTimems != 0 && ( CSoundManager.rPlaybackTimer.n現在時刻ms < pChip.nNoiseTimems - pChip.nMovementStandbyTimems ) )
                     {
-                        nノート座標 = (int)( ( ( ( pChip.nNoiseTimems ) - ( pChip.nNoiseTimems - pChip.nノーツ移動開始時刻ms ) ) * pChip.dbBPM * pChip.dbSCROLL * ( this.act譜面スクロール速度.db現在の譜面スクロール速度.Drums + 1 ) ) / 502.8594 );
-                        nノート末端座標 = (int)( ( ( pChip.nノーツ終了時刻ms - ( pChip.nNoiseTimems - pChip.nノーツ移動開始時刻ms ) ) * pChip.dbBPM * pChip.dbSCROLL * ( this.act譜面スクロール速度.db現在の譜面スクロール速度.Drums + 1 ) ) / 502.8594 );
+                        nノート座標 = (int)( ( ( ( pChip.nNoiseTimems ) - ( pChip.nNoiseTimems - pChip.nMovementStandbyTimems ) ) * pChip.dbBPM * pChip.dbSCROLL * ( this.act譜面スクロール速度.db現在の譜面スクロール速度.Drums + 1 ) ) / 502.8594 );
+                        nノート末端座標 = (int)( ( ( pChip.nノーツ終了時刻ms - ( pChip.nNoiseTimems - pChip.nMovementStandbyTimems ) ) * pChip.dbBPM * pChip.dbSCROLL * ( this.act譜面スクロール速度.db現在の譜面スクロール速度.Drums + 1 ) ) / 502.8594 );
                     }
                     else
                     {
@@ -1386,13 +1386,13 @@ namespace TJAPlayer3
                 }
                 if( pChip.nChannelNumber == 0x18 )
                 {
-                    if( pChip.nノーツ出現時刻ms != 0 && ( CSoundManager.rPlaybackTimer.n現在時刻ms < n先頭発声位置 - pChip.nノーツ出現時刻ms ) )
+                    if( pChip.nNodeAppearTimems != 0 && ( CSoundManager.rPlaybackTimer.n現在時刻ms < n先頭発声位置 - pChip.nNodeAppearTimems ) )
                         pChip.bShow = false;
                     else
                         pChip.bShow = true;
 
                     CDTX.CChip cChip = null;
-                    if( pChip.nノーツ移動開始時刻ms != 0 ) // n先頭発声位置 value is only used when this condition is met
+                    if( pChip.nMovementStandbyTimems != 0 ) // n先頭発声位置 value is only used when this condition is met
                     {
                         cChip = TJAPlayer3.stage演奏ドラム画面.r指定時刻に一番近い連打Chip_ヒット未済問わず不可視考慮( pChip.nNoiseTimems, 0x10 + pChip.n連打音符State, 0, nPlayer );
                         if( cChip != null )
@@ -1403,9 +1403,9 @@ namespace TJAPlayer3
 
                     //連打音符先頭の開始時刻を取得しなければならない。
                     //そうしなければ連打先頭と連打末端の移動開始時刻にズレが出てしまう。
-                    if( pChip.nノーツ移動開始時刻ms != 0 && ( CSoundManager.rPlaybackTimer.n現在時刻ms < n先頭発声位置 - pChip.nノーツ移動開始時刻ms ) )
+                    if( pChip.nMovementStandbyTimems != 0 && ( CSoundManager.rPlaybackTimer.n現在時刻ms < n先頭発声位置 - pChip.nMovementStandbyTimems ) )
                     {
-                        nノート座標 = (int)( ( ( pChip.nNoiseTimems - ( n先頭発声位置 - pChip.nノーツ移動開始時刻ms ) ) * pChip.dbBPM * pChip.dbSCROLL * ( this.act譜面スクロール速度.db現在の譜面スクロール速度.Drums + 1 ) ) / 502.8594 );
+                        nノート座標 = (int)( ( ( pChip.nNoiseTimems - ( n先頭発声位置 - pChip.nMovementStandbyTimems ) ) * pChip.dbBPM * pChip.dbSCROLL * ( this.act譜面スクロール速度.db現在の譜面スクロール速度.Drums + 1 ) ) / 502.8594 );
                     }
                     else
                     {
@@ -1419,7 +1419,7 @@ namespace TJAPlayer3
 
                 if( pChip.nChannelNumber >= 0x15 && pChip.nChannelNumber <= 0x17 )
                 {
-                    if( pChip.nノーツ移動開始時刻ms != 0 && ( CSoundManager.rPlaybackTimer.n現在時刻ms < pChip.nNoiseTimems - pChip.nノーツ移動開始時刻ms ) )
+                    if( pChip.nMovementStandbyTimems != 0 && ( CSoundManager.rPlaybackTimer.n現在時刻ms < pChip.nNoiseTimems - pChip.nMovementStandbyTimems ) )
                     {
                         x = TJAPlayer3.Skin.Game_Lane_Field_X[nPlayer] - (130 / 2) + nノート座標;
                         x末端 = TJAPlayer3.Skin.Game_Lane_Field_X[nPlayer] - (130 / 2) + nノート末端座標;
@@ -1432,7 +1432,7 @@ namespace TJAPlayer3
                 }
                 else if( pChip.nChannelNumber == 0x18 )
                 {
-                    if( pChip.nノーツ移動開始時刻ms != 0 && ( CSoundManager.rPlaybackTimer.n現在時刻ms < n先頭発声位置 - pChip.nノーツ移動開始時刻ms ) )
+                    if( pChip.nMovementStandbyTimems != 0 && ( CSoundManager.rPlaybackTimer.n現在時刻ms < n先頭発声位置 - pChip.nMovementStandbyTimems ) )
                     {
                         x = TJAPlayer3.Skin.Game_Lane_Field_X[nPlayer] - (130 / 2) + nノート座標;
                     }

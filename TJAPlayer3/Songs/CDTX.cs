@@ -371,8 +371,8 @@ namespace TJAPlayer3
             public double dbNoiseTimems;
             public int nノーツ終了位置;
             public int nノーツ終了時刻ms;
-            public int nノーツ出現時刻ms;
-            public int nノーツ移動開始時刻ms;
+            public int nNodeAppearTimems;
+            public int nMovementStandbyTimems;
             public int n分岐回数;
             public int n連打音符State;
             public int nLag;                // 2011.2.1 yyagi
@@ -1074,8 +1074,8 @@ namespace TJAPlayer3
         public string strBGIMAGE_PATH;
         public string strBGVIDEO_PATH;
 
-        public double db出現時刻;
-        public double db移動待機時刻;
+        public double dbAppearTime;
+        public double dbMovementStandbyTime;
 
         public string strBGM_PATH;
         public int SongVol;
@@ -3502,10 +3502,10 @@ namespace TJAPlayer3
             {
                 strArray = argument.Split(chDelimiter);
                 WarnSplitLength("#SUDDEN", strArray, 2);
-                double db出現時刻 = Convert.ToDouble(strArray[0]);
-                double db移動待機時刻 = Convert.ToDouble(strArray[1]);
-                this.db出現時刻 = db出現時刻;
-                this.db移動待機時刻 = db移動待機時刻;
+                double dbAppearTime = Convert.ToDouble(strArray[0]);
+                double dbMovementStandbyTime = Convert.ToDouble(strArray[1]);
+                this.dbAppearTime = dbAppearTime;
+                this.dbMovementStandbyTime = dbMovementStandbyTime;
 
                 //チップ追加して割り込んでみる。
                 var chip = new CChip();
@@ -3514,8 +3514,8 @@ namespace TJAPlayer3
                 chip.nNoiseLocation = ((this.nCurrentBar) * 384) - 1;
                 chip.nNoiseTimems = (int)this.dbNowTime;
                 chip.nIntNum_Internal = 0;
-                chip.nノーツ出現時刻ms = (int)this.db出現時刻;
-                chip.nノーツ移動開始時刻ms = (int)this.db移動待機時刻;
+                chip.nNodeAppearTimems = (int)this.dbAppearTime;
+                chip.nMovementStandbyTimems = (int)this.dbMovementStandbyTime;
                 chip.nCourse = this.nCurrentCourse;
 
                 // チップを配置。
@@ -3540,7 +3540,7 @@ namespace TJAPlayer3
                     strArray = reparg.Split(chDelimiter);
 
                     WarnSplitLength("#JPOSSCROLL", strArray, 4);
-                    double db移動時刻 = Convert.ToDouble(strArray[0]);
+                    double sbMovementTime = Convert.ToDouble(strArray[0]);
                     int n移動px = Convert.ToInt32(strArray[1]);
                     int n移動Ypx = Convert.ToInt32(strArray[2]);
                     int n移動方向 = Convert.ToInt32(strArray[3]);
@@ -3556,7 +3556,7 @@ namespace TJAPlayer3
 
                     // チップを配置。
 
-                    this.listJPOSSCROLL.Add(this.nInternalNumberJSCROLL1to, new CJPOSSCROLL() { nInternalNumber = this.nInternalNumberJSCROLL1to, nNotationalNumber = 0, db移動時間 = db移動時刻, n移動距離px = n移動px, n移動距離Ypx = n移動Ypx, n移動方向 = n移動方向 });
+                    this.listJPOSSCROLL.Add(this.nInternalNumberJSCROLL1to, new CJPOSSCROLL() { nInternalNumber = this.nInternalNumberJSCROLL1to, nNotationalNumber = 0, db移動時間 = sbMovementTime, n移動距離px = n移動px, n移動距離Ypx = n移動Ypx, n移動方向 = n移動方向 });
                     this.listChip.Add(chip);
                     this.nInternalNumberJSCROLL1to++;
                 }
@@ -3804,8 +3804,8 @@ namespace TJAPlayer3
                                     chip.nCourse = nCurrentCourse;
                                 chip.n分岐回数 = this.nInternalNumberBRANCH1to;
                                 chip.e楽器パート = E楽器パート.TAIKO;
-                                chip.nノーツ出現時刻ms = (int)(this.db出現時刻 * 1000.0);
-                                chip.nノーツ移動開始時刻ms = (int)(this.db移動待機時刻 * 1000.0);
+                                chip.nNodeAppearTimems = (int)(this.dbAppearTime * 1000.0);
+                                chip.nMovementStandbyTimems = (int)(this.dbMovementStandbyTime * 1000.0);
                                 chip.nPlayerSide = this.nPlayerSide;
                                 chip.bGOGOTIME = this.bGOGOTIME;
 
@@ -3881,8 +3881,8 @@ namespace TJAPlayer3
                                     chip.nノーツ終了時刻ms = (int)this.dbNowTime;
                                     chip.fBMSCROLLTime_end = (float)this.dbNowBMScollTime;
 
-                                    chip.nノーツ出現時刻ms = listChip[nNowRollCount].nノーツ出現時刻ms;
-                                    chip.nノーツ移動開始時刻ms = listChip[nNowRollCount].nノーツ移動開始時刻ms;
+                                    chip.nNodeAppearTimems = listChip[nNowRollCount].nNodeAppearTimems;
+                                    chip.nMovementStandbyTimems = listChip[nNowRollCount].nMovementStandbyTimems;
 
                                     chip.n連打音符State = nNowRoll;
                                     listChip[nNowRollCount].nノーツ終了位置 = (this.nCurrentBar * 384) + ((384 * n) / nCharacterCount);
