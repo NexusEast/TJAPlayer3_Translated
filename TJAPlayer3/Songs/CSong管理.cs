@@ -197,7 +197,7 @@ namespace TJAPlayer3
                             bool b = false;
                             for( int n = 0; n < (int)Difficulty.Total; n++ )
                             {
-                                if( dtx.b譜面が存在する[ n ] )
+                                if( dtx.AvailableCharts[ n ] )
                                 {
                                     c曲リストノード.nスコア数++;
                                     c曲リストノード.r親ノード = node親;
@@ -326,7 +326,7 @@ namespace TJAPlayer3
                         bool b = false;
                         for( int n = 0; n < (int)Difficulty.Total; n++ )
                         {
-                            if( dtx.b譜面が存在する[ n ] )
+                            if( dtx.AvailableCharts[ n ] )
                             {
                                 c曲リストノード.nスコア数++;
                                 c曲リストノード.r親ノード = node親;

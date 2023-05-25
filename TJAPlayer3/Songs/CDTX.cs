@@ -504,9 +504,9 @@ namespace TJAPlayer3
                     "0xF0", "歌詞", "??", "SUDDEN", "??", "??", "??", "??",
                     "??", "??", "??", "??", "??", "??", "??", "??", "譜面終了"
                 };
-                return string.Format("CChip: 位置:{0:D4}.{1:D3}, 時刻{2:D6}, Ch:{3:X2}({4}), Pn:{5}({11})(内部{6}), Pd:{7}, Sz:{8}, BMScroll:{9}, Auto:{10}, コース:{11}",
+                return string.Format("CChip: 位置:{0:D4}.{1:D3}, 時刻{2}, Ch:{3:X2}({4}), Pn:{5}({11})(内部{6}), Pd:{7}, Sz:{8}, BMScroll:{9}, Auto:{10}, コース:{11}",
                     this.n発声位置 / 384, this.n発声位置 % 384,
-                    this.n発声時刻ms,
+                    ((float)this.n発声時刻ms* 0.001f),
                     this.nチャンネル番号, chToStr[this.nチャンネル番号],
                     this.n整数値, this.n整数値_内部番号,
                     this.db実数値,
@@ -911,11 +911,11 @@ namespace TJAPlayer3
 
         public class CLine
         {
-            public int n小節番号;
-            public int n文字数;
+            public int nBarIndex;
+            public int nCharacterNum;
             public double db発声時刻;
             public double dbBMS時刻;
-            public int nコース;
+            public int nCourse;
             public int nタイプ;
         }
 
@@ -976,14 +976,14 @@ namespace TJAPlayer3
         public string PREVIEW;
         public string strハッシュofDTXファイル;
         public string strファイル名;
-        public string strファイル名の絶対パス;
+        public string strtFileAbsolutePath;
         public string strFileName;
         public string SUBTITLE;
         public string TITLE;
         public double dbScrollSpeed;
         public int nデモBGMオフセット;
 
-        private int n現在の小節数 = 1;
+        private int nCurrentBar = 1;
         private bool bBarLine = true;
         private int n命令数 = 0;
 
@@ -1021,11 +1021,11 @@ namespace TJAPlayer3
         private int nLineCountTemp; //分岐開始時の小節数を記録。
         private int nLineCountCourseTemp; //現在カウント中のコースを記録。
 
-        public int n参照中の難易度 = 3;
+        public int nSelectedDifficulty = 3;
         public int nScoreModeTmp = 99; //2017.01.28 DD
         public int[,] nScoreInit = new int[2, (int)Difficulty.Total]; //[ x, y ] x=通常or真打 y=コース
         public int[] nScoreDiff = new int[(int)Difficulty.Total]; //[y]
-        public bool[,] b配点が指定されている = new bool[3, (int)Difficulty.Total]; //2017.06.04 kairera0467 [ x, y ] x=通常(Init)or真打orDiff y=コース
+        public bool[,] bHasScoreAssigned = new bool[3, (int)Difficulty.Total]; //2017.06.04 kairera0467 [ x, y ] x=通常(Init)or真打orDiff y=コース
 
         private double dbBarLength;
         public float fNow_Measure_s = 4.0f;
@@ -1048,11 +1048,11 @@ namespace TJAPlayer3
 
         public List<string> listLiryc; //歌詞を格納していくリスト。スペル忘れた(ぉい
 
-        private int listBalloon_Normal_数値管理;
-        private int listBalloon_Expert_数値管理;
-        private int listBalloon_Master_数値管理;
+        private int listBalloon_Normal_NumberManage;
+        private int listBalloon_Expert_NumberManage;
+        private int listBalloon_Master_NumberManage;
 
-        public bool[] b譜面が存在する = new bool[(int)Difficulty.Total];
+        public bool[] AvailableCharts = new bool[(int)Difficulty.Total];
 
         private string[] dlmtSpace = { " " };
         private string[] dlmtEnter = { "\n" };
@@ -1132,14 +1132,14 @@ namespace TJAPlayer3
             this.bチップがある.OpenBass = false;
             this.strファイル名 = "";
             this.strFileName = "";
-            this.strファイル名の絶対パス = "";
+            this.strtFileAbsolutePath = "";
             this.n無限管理WAV = new int[36 * 36];
             this.n無限管理BPM = new int[36 * 36];
             this.n無限管理PAN = new int[36 * 36];
             this.n無限管理SIZE = new int[36 * 36];
-            this.listBalloon_Normal_数値管理 = 0;
-            this.listBalloon_Expert_数値管理 = 0;
-            this.listBalloon_Master_数値管理 = 0;
+            this.listBalloon_Normal_NumberManage = 0;
+            this.listBalloon_Expert_NumberManage = 0;
+            this.listBalloon_Master_NumberManage = 0;
             this.nRESULTIMAGE用優先順位 = new int[7];
             this.nRESULTMOVIE用優先順位 = new int[7];
             this.nRESULTSOUND用優先順位 = new int[7];
@@ -1171,7 +1171,11 @@ namespace TJAPlayer3
             this.stGDAParam = stgdaparamArray;
             #endregion
             this.nBGMAdjust = 0;
-            this.nPolyphonicSounds = TJAPlayer3.ConfigIni.nPoliphonicSounds;
+            if (TJAPlayer3.ConfigIni!= null)
+            {
+                this.nPolyphonicSounds = TJAPlayer3.ConfigIni.nPoliphonicSounds;
+
+            }
 
             //this.nScoreModeTmp = 1;
             for (int y = 0; y < (int)Difficulty.Total; y++)
@@ -1179,9 +1183,9 @@ namespace TJAPlayer3
                 this.nScoreInit[0, y] = 300;
                 this.nScoreInit[1, y] = 1000;
                 this.nScoreDiff[y] = 120;
-                this.b配点が指定されている[0, y] = false;
-                this.b配点が指定されている[1, y] = false;
-                this.b配点が指定されている[2, y] = false;
+                this.bHasScoreAssigned[0, y] = false;
+                this.bHasScoreAssigned[1, y] = false;
+                this.bHasScoreAssigned[2, y] = false;
             }
 
             this.bBarLine = true;
@@ -1656,9 +1660,9 @@ namespace TJAPlayer3
         public void t入力(string strファイル名, bool bヘッダのみ, double db再生速度, int nBGMAdjust, int nReadVersion, int nPlayerSide, bool bSession)
         {
             this.bヘッダのみ = bヘッダのみ;
-            this.strファイル名の絶対パス = Path.GetFullPath(strファイル名);
-            this.strファイル名 = Path.GetFileName(this.strファイル名の絶対パス);
-            this.strFileName = Path.GetDirectoryName(this.strファイル名の絶対パス) + @"\";
+            this.strtFileAbsolutePath = Path.GetFullPath(strファイル名);
+            this.strファイル名 = Path.GetFileName(this.strtFileAbsolutePath);
+            this.strFileName = Path.GetDirectoryName(this.strtFileAbsolutePath) + @"\";
             //if ( this.e種別 != EType.SMF )
             {
                 try
@@ -1778,7 +1782,7 @@ namespace TJAPlayer3
                         {
                             //this.t入力(str1);
                             //this.t入力_V3( str1, 3 );
-                            this.t入力_V4(str1);
+                            this.tParser_V4(str1);
                         }
                         if (ce.Current == '#')
                         {
@@ -1815,7 +1819,7 @@ namespace TJAPlayer3
                     this.n無限管理BPM = null;
                     this.n無限管理PAN = null;
                     this.n無限管理SIZE = null;
-                    //this.t入力_行解析ヘッダ( str1 );
+                    //this.tPaser_ParseHeader( str1 );
                     if (!this.bヘッダのみ)
                     {
                         #region [ BPM/BMP初期化 ]
@@ -2210,7 +2214,7 @@ namespace TJAPlayer3
                                         //chip.nノーツ終了時刻ms = ms + ( (int) ( ( ( 0x271 * ( chip.nノーツ終了位置 - n発声位置 ) ) * dbBarLength ) / bpm ) );
 
                                         #region[チップ番号を記録]
-                                        //switch(chip.nコース)
+                                        //switch(chip.nCourse)
                                         //{
                                         //    case 0:
                                         //        this.n連打チップ_temp[0] = this.nNowRoll;
@@ -2245,7 +2249,7 @@ namespace TJAPlayer3
                                         //風船は現時点では未実装のため処理しない。
 
 
-                                        //switch (chip.nコース)
+                                        //switch (chip.nCourse)
                                         //{
                                         //    case 0:
                                         //        if (this.listChip[this.n連打チップ_temp[0]].nチャンネル番号 == 0x99) break;
@@ -2278,7 +2282,7 @@ namespace TJAPlayer3
                                         //this.dbNowSCROLL = ( ( this.listSCROLL[ chip.n整数値_内部番号 ].n表記上の番号 == 0 ) ? 0.0 : 1.0 ) + this.listSCROLL[ chip.n整数値_内部番号 ].dbSCROLL値;
                                         //}
 
-                                        //switch (chip.nコース)
+                                        //switch (chip.nCourse)
                                         //{
                                         //    case 0:
                                         //        this.dbNowSCROLL_Normal = this.dbNowSCROLL;
@@ -2481,14 +2485,14 @@ namespace TJAPlayer3
             }
         }
 
-        private string tコメントを削除する(string input)
+        private string tRemoveComments(string input)
         {
             string strOutput = Regex.Replace(input, @" *//.*", ""); //2017.01.28 DD コメント前のスペースも削除するように修正
 
             return strOutput;
         }
 
-        private string[] tコマンド行を削除したTJAを返す(string[] input, int nMode)
+        private string[] tRemoveComments(string[] input, int nMode)
         {
             var sb = new StringBuilder();
             
@@ -2551,7 +2555,7 @@ namespace TJAPlayer3
             return strOutput;
         }
 
-        private string[] t空のstring配列を詰めたstring配列を返す(string[] input)
+        private string[] tBuildEmptyStringArray(string[] input)
         {
             var sb = new StringBuilder();
 
@@ -2581,47 +2585,47 @@ namespace TJAPlayer3
         }
 
         /// <summary>
-        /// 
+        /// Count the number of characters in the t1 bar and add it to the list
         /// </summary>
         /// <param name="InputText"></param>
         /// <returns>1小節内の文字数</returns>
-        private void t1小節の文字数をカウントしてリストに追加する(string InputText)
+        private void tAppendCharactersFromBarToList(string InputText)
         {
             int nCount = 0;
 
             if (InputText.StartsWith("#BRANCHSTART"))
             {
-                this.nLineCountTemp = this.n現在の小節数;
+                this.nLineCountTemp = this.nCurrentBar;
                 return;
             }
             else if (InputText.StartsWith("#N"))
             {
                 this.nLineCountCourseTemp = 0;
-                this.n現在の小節数 = this.nLineCountTemp;
+                this.nCurrentBar = this.nLineCountTemp;
                 return;
             }
             else if (InputText.StartsWith("#E"))
             {
                 this.nLineCountCourseTemp = 1;
-                this.n現在の小節数 = this.nLineCountTemp;
+                this.nCurrentBar = this.nLineCountTemp;
                 return;
             }
             else if (InputText.StartsWith("#M"))
             {
                 this.nLineCountCourseTemp = 2;
-                this.n現在の小節数 = this.nLineCountTemp;
+                this.nCurrentBar = this.nLineCountTemp;
                 return;
             }
 
 
             var line = new CLine();
-            line.nコース = this.nLineCountCourseTemp;
-            line.n文字数 = InputText.Length - 1;
-            line.n小節番号 = this.n現在の小節数;
+            line.nCourse = this.nLineCountCourseTemp;
+            line.nCharacterNum = InputText.Length - 1;
+            line.nBarIndex = this.nCurrentBar;
 
             this.listLine.Add(line);
 
-            this.n現在の小節数++;
+            this.nCurrentBar++;
 
         }
 
@@ -2632,7 +2636,7 @@ namespace TJAPlayer3
         /// <param name="strInput"></param>
         /// <param name="nMode"></param>
         /// <returns></returns>
-        private object str改行文字を削除する(string strInput, int nMode)
+        private object strRemoveNewLine(string strInput, int nMode)
         {
             string str = "";
             str = strInput.Replace(Environment.NewLine, "\n");
@@ -2660,7 +2664,7 @@ namespace TJAPlayer3
         /// </summary>
         /// <param name="strTJA"></param>
         /// <returns>各コースの譜面(string[5])</returns>
-        private string[] tコースで譜面を分割する(string strTJA)
+        private string[] tSplitCourses(string strTJA)
         {
             string[] strCourseTJA = new string[(int)Difficulty.Total];
 
@@ -2713,7 +2717,7 @@ namespace TJAPlayer3
         /// 
         /// </summary>
         /// <param name="strInput">譜面のデータ</param>
-        private void t入力_V4(string strInput)
+        private void tParser_V4(string strInput)
         {
             if (!String.IsNullOrEmpty(strInput)) //空なら通さない
             {
@@ -2735,7 +2739,7 @@ namespace TJAPlayer3
                 var startIndex = strInput.IndexOf("#START");
                 if (startIndex < 0)
                 {
-                    Trace.TraceWarning($"#START命令が少なくとも1つは必要です。 ({strファイル名の絶対パス})");
+                    Trace.TraceWarning($"#START命令が少なくとも1つは必要です。 ({strtFileAbsolutePath})");
                 }
                 string strInputHeader = strInput.Remove(startIndex);
                 strInput = strInput.Remove(0, startIndex);
@@ -2743,13 +2747,13 @@ namespace TJAPlayer3
                 strInput = strInputHeader + "\n" + strInput;
 
                 //どうせ使わないので先にSplitしてコメントを削除。
-                var strSplitした譜面 = (string[])this.str改行文字を削除する(strInput, 1);
-                for (int i = 0; strSplitした譜面.Length > i; i++)
+                var SplitedCharts = (string[])this.strRemoveNewLine(strInput, 1);
+                for (int i = 0; SplitedCharts.Length > i; i++)
                 {
-                    strSplitした譜面[i] = this.tコメントを削除する(strSplitした譜面[i]);
+                    SplitedCharts[i] = this.tRemoveComments(SplitedCharts[i]);
                 }
                 //空のstring配列を詰める
-                strSplitした譜面 = this.t空のstring配列を詰めたstring配列を返す(strSplitした譜面);
+                SplitedCharts = this.tBuildEmptyStringArray(SplitedCharts);
 
                 #region[ヘッダ]
 
@@ -2759,126 +2763,125 @@ namespace TJAPlayer3
                 //点数などの指定は後から各コースで行うので問題は無いだろう。
 
                 //SplitしたヘッダのLengthの回数だけ、forで回して各種情報を読み取っていく。
-                for (int i = 0; strSplitした譜面.Length > i; i++)
+                for (int i = 0; SplitedCharts.Length > i; i++)
                 {
-                    this.t入力_行解析ヘッダ(strSplitした譜面[i]);
+                    this.tPaser_ParseHeader(SplitedCharts[i]);
                 }
                 #endregion
 
                 #region[譜面]
 
-                int n読み込むコース = 3;
-                int n譜面数 = 0; //2017.07.22 kairera0467 tjaに含まれる譜面の数
+                int nCourseToRead = 3;
+                int nChartsNum = 0; //2017.07.22 kairera0467 tjaに含まれる譜面の数
 
 
-                bool b新処理 = false;
 
                 //まずはコースごとに譜面を分割。
-                strSplitした譜面 = this.tコースで譜面を分割する(StringArrayToString(strSplitした譜面, "\n"));
+                SplitedCharts = this.tSplitCourses(StringArrayToString(SplitedCharts, "\n"));
                 string strTest = "";
                 //存在するかのフラグ作成。
-                for (int i = 0; i < strSplitした譜面.Length; i++)
+                for (int i = 0; i < SplitedCharts.Length; i++)
                 {
-                    if (!String.IsNullOrEmpty(strSplitした譜面[i]))
+                    if (!String.IsNullOrEmpty(SplitedCharts[i]))
                     {
-                        this.b譜面が存在する[i] = true;
-                        n譜面数++;
+                        this.AvailableCharts[i] = true;
+                        nChartsNum++;
                     }
                     else
-                        this.b譜面が存在する[i] = false;
+                        this.AvailableCharts[i] = false;
                 }
                 #region[ 読み込ませるコースを決定 ]
-                if (this.b譜面が存在する[TJAPlayer3.stage選曲.n確定された曲の難易度] == false)
+                if (this.AvailableCharts[TJAPlayer3.stage選曲.n確定された曲の難易度] == false)
                 {
-                    n読み込むコース = TJAPlayer3.stage選曲.n確定された曲の難易度;
-                    n読み込むコース++;
+                    nCourseToRead = TJAPlayer3.stage選曲.n確定された曲の難易度;
+                    nCourseToRead++;
                     for (int n = 1; n < (int)Difficulty.Total; n++)
                     {
-                        if (this.b譜面が存在する[n読み込むコース] == false)
+                        if (this.AvailableCharts[nCourseToRead] == false)
                         {
-                            n読み込むコース++;
-                            if (n読み込むコース > (int)Difficulty.Total - 1)
-                                n読み込むコース = 0;
+                            nCourseToRead++;
+                            if (nCourseToRead > (int)Difficulty.Total - 1)
+                                nCourseToRead = 0;
                         }
                         else
                             break;
                     }
                 }
                 else
-                    n読み込むコース = TJAPlayer3.stage選曲.n確定された曲の難易度;
+                    nCourseToRead = TJAPlayer3.stage選曲.n確定された曲の難易度;
                 #endregion
 
                 //指定したコースの譜面の命令を消去する。
-                strSplitした譜面[n読み込むコース] = CDTXStyleExtractor.tセッション譜面がある(
-                    strSplitした譜面[n読み込むコース],
+                SplitedCharts[nCourseToRead] = CDTXStyleExtractor.tHasSessionInChart(
+                    SplitedCharts[nCourseToRead],
                     TJAPlayer3.ConfigIni.nPlayerCount > 1 ? (this.nPlayerSide + 1) : 0,
-                    this.strファイル名の絶対パス);
+                    this.strtFileAbsolutePath);
 
                 //命令をすべて消去した譜面
-                var str命令消去譜面 = strSplitした譜面[n読み込むコース].Split(this.dlmtEnter, StringSplitOptions.RemoveEmptyEntries);
+                var strActualCharts = SplitedCharts[nCourseToRead].Split(this.dlmtEnter, StringSplitOptions.RemoveEmptyEntries);
                 //if( bLog && stream != null )
                 //{
                 //    stream.WriteLine( "-------------------------------------------------" );
-                //    stream.WriteLine( ">>this.str命令消去譜面(コマンド削除前)" );
-                //    for( int i = 0; i < this.str命令消去譜面.Length; i++ )
+                //    stream.WriteLine( ">>this.strActualCharts(コマンド削除前)" );
+                //    for( int i = 0; i < this.strActualCharts.Length; i++ )
                 //    {
-                //        stream.WriteLine( this.str命令消去譜面[ i ] );
+                //        stream.WriteLine( this.strActualCharts[ i ] );
                 //    }
                 //    stream.WriteLine( "-------------------------------------------------" );
                 //}
-                str命令消去譜面 = this.tコマンド行を削除したTJAを返す(str命令消去譜面, 2);
+                strActualCharts = this.tRemoveComments(strActualCharts, 2);
 
                 //if( bLog && stream != null )
                 //{
                 //    stream.WriteLine( "-------------------------------------------------" );
-                //    stream.WriteLine( ">>this.str命令消去譜面" );
-                //    for( int i = 0; i < this.str命令消去譜面.Length; i++ )
+                //    stream.WriteLine( ">>this.strActualCharts" );
+                //    for( int i = 0; i < this.strActualCharts.Length; i++ )
                 //    {
-                //        stream.WriteLine( this.str命令消去譜面[ i ] );
+                //        stream.WriteLine( this.strActualCharts[ i ] );
                 //    }
                 //    stream.WriteLine( "-------------------------------------------------" );
                 //}
 
 
                 //ここで1行の文字数をカウント。配列にして返す。
-                var strSplit読み込むコース = strSplitした譜面[n読み込むコース].Split(this.dlmtEnter, StringSplitOptions.RemoveEmptyEntries);
+                var strCurrentCourse = SplitedCharts[nCourseToRead].Split(this.dlmtEnter, StringSplitOptions.RemoveEmptyEntries);
                 string str = "";
                 try
                 {
-                    if (n譜面数 > 0)
+                    if (nChartsNum > 0)
                     {
                         //2017.07.22 kairera0467 譜面が2つ以上ある場合はCOURSE以下のBALLOON命令を使う
                         this.listBalloon.Clear();
                         this.listBalloon_Normal.Clear();
                         this.listBalloon_Expert.Clear();
                         this.listBalloon_Master.Clear();
-                        this.listBalloon_Normal_数値管理 = 0;
-                        this.listBalloon_Expert_数値管理 = 0;
-                        this.listBalloon_Master_数値管理 = 0;
+                        this.listBalloon_Normal_NumberManage = 0;
+                        this.listBalloon_Expert_NumberManage = 0;
+                        this.listBalloon_Master_NumberManage = 0;
                     }
 
-                    for (int i = 0; i < strSplit読み込むコース.Length; i++)
+                    for (int i = 0; i < strCurrentCourse.Length; i++)
                     {
-                        if (!String.IsNullOrEmpty(strSplit読み込むコース[i]))
+                        if (!String.IsNullOrEmpty(strCurrentCourse[i]))
                         {
-                            this.t難易度別ヘッダ(strSplit読み込むコース[i]);
+                            this.tDifficultyHeader(strCurrentCourse[i]);
                         }
                     }
-                    for (int i = 0; i < str命令消去譜面.Length; i++)
+                    for (int i = 0; i < strActualCharts.Length; i++)
                     {
-                        if (str命令消去譜面[i].IndexOf(',', 0) == -1 && !String.IsNullOrEmpty(str命令消去譜面[i]))
+                        if (strActualCharts[i].IndexOf(',', 0) == -1 && !String.IsNullOrEmpty(strActualCharts[i]))
                         {
-                            if (str命令消去譜面[i].Substring(0, 1) == "#")
+                            if (strActualCharts[i].Substring(0, 1) == "#")
                             {
-                                this.t1小節の文字数をカウントしてリストに追加する(str + str命令消去譜面[i]);
+                                this.tAppendCharactersFromBarToList(str + strActualCharts[i]);
                             }
 
-                            if (this.CharConvertNote(str命令消去譜面[i].Substring(0, 1)) != -1)
-                                str += str命令消去譜面[i];
+                            if (this.CharConvertNote(strActualCharts[i].Substring(0, 1)) != -1)
+                                str += strActualCharts[i];
                         }
                         else
                         {
-                            this.t1小節の文字数をカウントしてリストに追加する(str + str命令消去譜面[i]);
+                            this.tAppendCharactersFromBarToList(str + strActualCharts[i]);
                             str = "";
                         }
                     }
@@ -2892,34 +2895,34 @@ namespace TJAPlayer3
                 //if( bLog && stream != null )
                 //{
                 //    stream.WriteLine( "-------------------------------------------------" );
-                //    stream.WriteLine( ">>this.str命令消去譜面 (命令消去した後)" );
-                //    for( int i = 0; i < this.str命令消去譜面.Length; i++ )
+                //    stream.WriteLine( ">>this.strActualCharts (命令消去した後)" );
+                //    for( int i = 0; i < this.strActualCharts.Length; i++ )
                 //    {
-                //        stream.WriteLine( this.str命令消去譜面[ i ] );
+                //        stream.WriteLine( this.strActualCharts[ i ] );
                 //    }
                 //    stream.WriteLine( "-------------------------------------------------" );
                 //}
 
                 //読み込み部分本体に渡す譜面を作成。
                 //0:ヘッダー情報 1:#START以降 となる。個数の定義は後からされるため、ここでは省略。
-                var strSplitした後の譜面 = strSplit読み込むコース; //strSplitした譜面[ n読み込むコース ].Split( this.dlmtEnter, StringSplitOptions.RemoveEmptyEntries );
-                strSplitした後の譜面 = this.tコマンド行を削除したTJAを返す(strSplitした後の譜面, 1);
-                //string str命令消去譜面temp = this.StringArrayToString( this.str命令消去譜面 );
+                var strSplitedChart = strCurrentCourse; //SplitedCharts[ nCourseToRead ].Split( this.dlmtEnter, StringSplitOptions.RemoveEmptyEntries );
+                strSplitedChart = this.tRemoveComments(strSplitedChart, 1);
+                //string str命令消去譜面temp = this.StringArrayToString( this.strActualCharts );
                 //string[] strDelimiter = { "," };
-                //this.str命令消去譜面 = str命令消去譜面temp.Split( strDelimiter, StringSplitOptions.RemoveEmptyEntries );
+                //this.strActualCharts = str命令消去譜面temp.Split( strDelimiter, StringSplitOptions.RemoveEmptyEntries );
 
                 //if( bLog && stream != null )
                 //{
                 //    stream.WriteLine( "-------------------------------------------------" );
-                //    stream.WriteLine( ">>this.str命令消去譜面 (Splitした後)" );
-                //    for( int i = 0; i < this.str命令消去譜面.Length; i++ )
+                //    stream.WriteLine( ">>this.strActualCharts (Splitした後)" );
+                //    for( int i = 0; i < this.strActualCharts.Length; i++ )
                 //    {
-                //        stream.WriteLine( this.str命令消去譜面[ i ] );
+                //        stream.WriteLine( this.strActualCharts[ i ] );
                 //    }
                 //    stream.WriteLine( "-------------------------------------------------" );
                 //}
 
-                this.n現在の小節数 = 1;
+                this.nCurrentBar = 1;
                 try
                 {
                     #region[ 最初の処理 ]
@@ -2928,16 +2931,16 @@ namespace TJAPlayer3
                     //this.dbNowBMScollTime += (( this.dbBarLength ) * 16.0 );
                     #endregion
                     //string strWrite = "";
-                    for (int i = 0; strSplitした後の譜面.Length > i; i++)
+                    for (int i = 0; strSplitedChart.Length > i; i++)
                     {
-                        str = strSplitした後の譜面[i];
+                        str = strSplitedChart[i];
                         //strWrite += str;
                         //if( !str.StartsWith( "#" ) && !string.IsNullOrEmpty( this.strTemp ) )
                         //{
                         //    str = this.strTemp + str;
                         //}
 
-                        this.t入力_行解析譜面_V4(str);
+                        this.tParser_ParseLine_V4(str);
                     }
                 }
                 catch (Exception ex)
@@ -2964,7 +2967,7 @@ namespace TJAPlayer3
         /// 譜面読み込みメソッドV4で使用。
         /// </summary>
         /// <param name="InputText"></param>
-        private void t命令を挿入する(string InputText)
+        private void tInsertCommand(string InputText)
         {
             string[] SplitComma(string input)
             {
@@ -3048,7 +3051,7 @@ namespace TJAPlayer3
                 var chip = new CChip();
 
                 chip.nチャンネル番号 = 0xFF;
-                chip.n発声位置 = ((this.n現在の小節数 + 2) * 384);
+                chip.n発声位置 = ((this.nCurrentBar + 2) * 384);
                 //chip.n発声時刻ms = (int)( this.dbNowTime + ((15000.0 / this.dbNowBPM * ( 4.0 / 4.0 )) * 16.0) * 2  );
                 chip.n発声時刻ms = (int)(this.dbNowTime + 1000); //2016.07.16 kairera0467 終了時から1秒後に設置するよう変更。
                 chip.n整数値 = 0xFF;
@@ -3078,7 +3081,7 @@ namespace TJAPlayer3
                 var chip = new CChip();
 
                 chip.nチャンネル番号 = 0x08;
-                chip.n発声位置 = ((this.n現在の小節数) * 384);
+                chip.n発声位置 = ((this.nCurrentBar) * 384);
                 chip.n発声時刻ms = (int)this.dbNowTime;
                 chip.fBMSCROLLTime = (float)this.dbNowBMScollTime;
                 chip.dbBPM = dbBPM;
@@ -3090,7 +3093,7 @@ namespace TJAPlayer3
 
                 var chip1 = new CChip();
                 chip1.nチャンネル番号 = 0x9C;
-                chip1.n発声位置 = ((this.n現在の小節数) * 384);
+                chip1.n発声位置 = ((this.nCurrentBar) * 384);
                 chip1.n発声時刻ms = (int)this.dbNowTime;
                 chip1.fBMSCROLLTime = (float)this.dbNowBMScollTime;
                 chip1.dbBPM = dbBPM;
@@ -3138,7 +3141,7 @@ namespace TJAPlayer3
                     var chip = new CChip();
 
                     chip.nチャンネル番号 = 0x9D;
-                    chip.n発声位置 = ((this.n現在の小節数) * 384) - 1;
+                    chip.n発声位置 = ((this.nCurrentBar) * 384) - 1;
                     chip.n発声時刻ms = (int)this.dbNowTime;
                     chip.n整数値_内部番号 = this.n内部番号SCROLL1to;
                     chip.dbSCROLL = dbComplexNum[0];
@@ -3174,7 +3177,7 @@ namespace TJAPlayer3
                     var chip = new CChip();
 
                     chip.nチャンネル番号 = 0x9D;
-                    chip.n発声位置 = ((this.n現在の小節数) * 384) - 1;
+                    chip.n発声位置 = ((this.nCurrentBar) * 384) - 1;
                     chip.n発声時刻ms = (int)this.dbNowTime;
                     chip.n整数値_内部番号 = this.n内部番号SCROLL1to;
                     chip.dbSCROLL = dbSCROLL;
@@ -3208,7 +3211,7 @@ namespace TJAPlayer3
                 var chip = new CChip();
 
                 chip.nチャンネル番号 = 0x02;
-                chip.n発声位置 = ((this.n現在の小節数) * 384);
+                chip.n発声位置 = ((this.nCurrentBar) * 384);
                 chip.n発声時刻ms = (int)this.dbNowTime;
                 chip.dbSCROLL = this.dbNowScroll;
                 chip.db実数値 = db小節長倍率;
@@ -3231,7 +3234,7 @@ namespace TJAPlayer3
                 var chip = new CChip();
 
                 chip.nチャンネル番号 = 0xDC;
-                chip.n発声位置 = ((this.n現在の小節数) * 384);
+                chip.n発声位置 = ((this.nCurrentBar) * 384);
                 chip.db発声時刻ms = this.dbNowTime;
                 chip.nコース = this.n現在のコース;
                 chip.n整数値_内部番号 = this.n内部番号DELAY1to;
@@ -3250,7 +3253,7 @@ namespace TJAPlayer3
                 var chip = new CChip();
 
                 chip.nチャンネル番号 = 0x9E;
-                chip.n発声位置 = ((this.n現在の小節数) * 384);
+                chip.n発声位置 = ((this.nCurrentBar) * 384);
                 chip.dbBPM = this.dbNowBPM;
                 chip.n発声時刻ms = (int)this.dbNowTime;
                 chip.n整数値_内部番号 = 1;
@@ -3264,7 +3267,7 @@ namespace TJAPlayer3
                 var chip = new CChip();
 
                 chip.nチャンネル番号 = 0x9F;
-                chip.n発声位置 = ((this.n現在の小節数) * 384);
+                chip.n発声位置 = ((this.nCurrentBar) * 384);
                 chip.n発声時刻ms = (int)this.dbNowTime;
                 chip.dbBPM = this.dbNowBPM;
                 chip.n整数値_内部番号 = 1;
@@ -3279,7 +3282,7 @@ namespace TJAPlayer3
                 var chip = new CChip();
 
                 chip.nチャンネル番号 = 0xDD;
-                chip.n発声位置 = ((this.n現在の小節数 - 1) * 384);
+                chip.n発声位置 = ((this.nCurrentBar - 1) * 384);
                 chip.n発声時刻ms = (int)this.dbNowTime;
                 chip.n整数値_内部番号 = 1;
                 chip.db発声時刻ms = this.dbNowTime;
@@ -3301,7 +3304,7 @@ namespace TJAPlayer3
                 var branchStartArgumentMatch = BranchStartArgumentRegex.Match(argument);
                 if (!branchStartArgumentMatch.Success)
                 {
-                    Trace.TraceWarning($"正常ではない.tjaファイルを読み込みました。 #BRANCHSTART 命令が正しく記述されていません。 ({strファイル名の絶対パス})");
+                    Trace.TraceWarning($"正常ではない.tjaファイルを読み込みました。 #BRANCHSTART 命令が正しく記述されていません。 ({strtFileAbsolutePath})");
                     return;
                 }
 
@@ -3329,13 +3332,13 @@ namespace TJAPlayer3
                 //まずはリストに現在の小節、発声位置、分岐条件を追加。
                 var branch = new CBRANCH();
                 branch.db判定時間 = this.dbNowTime;
-                branch.db分岐時間 = ((this.n現在の小節数 + 1) * 384);
+                branch.db分岐時間 = ((this.nCurrentBar + 1) * 384);
                 branch.db分岐時間ms = this.dbNowTime; //ここがうまく計算できてないので後からバグが出る。
                 //branch.db分岐時間ms = this.dbNowTime + ((((60.0 / this.dbNowBPM) / 4.0 ) * 16.0) * 1000.0);
                 branch.dbBPM = this.dbNowBPM;
                 branch.dbSCROLL = this.dbNowScroll;
                 branch.dbBMScrollTime = this.dbNowBMScollTime;
-                branch.n現在の小節 = this.n現在の小節数;
+                branch.n現在の小節 = this.nCurrentBar;
                 branch.n条件数値A = nNum[0];
                 branch.n条件数値B = nNum[1];
                 branch.n内部番号 = this.n内部番号BRANCH1to;
@@ -3350,7 +3353,7 @@ namespace TJAPlayer3
                 var chip = new CChip();
 
                 chip.nチャンネル番号 = 0xDE;
-                chip.n発声位置 = ((this.n現在の小節数 - 1) * 384);
+                chip.n発声位置 = ((this.nCurrentBar - 1) * 384);
                 chip.n発声時刻ms = (int)(this.dbNowTime - ((15000.0 / this.dbNowBPM * (this.fNow_Measure_s / this.fNow_Measure_m)) * 16.0)); //ここの時間設定は前の小節の開始時刻である必要があるのだが...
                 //chip.n発声時刻ms = (int)this.dbLastTime;
                 chip.dbSCROLL = this.dbNowScroll;
@@ -3364,7 +3367,7 @@ namespace TJAPlayer3
                 var chip2 = new CChip();
 
                 chip2.nチャンネル番号 = 0xDF;
-                chip2.n発声位置 = ((this.n現在の小節数) * 384);
+                chip2.n発声位置 = ((this.nCurrentBar) * 384);
                 chip2.n発声時刻ms = (int)this.dbNowTime;
                 chip2.dbSCROLL = this.dbNowScroll;
                 chip2.dbBPM = this.dbNowBPM;
@@ -3380,10 +3383,10 @@ namespace TJAPlayer3
                 this.n現在のコース = 0;
                 if (!listBRANCH.TryGetValue(this.n内部番号BRANCH1to - 1, out var branch))
                 {
-                    Trace.TraceWarning($"正常ではない.tjaファイルを読み込みました。 #N 命令がありません。 ({strファイル名の絶対パス})");
+                    Trace.TraceWarning($"正常ではない.tjaファイルを読み込みました。 #N 命令がありません。 ({strtFileAbsolutePath})");
                     return;
                 }
-                this.n現在の小節数 = branch.n現在の小節;
+                this.nCurrentBar = branch.n現在の小節;
                 this.dbNowTime = branch.db分岐時間ms;
                 this.dbNowBPM = branch.dbBPM;
                 this.dbNowScroll = branch.dbSCROLL;
@@ -3395,10 +3398,10 @@ namespace TJAPlayer3
                 this.n現在のコース = 1;
                 if (!listBRANCH.TryGetValue(this.n内部番号BRANCH1to - 1, out var branch))
                 {
-                    Trace.TraceWarning($"正常ではない.tjaファイルを読み込みました。 #E 命令がありません。 ({strファイル名の絶対パス})");
+                    Trace.TraceWarning($"正常ではない.tjaファイルを読み込みました。 #E 命令がありません。 ({strtFileAbsolutePath})");
                     return;
                 }
-                this.n現在の小節数 = branch.n現在の小節;
+                this.nCurrentBar = branch.n現在の小節;
                 this.dbNowTime = branch.db分岐時間ms;
                 this.dbNowBPM = branch.dbBPM;
                 this.dbNowScroll = branch.dbSCROLL;
@@ -3410,10 +3413,10 @@ namespace TJAPlayer3
                 this.n現在のコース = 2;
                 if (!listBRANCH.TryGetValue(this.n内部番号BRANCH1to - 1, out var branch))
                 {
-                    Trace.TraceWarning($"正常ではない.tjaファイルを読み込みました。 #M 命令がありません。 ({strファイル名の絶対パス})");
+                    Trace.TraceWarning($"正常ではない.tjaファイルを読み込みました。 #M 命令がありません。 ({strtFileAbsolutePath})");
                     return;
                 }
-                this.n現在の小節数 = branch.n現在の小節;
+                this.nCurrentBar = branch.n現在の小節;
                 this.dbNowTime = branch.db分岐時間ms;
                 this.dbNowBPM = branch.dbBPM;
                 this.dbNowScroll = branch.dbSCROLL;
@@ -3424,7 +3427,7 @@ namespace TJAPlayer3
                 var chip = new CChip();
 
                 chip.nチャンネル番号 = 0xE1;
-                chip.n発声位置 = ((this.n現在の小節数) * 384) - 1;
+                chip.n発声位置 = ((this.nCurrentBar) * 384) - 1;
                 chip.nコース = this.n現在のコース;
                 chip.n発声時刻ms = (int)this.dbNowTime;
                 chip.n整数値_内部番号 = 1;
@@ -3440,7 +3443,7 @@ namespace TJAPlayer3
                 var chip = new CChip();
 
                 chip.nチャンネル番号 = 0xE0;
-                chip.n発声位置 = ((this.n現在の小節数) * 384) - 1;
+                chip.n発声位置 = ((this.nCurrentBar) * 384) - 1;
                 chip.n発声時刻ms = (int)this.dbNowTime + 1;
                 chip.n整数値_内部番号 = 1;
                 chip.nコース = this.n現在のコース;
@@ -3453,7 +3456,7 @@ namespace TJAPlayer3
                 var chip = new CChip();
 
                 chip.nチャンネル番号 = 0xE0;
-                chip.n発声位置 = ((this.n現在の小節数) * 384) - 1;
+                chip.n発声位置 = ((this.nCurrentBar) * 384) - 1;
                 chip.n発声時刻ms = (int)this.dbNowTime + 1;
                 chip.n整数値_内部番号 = 2;
                 chip.nコース = this.n現在のコース;
@@ -3485,7 +3488,7 @@ namespace TJAPlayer3
                 var chip = new CChip();
 
                 chip.nチャンネル番号 = 0xF2;
-                chip.n発声位置 = ((this.n現在の小節数) * 384) - 1;
+                chip.n発声位置 = ((this.nCurrentBar) * 384) - 1;
                 chip.n発声時刻ms = (int)this.dbNowTime;
                 chip.n整数値_内部番号 = 0;
                 chip.nスクロール方向 = (int)dbSCROLL;
@@ -3508,7 +3511,7 @@ namespace TJAPlayer3
                 var chip = new CChip();
 
                 chip.nチャンネル番号 = 0xF3;
-                chip.n発声位置 = ((this.n現在の小節数) * 384) - 1;
+                chip.n発声位置 = ((this.nCurrentBar) * 384) - 1;
                 chip.n発声時刻ms = (int)this.dbNowTime;
                 chip.n整数値_内部番号 = 0;
                 chip.nノーツ出現時刻ms = (int)this.db出現時刻;
@@ -3546,7 +3549,7 @@ namespace TJAPlayer3
                     var chip = new CChip();
 
                     chip.nチャンネル番号 = 0xE2;
-                    chip.n発声位置 = ((this.n現在の小節数) * 384) - 1;
+                    chip.n発声位置 = ((this.nCurrentBar) * 384) - 1;
                     chip.n発声時刻ms = (int)this.dbNowTime;
                     chip.n整数値_内部番号 = 0;
                     chip.nコース = this.n現在のコース;
@@ -3569,7 +3572,7 @@ namespace TJAPlayer3
                     var chip = new CChip();
 
                     chip.nチャンネル番号 = 0xE2;
-                    chip.n発声位置 = ((this.n現在の小節数) * 384) - 1;
+                    chip.n発声位置 = ((this.nCurrentBar) * 384) - 1;
                     chip.n発声時刻ms = (int)this.dbNowTime;
                     chip.n整数値_内部番号 = 0;
                     chip.nコース = this.n現在のコース;
@@ -3593,7 +3596,7 @@ namespace TJAPlayer3
                 var chip = new CChip();
 
                 chip.nチャンネル番号 = 0x9B;
-                chip.n発声位置 = ((this.n現在の小節数) * 384) - 1;
+                chip.n発声位置 = ((this.nCurrentBar) * 384) - 1;
                 chip.n発声時刻ms = (int)this.dbNowTime;
                 this.dbNowTime += delayTime;
                 this.dbNowBMScollTime += delayTime * this.dbNowBPM / 15000;
@@ -3652,11 +3655,11 @@ namespace TJAPlayer3
             if (strArray.Length < minimumLength)
             {
                 Trace.TraceWarning(
-                    $"命令 {name} のパラメータが足りません。少なくとも {minimumLength} つのパラメータが必要です。 (現在のパラメータ数: {strArray.Length}). ({strファイル名の絶対パス})");
+                    $"命令 {name} のパラメータが足りません。少なくとも {minimumLength} つのパラメータが必要です。 (現在のパラメータ数: {strArray.Length}). ({strtFileAbsolutePath})");
             }
         }
 
-        private void t入力_行解析譜面_V4(string InputText)
+        private void tParser_ParseLine_V4(string InputText)
         {
             if (!String.IsNullOrEmpty(InputText))
             {
@@ -3665,16 +3668,16 @@ namespace TJAPlayer3
                 //現在のコース、小節に当てはまるものをリストから探して文字数を返す。
                 for (int i = 0; i < this.listLine.Count; i++)
                 {
-                    if (this.listLine[i].n小節番号 == this.n現在の小節数 && this.listLine[i].nコース == this.n現在のコース)
+                    if (this.listLine[i].nBarIndex == this.nCurrentBar && this.listLine[i].nCourse == this.n現在のコース)
                     {
-                        n文字数 = this.listLine[i].n文字数;
+                        n文字数 = this.listLine[i].nCharacterNum;
                     }
 
                 }
 
                 if (InputText.StartsWith("#"))
                 {
-                    this.t命令を挿入する(InputText);
+                    this.tInsertCommand(InputText);
                     return;
                 }
                 else
@@ -3682,11 +3685,11 @@ namespace TJAPlayer3
                     if (this.b小節線を挿入している == false)
                     {
                         CChip chip = new CChip();
-                        chip.n発声位置 = ((this.n現在の小節数) * 384);
+                        chip.n発声位置 = ((this.nCurrentBar) * 384);
                         chip.nチャンネル番号 = 0x50;
                         chip.n発声時刻ms = (int)this.dbNowTime;
-                        chip.n整数値 = this.n現在の小節数;
-                        chip.n整数値_内部番号 = this.n現在の小節数;
+                        chip.n整数値 = this.nCurrentBar;
+                        chip.n整数値_内部番号 = this.nCurrentBar;
                         chip.dbBPM = this.dbNowBPM;
                         chip.dbSCROLL = this.dbNowScroll;
                         chip.dbSCROLL_Y = this.dbNowScrollY;
@@ -3701,7 +3704,7 @@ namespace TJAPlayer3
 
                         if (this.listBRANCH.Count != 0)
                         {
-                            if (this.listBRANCH[this.n内部番号BRANCH1to - 1].n現在の小節 == this.n現在の小節数)
+                            if (this.listBRANCH[this.n内部番号BRANCH1to - 1].n現在の小節 == this.nCurrentBar)
                             {
                                 chip.bBranch = true;
                             }
@@ -3718,12 +3721,12 @@ namespace TJAPlayer3
                         for (int measure = 1; measure < this.fNow_Measure_s; measure++)
                         {
                             CChip hakusen = new CChip();
-                            hakusen.n発声位置 = ((this.n現在の小節数) * 384);
+                            hakusen.n発声位置 = ((this.nCurrentBar) * 384);
                             hakusen.n発声時刻ms = (int)(this.dbNowTime + (((db1拍 * 4.0)) * measure) * 1000.0);
                             hakusen.nチャンネル番号 = 0x51;
                             //hakusen.n発声時刻ms = (int)this.dbNowTime;
                             hakusen.fBMSCROLLTime = this.dbNowBMScollTime;
-                            hakusen.n整数値_内部番号 = this.n現在の小節数;
+                            hakusen.n整数値_内部番号 = this.nCurrentBar;
                             hakusen.n整数値 = 0;
                             hakusen.dbBPM = this.dbNowBPM;
                             hakusen.dbSCROLL = this.dbNowScroll;
@@ -3732,7 +3735,7 @@ namespace TJAPlayer3
 
                             this.listChip.Add(hakusen);
                             //--全ての拍線の時間を出力する--
-                            //Trace.WriteLine( string.Format( "|| {0,3:##0} Time:{1} Beat:{2}", this.n現在の小節数, hakusen.n発声時刻ms, measure ) );
+                            //Trace.WriteLine( string.Format( "|| {0,3:##0} Time:{1} Beat:{2}", this.nCurrentBar, hakusen.n発声時刻ms, measure ) );
                             //--------------------------------
                         }
 
@@ -3743,7 +3746,7 @@ namespace TJAPlayer3
                     {
                         if (InputText.Substring(n, 1) == ",")
                         {
-                            this.n現在の小節数++;
+                            this.nCurrentBar++;
                             this.b小節線を挿入している = false;
                             return;
                         }
@@ -3783,11 +3786,11 @@ namespace TJAPlayer3
                                 chip.b可視 = true;
                                 chip.bShow = true;
                                 chip.nチャンネル番号 = 0x10 + nObjectNum;
-                                //chip.n発声位置 = (this.n現在の小節数 * 384) + ((384 * n) / n文字数);
-                                chip.n発声位置 = (int)((this.n現在の小節数 * 384.0) + ((384.0 * n) / n文字数));
+                                //chip.n発声位置 = (this.nCurrentBar * 384) + ((384 * n) / nCharacterNum);
+                                chip.n発声位置 = (int)((this.nCurrentBar * 384.0) + ((384.0 * n) / n文字数));
                                 chip.db発声位置 = this.dbNowTime;
                                 chip.n発声時刻ms = (int)this.dbNowTime;
-                                //chip.fBMSCROLLTime = (float)(( this.dbBarLength ) * (16.0f / this.n各小節の文字数[this.n現在の小節数]));
+                                //chip.fBMSCROLLTime = (float)(( this.dbBarLength ) * (16.0f / this.n各小節の文字数[this.nCurrentBar]));
                                 chip.fBMSCROLLTime = (float)this.dbNowBMScollTime;
                                 chip.n整数値 = nObjectNum;
                                 chip.n整数値_内部番号 = 1;
@@ -3817,16 +3820,16 @@ namespace TJAPlayer3
                                                 break;
                                             }
 
-                                            if (this.listBalloon_Normal.Count > this.listBalloon_Normal_数値管理)
+                                            if (this.listBalloon_Normal.Count > this.listBalloon_Normal_NumberManage)
                                             {
-                                                chip.nBalloon = this.listBalloon_Normal[this.listBalloon_Normal_数値管理];
-                                                this.listBalloon_Normal_数値管理++;
+                                                chip.nBalloon = this.listBalloon_Normal[this.listBalloon_Normal_NumberManage];
+                                                this.listBalloon_Normal_NumberManage++;
                                                 break;
                                             }
                                             //else if( this.listBalloon.Count != 0 )
                                             //{
-                                            //    chip.nBalloon = this.listBalloon[ this.listBalloon_Normal_数値管理 ];
-                                            //    this.listBalloon_Normal_数値管理++;
+                                            //    chip.nBalloon = this.listBalloon[ this.listBalloon_Normal_NumberManage ];
+                                            //    this.listBalloon_Normal_NumberManage++;
                                             //    break;
                                             //}
                                             break;
@@ -3837,16 +3840,16 @@ namespace TJAPlayer3
                                                 break;
                                             }
 
-                                            if (this.listBalloon_Expert.Count > this.listBalloon_Expert_数値管理)
+                                            if (this.listBalloon_Expert.Count > this.listBalloon_Expert_NumberManage)
                                             {
-                                                chip.nBalloon = this.listBalloon_Expert[this.listBalloon_Expert_数値管理];
-                                                this.listBalloon_Expert_数値管理++;
+                                                chip.nBalloon = this.listBalloon_Expert[this.listBalloon_Expert_NumberManage];
+                                                this.listBalloon_Expert_NumberManage++;
                                                 break;
                                             }
                                             //else if( this.listBalloon.Count != 0 )
                                             //{
-                                            //    chip.nBalloon = this.listBalloon[ this.listBalloon_Normal_数値管理 ];
-                                            //    this.listBalloon_Normal_数値管理++;
+                                            //    chip.nBalloon = this.listBalloon[ this.listBalloon_Normal_NumberManage ];
+                                            //    this.listBalloon_Normal_NumberManage++;
                                             //    break;
                                             //}
                                             break;
@@ -3857,16 +3860,16 @@ namespace TJAPlayer3
                                                 break;
                                             }
 
-                                            if (this.listBalloon_Master.Count > this.listBalloon_Master_数値管理)
+                                            if (this.listBalloon_Master.Count > this.listBalloon_Master_NumberManage)
                                             {
-                                                chip.nBalloon = this.listBalloon_Master[this.listBalloon_Master_数値管理];
-                                                this.listBalloon_Master_数値管理++;
+                                                chip.nBalloon = this.listBalloon_Master[this.listBalloon_Master_NumberManage];
+                                                this.listBalloon_Master_NumberManage++;
                                                 break;
                                             }
                                             //else if( this.listBalloon.Count != 0 )
                                             //{
-                                            //    chip.nBalloon = this.listBalloon[ this.listBalloon_Normal_数値管理 ];
-                                            //    this.listBalloon_Normal_数値管理++;
+                                            //    chip.nBalloon = this.listBalloon[ this.listBalloon_Normal_NumberManage ];
+                                            //    this.listBalloon_Normal_NumberManage++;
                                             //    break;
                                             //}
                                             break;
@@ -3874,7 +3877,7 @@ namespace TJAPlayer3
                                 }
                                 if (nObjectNum == 8)
                                 {
-                                    chip.nノーツ終了位置 = (this.n現在の小節数 * 384) + ((384 * n) / n文字数);
+                                    chip.nノーツ終了位置 = (this.nCurrentBar * 384) + ((384 * n) / n文字数);
                                     chip.nノーツ終了時刻ms = (int)this.dbNowTime;
                                     chip.fBMSCROLLTime_end = (float)this.dbNowBMScollTime;
 
@@ -3882,7 +3885,7 @@ namespace TJAPlayer3
                                     chip.nノーツ移動開始時刻ms = listChip[nNowRollCount].nノーツ移動開始時刻ms;
 
                                     chip.n連打音符State = nNowRoll;
-                                    listChip[nNowRollCount].nノーツ終了位置 = (this.n現在の小節数 * 384) + ((384 * n) / n文字数);
+                                    listChip[nNowRollCount].nノーツ終了位置 = (this.nCurrentBar * 384) + ((384 * n) / n文字数);
                                     listChip[nNowRollCount].nノーツ終了時刻ms = (int)this.dbNowTime;
                                     listChip[nNowRollCount].fBMSCROLLTime_end = (int)this.dbNowBMScollTime;
                                     //listChip[ nNowRollCount ].dbBPM = this.dbNowBPM;
@@ -3967,7 +3970,7 @@ namespace TJAPlayer3
         /// (BALLOONなど。)
         /// </summary>
         /// <param name="InputText"></param>
-        private void t難易度別ヘッダ(string InputText)
+        private void tDifficultyHeader(string InputText)
         {
             if (InputText.Equals("#HBSCROLL") && TJAPlayer3.ConfigIni.bスクロールモードを上書き == false)
             {
@@ -4020,16 +4023,16 @@ namespace TJAPlayer3
 
                     this.ParseOptionalInt16("SCOREINIT first value", scoreinit[0], value =>
                     {
-                        this.nScoreInit[0, this.n参照中の難易度] = value;
-                        this.b配点が指定されている[0, this.n参照中の難易度] = true;
+                        this.nScoreInit[0, this.nSelectedDifficulty] = value;
+                        this.bHasScoreAssigned[0, this.nSelectedDifficulty] = true;
                     });
 
                     if (scoreinit.Length == 2)
                     {
                         this.ParseOptionalInt16("SCOREINIT second value", scoreinit[1], value =>
                         {
-                            this.nScoreInit[1, this.n参照中の難易度] = value;
-                            this.b配点が指定されている[2, this.n参照中の難易度] = true;
+                            this.nScoreInit[1, this.nSelectedDifficulty] = value;
+                            this.bHasScoreAssigned[2, this.nSelectedDifficulty] = true;
                         });
                     }
                 }
@@ -4038,8 +4041,8 @@ namespace TJAPlayer3
             {
                 ParseOptionalInt16(value =>
                 {
-                    this.nScoreDiff[this.n参照中の難易度] = value;
-                    this.b配点が指定されている[1, this.n参照中の難易度] = true;
+                    this.nScoreDiff[this.nSelectedDifficulty] = value;
+                    this.bHasScoreAssigned[1, this.nSelectedDifficulty] = true;
                 });
             }
 
@@ -4047,7 +4050,7 @@ namespace TJAPlayer3
             //{
             //    this.nScoreModeTmp = CDTXMania.ConfigIni.nScoreMode;
             //}
-            //if( CDTXMania.ConfigIni.nScoreMode == 3 && !this.b配点が指定されている[ 2, this.n参照中の難易度 ] ){ //2017.06.04 kairera0467
+            //if( CDTXMania.ConfigIni.nScoreMode == 3 && !this.bHasScoreAssigned[ 2, this.nSelectedDifficulty ] ){ //2017.06.04 kairera0467
             //    this.nScoreModeTmp = 3;
             //}
 
@@ -4066,12 +4069,12 @@ namespace TJAPlayer3
                 {
                     string[] scoreinit = strCommandParam.Split(',');
 
-                    this.nScoreInit[0, this.n参照中の難易度] = Convert.ToInt16(scoreinit[0]);
-                    this.b配点が指定されている[0, this.n参照中の難易度] = true;
+                    this.nScoreInit[0, this.nSelectedDifficulty] = Convert.ToInt16(scoreinit[0]);
+                    this.bHasScoreAssigned[0, this.nSelectedDifficulty] = true;
                     if (scoreinit.Length == 2)
                     {
-                        this.nScoreInit[1, this.n参照中の難易度] = Convert.ToInt16(scoreinit[1]);
-                        this.b配点が指定されている[2, this.n参照中の難易度] = true;
+                        this.nScoreInit[1, this.nSelectedDifficulty] = Convert.ToInt16(scoreinit[1]);
+                        this.bHasScoreAssigned[2, this.nSelectedDifficulty] = true;
                     }
                 }
             }
@@ -4079,8 +4082,8 @@ namespace TJAPlayer3
             {
                 if (!string.IsNullOrEmpty(strCommandParam))
                 {
-                    this.nScoreDiff[this.n参照中の難易度] = Convert.ToInt16(strCommandParam);
-                    this.b配点が指定されている[1, this.n参照中の難易度] = true;
+                    this.nScoreDiff[this.nSelectedDifficulty] = Convert.ToInt16(strCommandParam);
+                    this.bHasScoreAssigned[1, this.nSelectedDifficulty] = true;
                 }
             }
             else if (strCommandName.Equals("EXAM1") || strCommandName.Equals("EXAM2") || strCommandName.Equals("EXAM3"))
@@ -4148,7 +4151,7 @@ namespace TJAPlayer3
             {
                 this.nScoreModeTmp = TJAPlayer3.ConfigIni.nScoreMode;
             }
-            if (TJAPlayer3.ConfigIni.nScoreMode == 3 && !this.b配点が指定されている[2, this.n参照中の難易度])
+            if (TJAPlayer3.ConfigIni.nScoreMode == 3 && !this.bHasScoreAssigned[2, this.nSelectedDifficulty])
             { //2017.06.04 kairera0467
                 this.nScoreModeTmp = 3;
             }
@@ -4167,7 +4170,7 @@ namespace TJAPlayer3
             }
             else
             {
-                Trace.TraceWarning($"命令名: {name} のパラメータの値が正しくないことを検知しました。値: {unparsedValue} ({strファイル名の絶対パス})");
+                Trace.TraceWarning($"命令名: {name} のパラメータの値が正しくないことを検知しました。値: {unparsedValue} ({strtFileAbsolutePath})");
             }
         }
 
@@ -4187,7 +4190,7 @@ namespace TJAPlayer3
                 }
                 catch (Exception ex)
                 {
-                    Trace.TraceError($"おや?エラーが出たようです。お兄様。 ({strファイル名の絶対パス})");
+                    Trace.TraceError($"おや?エラーが出たようです。お兄様。 ({strtFileAbsolutePath})");
                     Trace.TraceError(ex.ToString());
                     Trace.TraceError("例外が発生しましたが処理を継続します。 (95327158-4e83-4fa9-b5e9-ad3c3d4c2a22)");
                     break;
@@ -4196,7 +4199,7 @@ namespace TJAPlayer3
                 listBalloon.Add(n打数);
             }
         }
-        private void t入力_行解析ヘッダ(string InputText)
+        private void tPaser_ParseHeader(string InputText)
         {
             //やべー。先頭にコメント行あったらやばいやん。
             string[] strArray = InputText.Split(new char[] { ':' });
@@ -4208,7 +4211,7 @@ namespace TJAPlayer3
                 //2015.08.18 kairera0467
                 //本来はヘッダ命令ではありませんが、難易度ごとに違う項目なのでここで読み込ませます。
                 //Lengthのチェックをされる前ににif文を入れています。
-                this.bHasBranch[this.n参照中の難易度] = true;
+                this.bHasBranch[this.nSelectedDifficulty] = true;
             }
 
             //まずは「:」でSplitして割り当てる。
@@ -4287,7 +4290,7 @@ namespace TJAPlayer3
                 var level = (int)Convert.ToDouble(strCommandParam);
                 this.LEVEL.Drums = level;
                 this.LEVEL.Taiko = level;
-                this.LEVELtaiko[this.n参照中の難易度] = level;
+                this.LEVELtaiko[this.nSelectedDifficulty] = level;
             }
             else if (strCommandName.Equals("BPM"))
             {
@@ -4307,7 +4310,7 @@ namespace TJAPlayer3
                 var chip = new CChip();
 
                 chip.nチャンネル番号 = 0x03;
-                chip.n発声位置 = ((this.n現在の小節数 - 1) * 384);
+                chip.n発声位置 = ((this.nCurrentBar - 1) * 384);
                 chip.n整数値 = 0x00;
                 chip.n整数値_内部番号 = 1;
 
@@ -4318,7 +4321,7 @@ namespace TJAPlayer3
             {
                 if (strBGM_PATH != null)
                 {
-                    Trace.TraceWarning($"{nameof(CDTX)} is ignoring an extra WAVE header in {this.strファイル名の絶対パス}");
+                    Trace.TraceWarning($"{nameof(CDTX)} is ignoring an extra WAVE header in {this.strtFileAbsolutePath}");
                 }
                 else
                 {
@@ -4396,14 +4399,14 @@ namespace TJAPlayer3
 
                     this.ParseOptionalInt16("SCOREINIT first value", scoreinit[0], value =>
                     {
-                        this.nScoreInit[0, this.n参照中の難易度] = value;
+                        this.nScoreInit[0, this.nSelectedDifficulty] = value;
                     });
 
                     if (scoreinit.Length == 2)
                     {
                         this.ParseOptionalInt16("SCOREINIT second value", scoreinit[1], value =>
                         {
-                            this.nScoreInit[1, this.n参照中の難易度] = value;
+                            this.nScoreInit[1, this.nSelectedDifficulty] = value;
                         });
                     }
                 }
@@ -4437,7 +4440,7 @@ namespace TJAPlayer3
             }
             else if (strCommandName.Equals("SCOREDIFF"))
             {
-                ParseOptionalInt16(value => this.nScoreDiff[this.n参照中の難易度] = value);
+                ParseOptionalInt16(value => this.nScoreDiff[this.nSelectedDifficulty] = value);
             }
             #endregion
             else if (strCommandName.Equals("SONGVOL") && !string.IsNullOrEmpty(strCommandParam))
@@ -4457,8 +4460,8 @@ namespace TJAPlayer3
             {
                 if (!string.IsNullOrEmpty(strCommandParam))
                 {
-                    //this.n参照中の難易度 = Convert.ToInt16( strCommandParam );
-                    this.n参照中の難易度 = this.strConvertCourse(strCommandParam);
+                    //this.nSelectedDifficulty = Convert.ToInt16( strCommandParam );
+                    this.nSelectedDifficulty = this.strConvertCourse(strCommandParam);
                 }
             }
 
@@ -4476,7 +4479,7 @@ namespace TJAPlayer3
                 var chip = new CChip();
 
                 chip.nチャンネル番号 = 0x9D;
-                chip.n発声位置 = ((this.n現在の小節数 - 2) * 384);
+                chip.n発声位置 = ((this.nCurrentBar - 2) * 384);
                 chip.n整数値 = 0x00;
                 chip.n整数値_内部番号 = this.n内部番号SCROLL1to;
                 chip.dbSCROLL = this.dbScrollSpeed;
@@ -4574,7 +4577,11 @@ namespace TJAPlayer3
             if (this.nScoreModeTmp == 99)
             {
                 //2017.01.28 DD 
-                this.nScoreModeTmp = TJAPlayer3.ConfigIni.nScoreMode;
+                if (TJAPlayer3.ConfigIni!=null)
+                {
+
+                    this.nScoreModeTmp = TJAPlayer3.ConfigIni.nScoreMode;
+                }
             }
         }
         /// <summary>
@@ -5883,7 +5890,7 @@ namespace TJAPlayer3
 
                 if (this.bstackIFからENDIFをスキップする.Count == 255)
                 {
-                    Trace.TraceWarning("#IF の入れ子の数が 255 を超えました。この #IF を無視します。[{0}: {1}行]", this.strファイル名の絶対パス, this.n現在の行数);
+                    Trace.TraceWarning("#IF の入れ子の数が 255 を超えました。この #IF を無視します。[{0}: {1}行]", this.strtFileAbsolutePath, this.n現在の行数);
                 }
                 else if (this.bstackIFからENDIFをスキップする.Peek())
                 {
@@ -5913,7 +5920,7 @@ namespace TJAPlayer3
                 }
                 else
                 {
-                    Trace.TraceWarning("#ENDIF に対応する #IF がありません。この #ENDIF を無視します。[{0}: {1}行]", this.strファイル名の絶対パス, this.n現在の行数);
+                    Trace.TraceWarning("#ENDIF に対応する #IF がありません。この #ENDIF を無視します。[{0}: {1}行]", this.strtFileAbsolutePath, this.n現在の行数);
                 }
             }
             //-----------------
@@ -6079,7 +6086,7 @@ namespace TJAPlayer3
             int zz = C変換.n36進数2桁の文字列を数値に変換して返す(strコマンド.Substring(0, 2));
             if (zz < 0 || zz >= 36 * 36)
             {
-                Trace.TraceError("AVI(VIDEO)番号に 00～ZZ 以外の値または不正な文字列が指定されました。[{0}: {1}行]", this.strファイル名の絶対パス, this.n現在の行数);
+                Trace.TraceError("AVI(VIDEO)番号に 00～ZZ 以外の値または不正な文字列が指定されました。[{0}: {1}行]", this.strtFileAbsolutePath, this.n現在の行数);
                 return false;
             }
             //-----------------
@@ -6138,7 +6145,7 @@ namespace TJAPlayer3
             int zz = C変換.n36進数2桁の文字列を数値に変換して返す(strコマンド.Substring(0, 2));
             if (zz < 0 || zz >= 36 * 36)
             {
-                Trace.TraceError("AVIPAN番号に 00～ZZ 以外の値または不正な文字列が指定されました。[{0}: {1}行]", this.strファイル名の絶対パス, this.n現在の行数);
+                Trace.TraceError("AVIPAN番号に 00～ZZ 以外の値または不正な文字列が指定されました。[{0}: {1}行]", this.strtFileAbsolutePath, this.n現在の行数);
                 return false;
             }
             //-----------------
@@ -6157,7 +6164,7 @@ namespace TJAPlayer3
             //-----------------
             if (strParams.Length < 14)
             {
-                Trace.TraceError("AVIPAN: 引数が足りません。[{0}: {1}行]", this.strファイル名の絶対パス, this.n現在の行数);
+                Trace.TraceError("AVIPAN: 引数が足りません。[{0}: {1}行]", this.strtFileAbsolutePath, this.n現在の行数);
                 return false;
             }
             //-----------------
@@ -6170,13 +6177,13 @@ namespace TJAPlayer3
             //-----------------
             if (string.IsNullOrEmpty(strParams[i]) || strParams[i].Length > 2)
             {
-                Trace.TraceError("AVIPAN: {2}番目の数（AVI番号）が異常です。[{0}: {1}行]", this.strファイル名の絶対パス, this.n現在の行数, i + 1);
+                Trace.TraceError("AVIPAN: {2}番目の数（AVI番号）が異常です。[{0}: {1}行]", this.strtFileAbsolutePath, this.n現在の行数, i + 1);
                 return false;
             }
             avipan.nAVINumber = C変換.n36進数2桁の文字列を数値に変換して返す(strParams[i]);
             if (avipan.nAVINumber < 1 || avipan.nAVINumber >= 36 * 36)
             {
-                Trace.TraceError("AVIPAN: {2}番目の数（AVI番号）が異常です。[{0}: {1}行]", this.strファイル名の絶対パス, this.n現在の行数, i + 1);
+                Trace.TraceError("AVIPAN: {2}番目の数（AVI番号）が異常です。[{0}: {1}行]", this.strtFileAbsolutePath, this.n現在の行数, i + 1);
                 return false;
             }
             i++;
@@ -6187,7 +6194,7 @@ namespace TJAPlayer3
             n値 = 0;
             if (!int.TryParse(strParams[i], out n値))
             {
-                Trace.TraceError("AVIPAN: {2}番目の引数（開始転送サイズ_幅）が異常です。[{0}: {1}行]", this.strファイル名の絶対パス, this.n現在の行数, i + 1);
+                Trace.TraceError("AVIPAN: {2}番目の引数（開始転送サイズ_幅）が異常です。[{0}: {1}行]", this.strtFileAbsolutePath, this.n現在の行数, i + 1);
                 return false;
             }
             avipan.sz開始サイズ.Width = n値;
@@ -6199,7 +6206,7 @@ namespace TJAPlayer3
             n値 = 0;
             if (!int.TryParse(strParams[i], out n値))
             {
-                Trace.TraceError("AVIPAN: {2}番目の引数（開始転送サイズ_高さ）が異常です。[{0}: {1}行]", this.strファイル名の絶対パス, this.n現在の行数, i + 1);
+                Trace.TraceError("AVIPAN: {2}番目の引数（開始転送サイズ_高さ）が異常です。[{0}: {1}行]", this.strtFileAbsolutePath, this.n現在の行数, i + 1);
                 return false;
             }
             avipan.sz開始サイズ.Height = n値;
@@ -6211,7 +6218,7 @@ namespace TJAPlayer3
             n値 = 0;
             if (!int.TryParse(strParams[i], out n値))
             {
-                Trace.TraceError("AVIPAN: {2}番目の引数（終了転送サイズ_幅）が異常です。[{0}: {1}行]", this.strファイル名の絶対パス, this.n現在の行数, i + 1);
+                Trace.TraceError("AVIPAN: {2}番目の引数（終了転送サイズ_幅）が異常です。[{0}: {1}行]", this.strtFileAbsolutePath, this.n現在の行数, i + 1);
                 return false;
             }
             avipan.sz終了サイズ.Width = n値;
@@ -6223,7 +6230,7 @@ namespace TJAPlayer3
             n値 = 0;
             if (!int.TryParse(strParams[i], out n値))
             {
-                Trace.TraceError("AVIPAN: {2}番目の引数（終了転送サイズ_高さ）が異常です。[{0}: {1}行]", this.strファイル名の絶対パス, this.n現在の行数, i + 1);
+                Trace.TraceError("AVIPAN: {2}番目の引数（終了転送サイズ_高さ）が異常です。[{0}: {1}行]", this.strtFileAbsolutePath, this.n現在の行数, i + 1);
                 return false;
             }
             avipan.sz終了サイズ.Height = n値;
@@ -6235,7 +6242,7 @@ namespace TJAPlayer3
             n値 = 0;
             if (!int.TryParse(strParams[i], out n値))
             {
-                Trace.TraceError("AVIPAN: {2}番目の引数（動画側開始位置_X）が異常です。[{0}: {1}行]", this.strファイル名の絶対パス, this.n現在の行数, i + 1);
+                Trace.TraceError("AVIPAN: {2}番目の引数（動画側開始位置_X）が異常です。[{0}: {1}行]", this.strtFileAbsolutePath, this.n現在の行数, i + 1);
                 return false;
             }
             avipan.pt動画側開始位置.X = n値;
@@ -6247,7 +6254,7 @@ namespace TJAPlayer3
             n値 = 0;
             if (!int.TryParse(strParams[i], out n値))
             {
-                Trace.TraceError("AVIPAN: {2}番目の引数（動画側開始位置_Y）が異常です。[{0}: {1}行]", this.strファイル名の絶対パス, this.n現在の行数, i + 1);
+                Trace.TraceError("AVIPAN: {2}番目の引数（動画側開始位置_Y）が異常です。[{0}: {1}行]", this.strtFileAbsolutePath, this.n現在の行数, i + 1);
                 return false;
             }
             avipan.pt動画側開始位置.Y = n値;
@@ -6259,7 +6266,7 @@ namespace TJAPlayer3
             n値 = 0;
             if (!int.TryParse(strParams[i], out n値))
             {
-                Trace.TraceError("AVIPAN: {2}番目の引数（動画側終了位置_X）が異常です。[{0}: {1}行]", this.strファイル名の絶対パス, this.n現在の行数, i + 1);
+                Trace.TraceError("AVIPAN: {2}番目の引数（動画側終了位置_X）が異常です。[{0}: {1}行]", this.strtFileAbsolutePath, this.n現在の行数, i + 1);
                 return false;
             }
             avipan.pt動画側終了位置.X = n値;
@@ -6271,7 +6278,7 @@ namespace TJAPlayer3
             n値 = 0;
             if (!int.TryParse(strParams[i], out n値))
             {
-                Trace.TraceError("AVIPAN: {2}番目の引数（動画側終了位置_Y）が異常です。[{0}: {1}行]", this.strファイル名の絶対パス, this.n現在の行数, i + 1);
+                Trace.TraceError("AVIPAN: {2}番目の引数（動画側終了位置_Y）が異常です。[{0}: {1}行]", this.strtFileAbsolutePath, this.n現在の行数, i + 1);
                 return false;
             }
             avipan.pt動画側終了位置.Y = n値;
@@ -6283,7 +6290,7 @@ namespace TJAPlayer3
             n値 = 0;
             if (!int.TryParse(strParams[i], out n値))
             {
-                Trace.TraceError("AVIPAN: {2}番目の引数（表示側開始位置_X）が異常です。[{0}: {1}行]", this.strファイル名の絶対パス, this.n現在の行数, i + 1);
+                Trace.TraceError("AVIPAN: {2}番目の引数（表示側開始位置_X）が異常です。[{0}: {1}行]", this.strtFileAbsolutePath, this.n現在の行数, i + 1);
                 return false;
             }
             avipan.pt表示側開始位置.X = n値;
@@ -6295,7 +6302,7 @@ namespace TJAPlayer3
             n値 = 0;
             if (!int.TryParse(strParams[i], out n値))
             {
-                Trace.TraceError("AVIPAN: {2}番目の引数（表示側開始位置_Y）が異常です。[{0}: {1}行]", this.strファイル名の絶対パス, this.n現在の行数, i + 1);
+                Trace.TraceError("AVIPAN: {2}番目の引数（表示側開始位置_Y）が異常です。[{0}: {1}行]", this.strtFileAbsolutePath, this.n現在の行数, i + 1);
                 return false;
             }
             avipan.pt表示側開始位置.Y = n値;
@@ -6307,7 +6314,7 @@ namespace TJAPlayer3
             n値 = 0;
             if (!int.TryParse(strParams[i], out n値))
             {
-                Trace.TraceError("AVIPAN: {2}番目の引数（表示側終了位置_X）が異常です。[{0}: {1}行]", this.strファイル名の絶対パス, this.n現在の行数, i + 1);
+                Trace.TraceError("AVIPAN: {2}番目の引数（表示側終了位置_X）が異常です。[{0}: {1}行]", this.strtFileAbsolutePath, this.n現在の行数, i + 1);
                 return false;
             }
             avipan.pt表示側終了位置.X = n値;
@@ -6319,7 +6326,7 @@ namespace TJAPlayer3
             n値 = 0;
             if (!int.TryParse(strParams[i], out n値))
             {
-                Trace.TraceError("AVIPAN: {2}番目の引数（表示側終了位置_Y）が異常です。[{0}: {1}行]", this.strファイル名の絶対パス, this.n現在の行数, i + 1);
+                Trace.TraceError("AVIPAN: {2}番目の引数（表示側終了位置_Y）が異常です。[{0}: {1}行]", this.strtFileAbsolutePath, this.n現在の行数, i + 1);
                 return false;
             }
             avipan.pt表示側終了位置.Y = n値;
@@ -6331,7 +6338,7 @@ namespace TJAPlayer3
             n値 = 0;
             if (!int.TryParse(strParams[i], out n値))
             {
-                Trace.TraceError("AVIPAN: {2}番目の引数（移動時間）が異常です。[{0}: {1}行]", this.strファイル名の絶対パス, this.n現在の行数, i + 1);
+                Trace.TraceError("AVIPAN: {2}番目の引数（移動時間）が異常です。[{0}: {1}行]", this.strtFileAbsolutePath, this.n現在の行数, i + 1);
                 return false;
             }
 
@@ -6377,7 +6384,7 @@ namespace TJAPlayer3
 
             if (nWAV番号 < 0 || nWAV番号 >= 36 * 36)
             {
-                Trace.TraceError("SIZEのWAV番号に 00～ZZ 以外の値または不正な文字列が指定されました。[{0}: {1}行]", this.strファイル名の絶対パス, this.n現在の行数);
+                Trace.TraceError("SIZEのWAV番号に 00～ZZ 以外の値または不正な文字列が指定されました。[{0}: {1}行]", this.strtFileAbsolutePath, this.n現在の行数);
                 return false;
             }
             //-----------------
@@ -6440,7 +6447,7 @@ namespace TJAPlayer3
             int zz = C変換.n36進数2桁の文字列を数値に変換して返す(strコマンド.Substring(0, 2));
             if (zz < 0 || zz >= 36 * 36)
             {
-                Trace.TraceError("WAVPAN(PAN)のWAV番号に 00～ZZ 以外の値または不正な文字列が指定されました。[{0}: {1}行]", this.strファイル名の絶対パス, this.n現在の行数);
+                Trace.TraceError("WAVPAN(PAN)のWAV番号に 00～ZZ 以外の値または不正な文字列が指定されました。[{0}: {1}行]", this.strtFileAbsolutePath, this.n現在の行数);
                 return false;
             }
             //-----------------
@@ -6575,7 +6582,7 @@ namespace TJAPlayer3
                 //if( !double.TryParse( strパラメータ, out result ) )
                 if (!this.TryParse(strパラメータ, out db小節長倍率))          // #23880 2010.12.30 yyagi: alternative TryParse to permit both '.' and ',' for decimal point
                 {
-                    Trace.TraceError("小節長倍率に不正な値を指定しました。[{0}: {1}行]", this.strファイル名の絶対パス, this.n現在の行数);
+                    Trace.TraceError("小節長倍率に不正な値を指定しました。[{0}: {1}行]", this.strtFileAbsolutePath, this.n現在の行数);
                     return false;
                 }
 
@@ -6617,7 +6624,7 @@ namespace TJAPlayer3
 
                 if (C変換.str36進数文字.IndexOf(ce.Current) < 0)  // オブジェクト記述は36進数文字であること。
                 {
-                    Trace.TraceError("不正なオブジェクト指定があります。[{0}: {1}行]", this.strファイル名の絶対パス, this.n現在の行数);
+                    Trace.TraceError("不正なオブジェクト指定があります。[{0}: {1}行]", this.strtFileAbsolutePath, this.n現在の行数);
                     return false;
                 }
 

@@ -198,7 +198,7 @@ namespace TJAPlayer3
                 },
             };
 
-        public static string tセッション譜面がある(string strTJA, int seqNo, string strファイル名の絶対パス)
+        public static string tHasSessionInChart(string strTJA, int seqNo, string strファイル名の絶対パス)
         {
             void TraceError(string subMessage)
             {
