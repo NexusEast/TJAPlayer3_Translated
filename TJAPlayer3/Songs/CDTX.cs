@@ -505,16 +505,16 @@ namespace TJAPlayer3
                     "??", "??", "??", "??", "??", "??", "??", "??", "譜面終了"
                 };
                 return string.Format("CChip: 位置:{0:D4}.{1:D3}, 時刻{2}, Ch:{3:X2}({4}), Pn:{5}({11})(内部{6}), Pd:{7}, Sz:{8}, BMScroll:{9}, Auto:{10}, コース:{11}",
-                    this.n発声位置 / 384, this.n発声位置 % 384,
-                    ((float)this.n発声時刻ms * 0.001f),
-                    this.nチャンネル番号, chToStr[this.nチャンネル番号],
-                    this.n整数値, this.n整数値_内部番号,
-                    this.db実数値,
-                    this.dbチップサイズ倍率,
-                    this.fBMSCROLLTime,
-                    this.bHasAutoplayChannel,
-                    this.nCourse,
-                    CDTX.tZZ(this.nIntNum));
+                     this.nNoiseLocation / 384, this.nNoiseLocation % 384,
+                     ((float)this.nNoiseTimems * 0.001f),
+                     this.nChannelNumber, chToStr[this.nChannelNumber],
+                     this.nIntNum, this.nIntNum_Internal,
+                     this.dbActualValue,
+                     this.sbChipSizeScale,
+                     this.fBMSCROLLTime,
+                     this.bHasAutoplayChannel,
+                     this.nCourse,
+                     CDTX.tZZ(this.nIntNum));
             }
             /// <summary>
             /// チップの再生長を取得する。現状、WAVチップとBGAチップでのみ使用可能。
