@@ -113,12 +113,12 @@ namespace TJAPlayer3
                     {
                         this.long再生位置 = CSoundManager.rPlaybackTimer.nシステム時刻ms - this.long再生開始時のシステム時刻;
                     }
-                    if (this.long再生位置 >= (this.sound.n総演奏時間ms - cスコア.譜面情報.nデモBGMオフセット) - 1 && this.long再生位置 <= (this.sound.n総演奏時間ms - cスコア.譜面情報.nデモBGMオフセット) + 0)
+                    if (this.long再生位置 >= (this.sound.nTotalPlayTimems - cスコア.譜面情報.nデモBGMオフセット) - 1 && this.long再生位置 <= (this.sound.nTotalPlayTimems - cスコア.譜面情報.nデモBGMオフセット) + 0)
                         this.long再生位置 = -1;
 
 
                     //CDTXMania.act文字コンソール.tPrint( 0, 0, C文字コンソール.Eフォント種別.白, this.long再生位置.ToString() );
-                    //CDTXMania.act文字コンソール.tPrint( 0, 20, C文字コンソール.Eフォント種別.白, (this.sound.n総演奏時間ms - cスコア.譜面情報.nデモBGMオフセット).ToString() );
+                    //CDTXMania.act文字コンソール.tPrint( 0, 20, C文字コンソール.Eフォント種別.白, (this.sound.nTotalPlayTimems - cスコア.譜面情報.nデモBGMオフセット).ToString() );
                 }
 			}
 			return 0;
@@ -182,7 +182,7 @@ namespace TJAPlayer3
                         this.sound.t再生位置を変更する( cスコア.譜面情報.nデモBGMオフセット );
                         this.long再生位置 = CSoundManager.rPlaybackTimer.nシステム時刻ms - this.long再生開始時のシステム時刻;
                     }
-                    //if( long再生位置 == this.sound.n総演奏時間ms - 10 )
+                    //if( long再生位置 == this.sound.nTotalPlayTimems - 10 )
                     //    this.long再生位置 = -1;
 
                     this.str現在のファイル名 = strPreviewFilename;

@@ -191,7 +191,7 @@ namespace TJAPlayer3
 					}
 					this.sd読み込み音.t再生を開始する();
 					this.nBGM再生開始時刻 = CSoundManager.rPlaybackTimer.n現在時刻;
-					this.nBGMの総再生時間ms = this.sd読み込み音.n総演奏時間ms;
+					this.nBGMの総再生時間ms = this.sd読み込み音.nTotalPlayTimems;
 				}
 				else
 				{

@@ -190,7 +190,7 @@ namespace TJAPlayer3
                                         float f倍率 = 0.5f + ( (this.st状態_大[ i ].ct進行.nCurrentValue * 0.5f) / 10.0f);
                                         //this.txアタックエフェクトUpper_big.vc拡大縮小倍率.X = f倍率;
                                         //this.txアタックエフェクトUpper_big.vc拡大縮小倍率.Y = f倍率;
-                                        //this.txアタックエフェクトUpper_big.n透明度 = (int)(255 * f倍率);
+                                        //this.txアタックエフェクトUpper_big.nTranslucency = (int)(255 * f倍率);
                                         //this.txアタックエフェクトUpper_big.t2D描画( CDTXMania.app.Device, fX, fY );
 
                                         Matrix mat = Matrix.Identity;

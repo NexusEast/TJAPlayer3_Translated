@@ -129,7 +129,7 @@ namespace TJAPlayer3
                     {
                         return 0;
                     }
-                    return sound.n総演奏時間ms;
+                    return sound.nTotalPlayTimems;
                 }
             }
             public int n長さ_次に鳴るサウンド
@@ -141,7 +141,7 @@ namespace TJAPlayer3
                     {
                         return 0;
                     }
-                    return sound.n総演奏時間ms;
+                    return sound.nTotalPlayTimems;
                 }
             }
 

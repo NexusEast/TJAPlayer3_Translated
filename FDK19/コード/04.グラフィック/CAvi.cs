@@ -8,12 +8,12 @@ namespace FDK
 	{
 		// プロパティ
 
-		public uint dwスケール 
+		public uint dwScale 
 		{
 			get;
 			set; 
 		}
-		public uint dwレート
+		public uint dwRate
 		{
 			get;
 			set;
@@ -46,8 +46,8 @@ namespace FDK
 			}
 			var info = new AVISTREAMINFO();
 			AVIStreamInfo( this.aviStream, ref info, Marshal.SizeOf( info ) );
-			this.dwレート = info.dwRate;
-			this.dwスケール = info.dwScale;
+			this.dwRate = info.dwRate;
+			this.dwScale = info.dwScale;
 			this.nフレーム幅 = info.rcFrame.right - info.rcFrame.left;
 			this.nフレーム高さ = info.rcFrame.bottom - info.rcFrame.top;
 			try
@@ -75,7 +75,7 @@ namespace FDK
 		
 		public int GetFrameNoFromTime( int time )
 		{
-			return (int) ( time * ( ( (double) this.dwレート ) / ( 1000.0 * this.dwスケール ) ) );
+			return (int) ( time * ( ( (double) this.dwRate ) / ( 1000.0 * this.dwScale ) ) );
 		}
 		public IntPtr GetFramePtr( int no )
 		{

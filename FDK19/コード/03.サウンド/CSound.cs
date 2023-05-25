@@ -368,7 +368,7 @@ namespace FDK
 
 		#region [ DTXMania用拡張 ]
 
-		public int n総演奏時間ms
+		public int nTotalPlayTimems
 		{
 			get;
 			private set;
@@ -434,7 +434,7 @@ namespace FDK
 						{
 							Bass.BASS_ChannelSetAttribute( this.hBassStream, BASSAttribute.BASS_ATTRIB_TEMPO, (float) ( db再生速度 * 100 - 100 ) );
 							//double seconds = Bass.BASS_ChannelBytes2Seconds( this.hTempoStream, nBytes );
-							//this.n総演奏時間ms = (int) ( seconds * 1000 );
+							//this.nTotalPlayTimems = (int) ( seconds * 1000 );
 						}
 						else
 						{
@@ -954,7 +954,7 @@ namespace FDK
 
 			// DTXMania用に追加
 			this.nオリジナルの周波数 = wfx.SamplesPerSecond;
-			n総演奏時間ms = (int) ( ( (double) nPCMサイズbyte ) / ( this.Buffer.Format.AverageBytesPerSecond * 0.001 ) );
+			nTotalPlayTimems = (int) ( ( (double) nPCMサイズbyte ) / ( this.Buffer.Format.AverageBytesPerSecond * 0.001 ) );
 
 
 			// インスタンスリストに登録。
@@ -1189,7 +1189,7 @@ Debug.WriteLine("更に再生に失敗: " + Path.GetFileName(this.strFileName) +
 						Trace.TraceInformation( Path.GetFileName( this.strFileName ) + ": Seek error: " + be.ToString() + ": " + n位置ms + "MS" );
 					}
 				}
-				//if ( this.n総演奏時間ms > 5000 )
+				//if ( this.nTotalPlayTimems > 5000 )
 				//{
 				//    Trace.TraceInformation( Path.GetFileName( this.strFileName ) + ": Seeked to " + n位置ms + "ms = " + Bass.BASS_ChannelSeconds2Bytes( this.hBassStream, n位置ms * this.db周波数倍率 * this.db再生速度 / 1000.0 ) );
 				//}
@@ -1207,7 +1207,7 @@ Debug.WriteLine("更に再生に失敗: " + Path.GetFileName(this.strFileName) +
 					Trace.TraceError( e.ToString() );
 					Trace.TraceError( "例外が発生しましたが処理を継続します。 (95dee242-1f92-4fcf-aaf6-b162ad2bfc03)" );
 				}
-				//if ( this.n総演奏時間ms > 5000 )
+				//if ( this.nTotalPlayTimems > 5000 )
 				//{
 				//    Trace.TraceInformation( Path.GetFileName( this.strFileName ) + ": Seeked to " + n位置ms + "ms = " + n位置sample );
 				//}
@@ -1636,7 +1636,7 @@ Debug.WriteLine("更に再生に失敗: " + Path.GetFileName(this.strFileName) +
 
 			// n総演奏時間の取得; DTXMania用に追加。
 			double seconds = Bass.BASS_ChannelBytes2Seconds( this._hBassStream, nBytes );
-			this.n総演奏時間ms = (int) ( seconds * 1000 );
+			this.nTotalPlayTimems = (int) ( seconds * 1000 );
 			//this.pos = 0;
 			this.hMixer = hMixer;
 			float freq = 0.0f;

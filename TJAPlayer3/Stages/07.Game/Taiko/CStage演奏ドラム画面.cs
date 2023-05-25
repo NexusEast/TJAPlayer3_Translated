@@ -1109,7 +1109,7 @@ namespace TJAPlayer3
                     }
                     else
                     {
-                        x = pChip.nバーからの距離dot.Taiko;
+                        x = pChip.nBarDistancedot.Taiko;
                     }
 
                     int xTemp = 0;
@@ -1177,10 +1177,10 @@ namespace TJAPlayer3
                         if( TJAPlayer3.ConfigIni.eScrollMode == EScrollMode.Normal )
                             y += (int) ( ( ( pChip.nNoiseTimems - CSoundManager.rPlaybackTimer.n現在時刻 ) * pChip.dbBPM * pChip.dbSCROLL_Y * ( this.act譜面スクロール速度.db現在の譜面スクロール速度.Drums + 1 ) ) / 502.8594 );
                         else if( TJAPlayer3.ConfigIni.eScrollMode == EScrollMode.BMSCROLL || TJAPlayer3.ConfigIni.eScrollMode == EScrollMode.HBSCROLL )
-                            y += pChip.nバーからの距離dot.Taiko;
+                            y += pChip.nBarDistancedot.Taiko;
                     }
 
-                    if( pChip.nバーからの距離dot.Drums < 0 )
+                    if( pChip.nBarDistancedot.Drums < 0 )
                     {
                         this.actGame.st叩ききりまショー.b最初のチップが叩かれた = true;
                     }
@@ -1253,7 +1253,7 @@ namespace TJAPlayer3
                             int nHand = this.ct手つなぎ.nCurrentValue < 30 ? this.ct手つなぎ.nCurrentValue : 60 - this.ct手つなぎ.nCurrentValue;
 
 
-                            x = ( x ) - ( ( int ) ( ( 130.0 * pChip.dbチップサイズ倍率 ) / 2.0 ) );
+                            x = ( x ) - ( ( int ) ( ( 130.0 * pChip.sbChipSizeScale ) / 2.0 ) );
                             TJAPlayer3.Tx.Notes.b加算合成 = false;
 
                             if (TJAPlayer3.Tx.SENotes != null)
@@ -1376,7 +1376,7 @@ namespace TJAPlayer3
                     if( pChip.nMovementStandbyTimems != 0 && ( CSoundManager.rPlaybackTimer.n現在時刻ms < pChip.nNoiseTimems - pChip.nMovementStandbyTimems ) )
                     {
                         nノート座標 = (int)( ( ( ( pChip.nNoiseTimems ) - ( pChip.nNoiseTimems - pChip.nMovementStandbyTimems ) ) * pChip.dbBPM * pChip.dbSCROLL * ( this.act譜面スクロール速度.db現在の譜面スクロール速度.Drums + 1 ) ) / 502.8594 );
-                        nノート末端座標 = (int)( ( ( pChip.nノーツ終了時刻ms - ( pChip.nNoiseTimems - pChip.nMovementStandbyTimems ) ) * pChip.dbBPM * pChip.dbSCROLL * ( this.act譜面スクロール速度.db現在の譜面スクロール速度.Drums + 1 ) ) / 502.8594 );
+                        nノート末端座標 = (int)( ( ( pChip.nNoteEndTimems - ( pChip.nNoiseTimems - pChip.nMovementStandbyTimems ) ) * pChip.dbBPM * pChip.dbSCROLL * ( this.act譜面スクロール速度.db現在の譜面スクロール速度.Drums + 1 ) ) / 502.8594 );
                     }
                     else
                     {
@@ -1394,7 +1394,7 @@ namespace TJAPlayer3
                     CDTX.CChip cChip = null;
                     if( pChip.nMovementStandbyTimems != 0 ) // n先頭NoiseLocation value is only used when this condition is met
                     {
-                        cChip = TJAPlayer3.stage演奏ドラム画面.r指定時刻に一番近い連打Chip_ヒット未済問わず不可視考慮( pChip.nNoiseTimems, 0x10 + pChip.n連打音符State, 0, nPlayer );
+                        cChip = TJAPlayer3.stage演奏ドラム画面.r指定時刻に一番近い連打Chip_ヒット未済問わず不可視考慮( pChip.nNoiseTimems, 0x10 + pChip.nnRennDaNoteState, 0, nPlayer );
                         if( cChip != null )
                         {
                             n先頭NoiseLocation = cChip.nNoiseTimems;
@@ -1413,8 +1413,8 @@ namespace TJAPlayer3
                     }
                 }
 
-                int x = TJAPlayer3.Skin.Game_Lane_Field_X[nPlayer] - (130 / 2) + pChip.nバーからの距離dot.Taiko + 10;
-                int x末端 = TJAPlayer3.Skin.Game_Lane_Field_X[nPlayer] - (130 / 2) + pChip.nバーからのノーツ末端距離dot.Taiko + 10;
+                int x = TJAPlayer3.Skin.Game_Lane_Field_X[nPlayer] - (130 / 2) + pChip.nBarDistancedot.Taiko + 10;
+                int x末端 = TJAPlayer3.Skin.Game_Lane_Field_X[nPlayer] - (130 / 2) + pChip.nBarNoteDistancedot.Taiko + 10;
                 int y = TJAPlayer3.Skin.Game_Lane_Field_Y[ nPlayer ];
 
                 if( pChip.nChannelNumber >= 0x15 && pChip.nChannelNumber <= 0x17 )
@@ -1426,8 +1426,8 @@ namespace TJAPlayer3
                     }
                     else
                     {
-                        x = TJAPlayer3.Skin.Game_Lane_Field_X[nPlayer] - (130 / 2) + pChip.nバーからの距離dot.Taiko + 10;
-                        x末端 = TJAPlayer3.Skin.Game_Lane_Field_X[nPlayer] - (130 / 2) + pChip.nバーからのノーツ末端距離dot.Taiko + 10;
+                        x = TJAPlayer3.Skin.Game_Lane_Field_X[nPlayer] - (130 / 2) + pChip.nBarDistancedot.Taiko + 10;
+                        x末端 = TJAPlayer3.Skin.Game_Lane_Field_X[nPlayer] - (130 / 2) + pChip.nBarNoteDistancedot.Taiko + 10;
                     }
                 }
                 else if( pChip.nChannelNumber == 0x18 )
@@ -1438,7 +1438,7 @@ namespace TJAPlayer3
                     }
                     else
                     {
-                        x = TJAPlayer3.Skin.Game_Lane_Field_X[nPlayer] - (130 / 2) + pChip.nバーからの距離dot.Taiko + 10;
+                        x = TJAPlayer3.Skin.Game_Lane_Field_X[nPlayer] - (130 / 2) + pChip.nBarDistancedot.Taiko + 10;
                     }
                 }
 
@@ -1618,7 +1618,7 @@ namespace TJAPlayer3
                         }
                         if( pChip.nChannelNumber == 0x17 )
                         {
-                            if( pChip.nNoiseTimems < CSoundManager.rPlaybackTimer.n現在時刻ms && pChip.nノーツ終了時刻ms > CSoundManager.rPlaybackTimer.n現在時刻ms )
+                            if( pChip.nNoiseTimems < CSoundManager.rPlaybackTimer.n現在時刻ms && pChip.nNoteEndTimems > CSoundManager.rPlaybackTimer.n現在時刻ms )
                                 x = TJAPlayer3.Skin.Game_Lane_Field_X[nPlayer] - (130 / 2);
                             if( TJAPlayer3.ConfigIni.eSTEALTH != Eステルスモード.DORON )
                                 TJAPlayer3.Tx.Notes.t2D描画( TJAPlayer3.app.Device, x, y, new Rectangle( 1430, num9, 260, 130 ) );
@@ -1630,7 +1630,7 @@ namespace TJAPlayer3
                             //大きい連打か小さい連打かの区別方法を考えてなかったよちくしょう
                             TJAPlayer3.Tx.Notes.vc拡大縮小倍率.X = 1.0f;
                             int n = 0;
-                            switch( pChip.n連打音符State )
+                            switch( pChip.nnRennDaNoteState )
                             {
                                 case 5:
                                     n = 910;
@@ -1642,7 +1642,7 @@ namespace TJAPlayer3
                                     n = 910;
                                     break;
                             }
-                            if( pChip.n連打音符State != 7 )
+                            if( pChip.nnRennDaNoteState != 7 )
                             {
                                 TJAPlayer3.Tx.SENotes?.t2D描画(TJAPlayer3.app.Device, x + 56, y + nSenotesY, new Rectangle( 58, 270, 78, 30 ) );
                             }
@@ -1650,7 +1650,7 @@ namespace TJAPlayer3
                     }
                 }
             }
-            if( pChip.nNoiseTimems < CSoundManager.rPlaybackTimer.n現在時刻ms && pChip.nノーツ終了時刻ms > CSoundManager.rPlaybackTimer.n現在時刻ms )
+            if( pChip.nNoiseTimems < CSoundManager.rPlaybackTimer.n現在時刻ms && pChip.nNoteEndTimems > CSoundManager.rPlaybackTimer.n現在時刻ms )
             {
                 //時間内でかつ0x9Aじゃないならならヒット処理
                 if( pChip.nChannelNumber != 0x18 && ( nPlayer == 0 ? TJAPlayer3.ConfigIni.b太鼓パートAutoPlay : TJAPlayer3.ConfigIni.b太鼓パートAutoPlay2P ) )
@@ -1665,7 +1665,7 @@ namespace TJAPlayer3
                 return;
 
             int n小節番号plus1 = this.actPlayInfo.NowMeasure[nPlayer];
-            int x = TJAPlayer3.Skin.Game_Lane_Field_X[ nPlayer ] + pChip.nバーからの距離dot.Taiko;
+            int x = TJAPlayer3.Skin.Game_Lane_Field_X[ nPlayer ] + pChip.nBarDistancedot.Taiko;
             int y = TJAPlayer3.Skin.Game_Lane_Field_Y[ nPlayer ];
 
             if( pChip.dbSCROLL_Y != 0.0 )
@@ -1725,7 +1725,7 @@ namespace TJAPlayer3
 
                     if( this.chip現在処理中の連打チップ[ i ].nChannelNumber == 0x17 && this.b連打中[ i ] == true )
                     {
-                        if( this.chip現在処理中の連打チップ[ i ].nNoiseTimems <= (int)CSoundManager.rPlaybackTimer.n現在時刻ms && this.chip現在処理中の連打チップ[ i ].nノーツ終了時刻ms + 500 >= (int)CSoundManager.rPlaybackTimer.n現在時刻ms)
+                        if( this.chip現在処理中の連打チップ[ i ].nNoiseTimems <= (int)CSoundManager.rPlaybackTimer.n現在時刻ms && this.chip現在処理中の連打チップ[ i ].nNoteEndTimems + 500 >= (int)CSoundManager.rPlaybackTimer.n現在時刻ms)
                         {
                             this.chip現在処理中の連打チップ[ i ].bShow = false;
                             this.actBalloon.On進行描画( this.chip現在処理中の連打チップ[ i ].nBalloon, this.n風船残り[ i ], i );
