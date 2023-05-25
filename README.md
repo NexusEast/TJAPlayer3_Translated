@@ -1,5 +1,6 @@
 ﻿<!-- omit in toc -->
-# TJAPlayer3
+# TJAPlayer3: English version.
+I'm trying to transe entire code into english.
 
 ## Quick Links
 
