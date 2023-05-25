@@ -250,10 +250,10 @@ namespace TJAPlayer3
         /// </summary>
 		public class CJPOSSCROLL
         {
-            public double db移動時間;
-            public int n移動距離px;
-            public int n移動距離Ypx;
-            public int n移動方向; //移動方向は0(左)、1(右)の2つだけ。
+            public double dbMovementTime;
+            public int nMovementDistancepx;
+            public int nMovementDistanceYpx;
+            public int nMovementDirection; //移動方向は0(左)、1(右)の2つだけ。
             public int nInternalNumber;
             public int nNotationalNumber;
 
@@ -269,7 +269,7 @@ namespace TJAPlayer3
                 {
                     builder.Append(string.Format("CJPOSSCROLL{0}", CDTX.tZZ(this.nNotationalNumber)));
                 }
-                builder.Append(string.Format(", JPOSSCROLL:{0}", this.db移動時間));
+                builder.Append(string.Format(", JPOSSCROLL:{0}", this.dbMovementTime));
                 return builder.ToString();
             }
         }
@@ -624,7 +624,7 @@ namespace TJAPlayer3
         {
             public bool bBGMとして使う;
             public List<int> listこのWAVを使用するチャンネル番号の集合 = new List<int>(16);
-            public int nチップサイズ = 100;
+            public int nChipSize = 100;
             public int n位置;
             public long[] n一時停止時刻 = new long[TJAPlayer3.ConfigIni.nPoliphonicSounds];    // 4
             public int SongVol = CSound.DefaultSongVol;
@@ -666,7 +666,7 @@ namespace TJAPlayer3
                     sb.Append(string.Format("CWAV{0}(内部{1}): ", CDTX.tZZ(this.nNotationalNumber), this.nInternalNumber));
                 }
                 sb.Append(
-                    $"{nameof(SongVol)}:{this.SongVol}, {nameof(LoudnessMetadata.Integrated)}:{this.SongLoudnessMetadata?.Integrated}, {nameof(LoudnessMetadata.TruePeak)}:{this.SongLoudnessMetadata?.TruePeak}, 位置:{this.n位置}, サイズ:{this.nチップサイズ}, BGM:{(this.bBGMとして使う ? 'Y' : 'N')}, File:{this.strファイル名}, Comment:{this.strコメント文}");
+                    $"{nameof(SongVol)}:{this.SongVol}, {nameof(LoudnessMetadata.Integrated)}:{this.SongLoudnessMetadata?.Integrated}, {nameof(LoudnessMetadata.TruePeak)}:{this.SongLoudnessMetadata?.TruePeak}, 位置:{this.n位置}, サイズ:{this.nChipSize}, BGM:{(this.bBGMとして使う ? 'Y' : 'N')}, File:{this.strファイル名}, Comment:{this.strコメント文}");
 
                 return sb.ToString();
             }
@@ -1863,9 +1863,9 @@ namespace TJAPlayer3
                         #region [ CWAV初期化 ]
                         foreach (CWAV cwav in this.listWAV.Values)
                         {
-                            if (cwav.nチップサイズ < 0)
+                            if (cwav.nChipSize < 0)
                             {
-                                cwav.nチップサイズ = 100;
+                                cwav.nChipSize = 100;
                             }
                             if (cwav.n位置 <= -10000)
                             {
@@ -1883,7 +1883,7 @@ namespace TJAPlayer3
                         //    {
                         //        if( chip.nIntNum_Internal == cwav.nInternalNumber )
                         //        {
-                        //            chip.dbチップサイズ倍率 = ( (double) cwav.nチップサイズ ) / 100.0;
+                        //            chip.dbチップサイズ倍率 = ( (double) cwav.nChipSize ) / 100.0;
                         //            if (chip.nChannelNumber == 0x01 )	// BGMだったら
                         //            {
                         //                cwav.bIsOnBGMLane = true;
@@ -1898,7 +1898,7 @@ namespace TJAPlayer3
                             {
                                 //	if ( chip.nIntNum_Internal == cwav.nInternalNumber )
                                 //	{
-                                chip.dbチップサイズ倍率 = ((double)cwav.nチップサイズ) / 100.0;
+                                chip.dbチップサイズ倍率 = ((double)cwav.nChipSize) / 100.0;
                                 //if ( chip.nChannelNumber == 0x01 )	// BGMだったら
                                 //{
                                 //	cwav.bIsOnBGMLane = true;
@@ -3541,9 +3541,9 @@ namespace TJAPlayer3
 
                     WarnSplitLength("#JPOSSCROLL", strArray, 4);
                     double sbMovementTime = Convert.ToDouble(strArray[0]);
-                    int n移動px = Convert.ToInt32(strArray[1]);
-                    int n移動Ypx = Convert.ToInt32(strArray[2]);
-                    int n移動方向 = Convert.ToInt32(strArray[3]);
+                    int nMovementpx = Convert.ToInt32(strArray[1]);
+                    int nMovementYpx = Convert.ToInt32(strArray[2]);
+                    int nMovementDirection = Convert.ToInt32(strArray[3]);
 
                     //チップ追加して割り込んでみる。
                     var chip = new CChip();
@@ -3556,7 +3556,7 @@ namespace TJAPlayer3
 
                     // チップを配置。
 
-                    this.listJPOSSCROLL.Add(this.nInternalNumberJSCROLL1to, new CJPOSSCROLL() { nInternalNumber = this.nInternalNumberJSCROLL1to, nNotationalNumber = 0, db移動時間 = sbMovementTime, n移動距離px = n移動px, n移動距離Ypx = n移動Ypx, n移動方向 = n移動方向 });
+                    this.listJPOSSCROLL.Add(this.nInternalNumberJSCROLL1to, new CJPOSSCROLL() { nInternalNumber = this.nInternalNumberJSCROLL1to, nNotationalNumber = 0, dbMovementTime = sbMovementTime, nMovementDistancepx = nMovementpx, nMovementDistanceYpx = nMovementYpx, nMovementDirection = nMovementDirection });
                     this.listChip.Add(chip);
                     this.nInternalNumberJSCROLL1to++;
                 }
@@ -3564,9 +3564,9 @@ namespace TJAPlayer3
                 {
                     strArray = argument.Split(chDelimiter);
                     WarnSplitLength("#JPOSSCROLL", strArray, 3);
-                    double db移動時刻 = Convert.ToDouble(strArray[0]);
-                    int n移動px = Convert.ToInt32(strArray[1]);
-                    int n移動方向 = Convert.ToInt32(strArray[2]);
+                    double dbMovementTime = Convert.ToDouble(strArray[0]);
+                    int nMovementpx = Convert.ToInt32(strArray[1]);
+                    int nMovementDirection = Convert.ToInt32(strArray[2]);
 
                     //チップ追加して割り込んでみる。
                     var chip = new CChip();
@@ -3579,7 +3579,7 @@ namespace TJAPlayer3
 
                     // チップを配置。
 
-                    this.listJPOSSCROLL.Add(this.nInternalNumberJSCROLL1to, new CJPOSSCROLL() { nInternalNumber = this.nInternalNumberJSCROLL1to, nNotationalNumber = 0, db移動時間 = db移動時刻, n移動距離px = n移動px, n移動距離Ypx = 0, n移動方向 = n移動方向 });
+                    this.listJPOSSCROLL.Add(this.nInternalNumberJSCROLL1to, new CJPOSSCROLL() { nInternalNumber = this.nInternalNumberJSCROLL1to, nNotationalNumber = 0, dbMovementTime = dbMovementTime, nMovementDistancepx = nMovementpx, nMovementDistanceYpx = 0, nMovementDirection = nMovementDirection });
                     this.listChip.Add(chip);
                     this.nInternalNumberJSCROLL1to++;
                 }
@@ -3622,7 +3622,7 @@ namespace TJAPlayer3
                 {
                     nInternalNumber = this.nInternalNumberWAV1to,
                     nNotationalNumber = this.nInternalNumberWAV1to,
-                    nチップサイズ = this.n無限管理SIZE[this.nInternalNumberWAV1to],
+                    nChipSize = this.n無限管理SIZE[this.nInternalNumberWAV1to],
                     n位置 = this.n無限管理PAN[this.nInternalNumberWAV1to],
                     SongVol = this.SongVol,
                     SongLoudnessMetadata = this.SongLoudnessMetadata,
@@ -4340,7 +4340,7 @@ namespace TJAPlayer3
                         {
                             nInternalNumber = this.nInternalNumberWAV1to,
                             nNotationalNumber = 1,
-                            nチップサイズ = this.n無限管理SIZE[this.nInternalNumberWAV1to],
+                            nChipSize = this.n無限管理SIZE[this.nInternalNumberWAV1to],
                             n位置 = this.n無限管理PAN[this.nInternalNumberWAV1to],
                             SongVol = this.SongVol,
                             SongLoudnessMetadata = this.SongLoudnessMetadata,
@@ -6410,8 +6410,8 @@ namespace TJAPlayer3
             {
                 foreach (CWAV wav in this.listWAV.Values)       // これまでに出てきたWAVチップのうち、該当する（サイズが未設定の）チップのサイズを変更する（仕組み上、必ず後方参照となる）。
                 {
-                    if (wav.nチップサイズ == -nWAV番号)     // #SIZExx 行より前の行に出現した #WAVxx では、チップサイズは -xx に初期化されている。
-                        wav.nチップサイズ = nサイズ値;
+                    if (wav.nChipSize == -nWAV番号)     // #SIZExx 行より前の行に出現した #WAVxx では、チップサイズは -xx に初期化されている。
+                        wav.nChipSize = nサイズ値;
                 }
             }
             this.n無限管理SIZE[nWAV番号] = nサイズ値;         // 次にこの nWAV番号を使うWAVチップが現れたら、負数の代わりに、このサイズ値が格納されることになる。

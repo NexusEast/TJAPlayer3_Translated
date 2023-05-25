@@ -3428,11 +3428,11 @@ namespace TJAPlayer3
                         {
                             if (nPlayer == 0)
                             {
-                                TJAPlayer3.stage演奏ドラム画面.actLaneTaiko.t判定枠移動XY(dTX.listJPOSSCROLL[nJPOSSCROLL[nPlayer]].db移動時間, dTX.listJPOSSCROLL[nJPOSSCROLL[nPlayer]].n移動距離px, dTX.listJPOSSCROLL[nJPOSSCROLL[nPlayer]].n移動距離Ypx, dTX.listJPOSSCROLL[nJPOSSCROLL[nPlayer]].n移動方向);
+                                TJAPlayer3.stage演奏ドラム画面.actLaneTaiko.t判定枠移動XY(dTX.listJPOSSCROLL[nJPOSSCROLL[nPlayer]].dbMovementTime, dTX.listJPOSSCROLL[nJPOSSCROLL[nPlayer]].nMovementDistancepx, dTX.listJPOSSCROLL[nJPOSSCROLL[nPlayer]].nMovementDistanceYpx, dTX.listJPOSSCROLL[nJPOSSCROLL[nPlayer]].nMovementDirection);
                             }
                             else
                             {
-                                TJAPlayer3.stage演奏ドラム画面.actLaneTaiko.t判定枠移動XY2(dTX.listJPOSSCROLL[nJPOSSCROLL[nPlayer]].db移動時間, dTX.listJPOSSCROLL[nJPOSSCROLL[nPlayer]].n移動距離px, dTX.listJPOSSCROLL[nJPOSSCROLL[nPlayer]].n移動距離Ypx, dTX.listJPOSSCROLL[nJPOSSCROLL[nPlayer]].n移動方向);
+                                TJAPlayer3.stage演奏ドラム画面.actLaneTaiko.t判定枠移動XY2(dTX.listJPOSSCROLL[nJPOSSCROLL[nPlayer]].dbMovementTime, dTX.listJPOSSCROLL[nJPOSSCROLL[nPlayer]].nMovementDistancepx, dTX.listJPOSSCROLL[nJPOSSCROLL[nPlayer]].nMovementDistanceYpx, dTX.listJPOSSCROLL[nJPOSSCROLL[nPlayer]].nMovementDirection);
                             }
                             this.nJPOSSCROLL[ nPlayer ]++;
                             pChip.bHit = true;
