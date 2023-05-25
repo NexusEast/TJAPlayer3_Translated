@@ -144,11 +144,11 @@ namespace TJAPlayer3
                 {
                     TJAPlayer3.Tx.Failed_Game?.t2D描画(TJAPlayer3.app.Device, 0, 0);
 
-                    int num = (TJAPlayer3.DTX.listChip.Count > 0) ? TJAPlayer3.DTX.listChip[TJAPlayer3.DTX.listChip.Count - 1].n発声時刻ms : 0;
+                    int num = (TJAPlayer3.DTX.listChip.Count > 0) ? TJAPlayer3.DTX.listChip[TJAPlayer3.DTX.listChip.Count - 1].nNoiseTimems : 0;
                     this.t文字表示(640, 520, (((this.dbFailedTime) / 1000.0) / (((double)num) / 1000.0) * 100).ToString("##0") + "%");
                 }
 
-                //int num = ( CDTXMania.DTX.listChip.Count > 0 ) ? CDTXMania.DTX.listChip[ CDTXMania.DTX.listChip.Count - 1 ].n発声時刻ms : 0;
+                //int num = ( CDTXMania.DTX.listChip.Count > 0 ) ? CDTXMania.DTX.listChip[ CDTXMania.DTX.listChip.Count - 1 ].nNoiseTimems : 0;
                 //string str = "Time:          " + ( ( ( this.dbFailedTime ) / 1000.0 ) ).ToString( "####0.00" ) + " / " + ( ( ( ( double ) num ) / 1000.0 ) ).ToString( "####0.00" );
                 //CDTXMania.act文字コンソール.tPrint( 0, 0, C文字コンソール.Eフォント種別.白, str );
 

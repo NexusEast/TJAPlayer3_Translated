@@ -58,7 +58,7 @@ namespace TJAPlayer3.Tests
                 .Replace("\r\n", "\n")
                 .Replace('\t', ' ');
 
-            var result = CDTXStyleExtractor.tセッション譜面がある(input, seqNo, inputPath);
+            var result = CDTXStyleExtractor.tHasSessionInChart(input, seqNo, inputPath);
 
             // I would use ApprovalTests.Net for this,
             // but cannot until we upgrade past .net 3.5.

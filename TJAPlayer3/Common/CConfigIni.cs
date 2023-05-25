@@ -773,7 +773,7 @@ namespace TJAPlayer3
 		public int nInputAdjustTimeMs;
 		public STDGBVALUE<int> nJudgeLinePosOffset;	// #31602 2013.6.23 yyagi 判定ライン表示位置のオフセット
 		public bool bIsAutoResultCapture;			// #25399 2011.6.9 yyagi リザルト画像自動保存機能のON/OFF制御
-		public int nPoliphonicSounds;				// #28228 2012.5.1 yyagi レーン毎の最大同時発音数
+		public int nPoliphonicSounds = 4;				// #28228 2012.5.1 yyagi レーン毎の最大同時発音数
 		public bool bバッファ入力を行う;
 		public bool bIsEnabledSystemMenu;			// #28200 2012.5.1 yyagi System Menuの使用可否切替
 		public string strSystemSkinSubfolderFullName;	// #28195 2012.5.2 yyagi Skin切替用 System/以下のサブフォルダ名

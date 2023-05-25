@@ -291,7 +291,7 @@ namespace TJAPlayer3
 
 					    	Trace.TraceInformation( "----曲情報-----------------" );
 				    		Trace.TraceInformation( "TITLE: {0}", TJAPlayer3.DTX.TITLE );
-			    			Trace.TraceInformation( "FILE: {0}",  TJAPlayer3.DTX.strファイル名の絶対パス );
+			    			Trace.TraceInformation( "FILE: {0}",  TJAPlayer3.DTX.strtFileAbsolutePath );
 		    				Trace.TraceInformation( "---------------------------" );
 
 							var span = (TimeSpan) ( DateTime.Now - timeBeginLoad );

@@ -96,7 +96,7 @@ namespace TJAPlayer3
         public void t叩ききりまショー_初期化()
         {
             this.st叩ききりまショー = new ST叩ききりまショー();
-            this.n演奏時間 = ( TJAPlayer3.DTX.listChip.Count > 0 ) ? TJAPlayer3.DTX.listChip[ TJAPlayer3.DTX.listChip.Count - 1 ].n発声時刻ms : 0;
+            this.n演奏時間 = ( TJAPlayer3.DTX.listChip.Count > 0 ) ? TJAPlayer3.DTX.listChip[ TJAPlayer3.DTX.listChip.Count - 1 ].nNoiseTimems : 0;
             this.st叩ききりまショー.ct残り時間 = new CCounter( 0, 25000, 1, TJAPlayer3.Timer );
             this.st叩ききりまショー.ct加算時間表示 = new CCounter();
             this.st叩ききりまショー.ct加算審査中 = new CCounter();

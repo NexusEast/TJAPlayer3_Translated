@@ -22,7 +22,7 @@ namespace TJAPlayer3
                 return;
             }
 
-            switch (pChip.nチャンネル番号)
+            switch (pChip.nChannelNumber)
             {
                 case 0x15:
                 case 0x16:

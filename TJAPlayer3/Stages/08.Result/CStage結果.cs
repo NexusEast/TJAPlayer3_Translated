@@ -114,7 +114,7 @@ namespace TJAPlayer3
 
                 #region [ .score.ini の作成と出力 ]
 				//---------------------
-				string str = TJAPlayer3.DTX.strファイル名の絶対パス + ".score.ini";
+				string str = TJAPlayer3.DTX.strtFileAbsolutePath + ".score.ini";
 				CScoreIni ini = new CScoreIni( str );
 
 				bool[] b今までにフルコンボしたことがある = new bool[] { false, false, false };
@@ -427,7 +427,7 @@ namespace TJAPlayer3
 		/// <param name="bIsAutoSave">true=自動保存モード, false=手動保存モード</param>
 		private void CheckAndSaveResultScreen(bool bIsAutoSave)
 		{
-			string path = Path.GetDirectoryName( TJAPlayer3.DTX.strファイル名の絶対パス );
+			string path = Path.GetDirectoryName( TJAPlayer3.DTX.strtFileAbsolutePath );
 			string datetime = DateTime.Now.ToString( "yyyyMMddHHmmss" );
 			if ( bIsAutoSave )
 			{
@@ -438,7 +438,7 @@ namespace TJAPlayer3
 					{
 						string strPart = ( (E楽器パート) ( i ) ).ToString();
 						string strRank = ( (CScoreIni.ERANK) ( this.nランク値[ i ] ) ).ToString();
-						string strFullPath = TJAPlayer3.DTX.strファイル名の絶対パス + "." + datetime + "_" + strPart + "_" + strRank + ".png";
+						string strFullPath = TJAPlayer3.DTX.strtFileAbsolutePath + "." + datetime + "_" + strPart + "_" + strRank + ".png";
 						//Surface.ToFile( pSurface, strFullPath, ImageFileFormat.Png );
 						TJAPlayer3.app.SaveResultScreen( strFullPath );
 					}

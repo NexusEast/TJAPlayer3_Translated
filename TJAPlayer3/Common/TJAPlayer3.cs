@@ -336,12 +336,13 @@ namespace TJAPlayer3
 			get { return base.Window.Handle; }
 		}
 
-        #endregion
+		#endregion
 
-        // コンストラクタ
-
-        public TJAPlayer3()
+		// コンストラクタ
+		public bool HeadlessMode = false;
+        public TJAPlayer3(bool HeadlessMode)
 		{
+			this.HeadlessMode = HeadlessMode;
 			TJAPlayer3.app = this;
 			this.t起動処理();
 		}
@@ -1487,8 +1488,8 @@ for (int i = 0; i < 3; i++) {
 					Trace.TraceError( "例外が発生しましたが処理を継続します。 (b8d93255-bbe4-4ca3-8264-7ee5175b19f3)" );
 				}
 			}
-			this.Window.EnableSystemMenu = TJAPlayer3.ConfigIni.bIsEnabledSystemMenu;	// #28200 2011.5.1 yyagi
-			// 2012.8.22 Config.iniが無いときに初期値が適用されるよう、この設定行をifブロック外に移動
+			this.Window.EnableSystemMenu = TJAPlayer3.ConfigIni.bIsEnabledSystemMenu;   // #28200 2011.5.1 yyagi
+																						// 2012.8.22 Config.iniが無いときに初期値が適用されるよう、この設定行をifブロック外に移動
 
 			//---------------------
 			#endregion
@@ -1890,18 +1891,21 @@ for (int i = 0; i < 3; i++) {
 
             Trace.TraceInformation( "アプリケーションの初期化を完了しました。" );
 
+			if (!HeadlessMode)
+			{
 
-            #region [ 最初のステージの起動 ]
-            //---------------------
-            Trace.TraceInformation( "----------------------" );
-			Trace.TraceInformation( "■ 起動" );
+                #region [ 最初のステージの起動 ]
+                //---------------------
+                Trace.TraceInformation("----------------------");
+                Trace.TraceInformation("■ 起動");
 
-			r現在のステージ = stage起動;
-			r現在のステージ.On活性化();
+                r現在のステージ = stage起動;
+                r現在のステージ.On活性化();
 
-			//---------------------
-			#endregion
-		}
+                //---------------------
+                #endregion
+            }
+        }
 
 		public void ShowWindowTitleWithSoundType()
 		{
@@ -2207,7 +2211,7 @@ for (int i = 0; i < 3; i++) {
 
 		private static void tScoreIniへBGMAdjustとHistoryとPlayCountを更新(string str新ヒストリ行)
 		{
-            string strFilename = DTX.strファイル名の絶対パス + ".score.ini";
+            string strFilename = DTX.strtFileAbsolutePath + ".score.ini";
 			CScoreIni ini = new CScoreIni( strFilename );
 			if( !File.Exists( strFilename ) )
 			{
