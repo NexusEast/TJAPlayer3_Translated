@@ -22,12 +22,12 @@ namespace FDK
 		/// <para>利用可能な画像形式は、BMP, JPG, PNG, TGA, DDS, PPM, DIB, HDR, PFM のいずれか。</para>
 		/// </summary>
 		/// <param name="device">Direct3D9 デバイス。</param>
-		/// <param name="strファイル名">画像ファイル名。</param>
+		/// <param name="strFileName">画像ファイル名。</param>
 		/// <param name="format">テクスチャのフォーマット。</param>
 		/// <param name="b黒を透過する">画像の黒（0xFFFFFFFF）を透過させるなら true。</param>
 		/// <exception cref="CTextureCreateFailedException">テクスチャの作成に失敗しました。</exception>
-		public CTextureAf( Device device, string strファイル名, Format format, bool b黒を透過する )
-			: this( device, strファイル名, format, b黒を透過する, Pool.Managed )
+		public CTextureAf( Device device, string strFileName, Format format, bool b黒を透過する )
+			: this( device, strFileName, format, b黒を透過する, Pool.Managed )
 		{
 		}
 
@@ -39,22 +39,22 @@ namespace FDK
 		/// <para>その他、ミップマップ数は 1、Usage は None、イメージフィルタは Point、ミップマップフィルタは None になる。</para>
 		/// </summary>
 		/// <param name="device">Direct3D9 デバイス。</param>
-		/// <param name="strファイル名">画像ファイル名。</param>
+		/// <param name="strFileName">画像ファイル名。</param>
 		/// <param name="format">テクスチャのフォーマット。</param>
 		/// <param name="b黒を透過する">画像の黒（0xFFFFFFFF）を透過させるなら true。</param>
 		/// <param name="pool">テクスチャの管理方法。</param>
 		/// <exception cref="CTextureCreateFailedException">テクスチャの作成に失敗しました。</exception>
-        private CTextureAf( Device device, string strファイル名, Format format, bool b黒を透過する, Pool pool )
+        private CTextureAf( Device device, string strFileName, Format format, bool b黒を透過する, Pool pool )
 		{
-			MakeTexture( device, strファイル名, format, b黒を透過する, pool );
+			MakeTexture( device, strFileName, format, b黒を透過する, pool );
 		}
 
-        private new void MakeTexture( Device device, string strファイル名, Format format, bool b黒を透過する, Pool pool )
+        private new void MakeTexture( Device device, string strFileName, Format format, bool b黒を透過する, Pool pool )
 		{
-			if ( !File.Exists( strファイル名 ) )		// #27122 2012.1.13 from: ImageInformation では FileNotFound 例外は返ってこないので、ここで自分でチェックする。わかりやすいログのために。
-				throw new FileNotFoundException( string.Format( "ファイルが存在しません。\n[{0}]", strファイル名 ) );
+			if ( !File.Exists( strFileName ) )		// #27122 2012.1.13 from: ImageInformation では FileNotFound 例外は返ってこないので、ここで自分でチェックする。わかりやすいログのために。
+				throw new FileNotFoundException( string.Format( "ファイルが存在しません。\n[{0}]", strFileName ) );
 
-			Byte[] _txData = File.ReadAllBytes( strファイル名 );
+			Byte[] _txData = File.ReadAllBytes( strFileName );
 			bool b条件付きでサイズは２の累乗でなくてもOK = ( device.Capabilities.TextureCaps & TextureCaps.NonPow2Conditional ) != 0;
 			bool bサイズは２の累乗でなければならない = ( device.Capabilities.TextureCaps & TextureCaps.Pow2 ) != 0;
 			bool b正方形でなければならない = ( device.Capabilities.TextureCaps & TextureCaps.SquareOnly ) != 0;
@@ -62,8 +62,8 @@ namespace FDK
 			// そもそもこんな最適化をしなくてよいのなら、さっさとbaseに処理を委ねて終了
 			if ( !bサイズは２の累乗でなければならない && b条件付きでサイズは２の累乗でなくてもOK )
 			{
-				//Debug.WriteLine( Path.GetFileName( strファイル名 )  + ": 最適化は不要です。" );
-				base.MakeTexture( device, strファイル名, format, b黒を透過する, pool );
+				//Debug.WriteLine( Path.GetFileName( strFileName )  + ": 最適化は不要です。" );
+				base.MakeTexture( device, strFileName, format, b黒を透過する, pool );
 				return;
 			}
 
@@ -77,8 +77,8 @@ namespace FDK
 				this.b横長のテクスチャである = true;
 				if ( !GetFoldedTextureSize( ref w, ref h, out foldtimes ) )
 				{
-//Debug.WriteLine( Path.GetFileName( strファイル名 ) + ": 最適化を断念。" );
-					base.MakeTexture( device, strファイル名, format, b黒を透過する, pool );
+//Debug.WriteLine( Path.GetFileName( strFileName ) + ": 最適化を断念。" );
+					base.MakeTexture( device, strFileName, format, b黒を透過する, pool );
 					return;
 				}
 			}
@@ -87,14 +87,14 @@ namespace FDK
 				this.b横長のテクスチャである = false;
 				if ( !GetFoldedTextureSize( ref h, ref w, out foldtimes ) )	// 縦横入れ替えて呼び出し
 				{
-//Debug.WriteLine( Path.GetFileName( strファイル名 ) + ": 最適化を断念。" );
-					base.MakeTexture( device, strファイル名, format, b黒を透過する, pool );
+//Debug.WriteLine( Path.GetFileName( strFileName ) + ": 最適化を断念。" );
+					base.MakeTexture( device, strFileName, format, b黒を透過する, pool );
 					return;
 				}
 			}
 			#endregion
 
-//Debug.WriteLine( Path.GetFileName( strファイル名 ) + ": texture最適化結果: width=" + w + ", height=" + h + ", 折りたたみ回数=" + foldtimes );
+//Debug.WriteLine( Path.GetFileName( strFileName ) + ": texture最適化結果: width=" + w + ", height=" + h + ", 折りたたみ回数=" + foldtimes );
 			#region [ 折りたたみテクスチャ画像を作り、テクスチャ登録する ]
 			// バイナリ(Byte配列)をBitmapに変換
 			MemoryStream mms = new MemoryStream( _txData );

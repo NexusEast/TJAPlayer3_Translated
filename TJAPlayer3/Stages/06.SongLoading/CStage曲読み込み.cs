@@ -491,12 +491,12 @@ namespace TJAPlayer3
 		}
 
 
-		private void ShowProgressByFilename(string strファイル名 )
+		private void ShowProgressByFilename(string strFileName )
 		{
 			if ( graphicsFilename != null && ftFilename != null )
 			{
 				graphicsFilename.Clear( Color.Transparent );
-				graphicsFilename.DrawString( strファイル名, ftFilename, Brushes.White, new RectangleF( 0, 0, 640, 24 ) );
+				graphicsFilename.DrawString( strFileName, ftFilename, Brushes.White, new RectangleF( 0, 0, 640, 24 ) );
 				if ( txFilename != null )
 				{
 					txFilename.Dispose();

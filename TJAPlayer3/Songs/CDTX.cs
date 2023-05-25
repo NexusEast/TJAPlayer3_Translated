@@ -127,9 +127,9 @@ namespace TJAPlayer3
         {
             public FDK.CDirectShow dshow;
             private bool bDispose済み;
-            public int n番号;
-            public string strコメント文 = "";
-            public string strファイル名 = "";
+            public int nNumber;
+            public string strCommentText = "";
+            public string strFileName = "";
 
             public void OnDeviceCreated()
             {
@@ -137,15 +137,15 @@ namespace TJAPlayer3
                 //-----------------
                 string str動画ファイル名;
                 if (!string.IsNullOrEmpty(TJAPlayer3.DTX.PATH_WAV))
-                    str動画ファイル名 = TJAPlayer3.DTX.PATH_WAV + this.strファイル名;
+                    str動画ファイル名 = TJAPlayer3.DTX.PATH_WAV + this.strFileName;
                 else
-                    str動画ファイル名 = TJAPlayer3.DTX.strFolderName + this.strファイル名;
+                    str動画ファイル名 = TJAPlayer3.DTX.strFolderName + this.strFileName;
                 //-----------------
                 #endregion
 
                 if (!File.Exists(str動画ファイル名))
                 {
-                    Trace.TraceWarning("ファイルが存在しません。({0})({1})", this.strコメント文, str動画ファイル名);
+                    Trace.TraceWarning("ファイルが存在しません。({0})({1})", this.strCommentText, str動画ファイル名);
                     this.dshow = null;
                 }
 
@@ -153,19 +153,19 @@ namespace TJAPlayer3
 
                 try
                 {
-                    this.dshow = new FDK.CDirectShow(TJAPlayer3.stage選曲.r確定されたスコア.ファイル情報.フォルダの絶対パス + this.strファイル名, TJAPlayer3.app.WindowHandle, true);
-                    Trace.TraceInformation("DirectShowを生成しました。({0})({1})({2}byte)", this.strコメント文, str動画ファイル名, this.dshow.nデータサイズbyte);
+                    this.dshow = new FDK.CDirectShow(TJAPlayer3.stage選曲.r確定されたスコア.ファイル情報.フォルダの絶対パス + this.strFileName, TJAPlayer3.app.WindowHandle, true);
+                    Trace.TraceInformation("DirectShowを生成しました。({0})({1})({2}byte)", this.strCommentText, str動画ファイル名, this.dshow.nデータサイズbyte);
                 }
                 catch (Exception e)
                 {
                     Trace.TraceError(e.ToString());
-                    Trace.TraceError("DirectShowの生成に失敗しました。({0})({1})", this.strコメント文, str動画ファイル名);
+                    Trace.TraceError("DirectShowの生成に失敗しました。({0})({1})", this.strCommentText, str動画ファイル名);
                     this.dshow = null;
                 }
             }
             public override string ToString()
             {
-                return string.Format("CAVI{0}: File:{1}, Comment:{2}", CDTX.tZZ(this.n番号), this.strファイル名, this.strコメント文);
+                return string.Format("CAVI{0}: File:{1}, Comment:{2}", CDTX.tZZ(this.nNumber), this.strFileName, this.strCommentText);
             }
 
             #region [ IDisposable 実装 ]
@@ -181,16 +181,16 @@ namespace TJAPlayer3
                     //-----------------
                     string str動画ファイル名;
                     if (!string.IsNullOrEmpty(TJAPlayer3.DTX.PATH_WAV))
-                        str動画ファイル名 = TJAPlayer3.DTX.PATH_WAV + this.strファイル名;
+                        str動画ファイル名 = TJAPlayer3.DTX.PATH_WAV + this.strFileName;
                     else
-                        str動画ファイル名 = TJAPlayer3.DTX.strFolderName + this.strファイル名;
+                        str動画ファイル名 = TJAPlayer3.DTX.strFolderName + this.strFileName;
                     //-----------------
                     #endregion
 
                     this.dshow.Dispose();
                     this.dshow = null;
 
-                    Trace.TraceInformation("動画を解放しました。({0})({1})", this.strコメント文, str動画ファイル名);
+                    Trace.TraceInformation("動画を解放しました。({0})({1})", this.strCommentText, str動画ファイル名);
                 }
 
                 this.bDispose済み = true;
@@ -996,9 +996,9 @@ namespace TJAPlayer3
         private int nCount = 0;
 
         public int nOFFSET = 0;
-        private bool bOFFSETの値がマイナスである = false;
+        private bool bHasNegativeOFFSET = false;
         private int nMOVIEOFFSET = 0;
-        private bool bMOVIEOFFSETの値がマイナスである = false;
+        private bool bMOVIEOFFSETIsNegative= false;
         private double dbNowBPM = 120.0;
         private int nDELAY = 0;
         public bool[] bHasBranch = new bool[(int)Difficulty.Total] { false, false, false, false, false, false, false };
@@ -1209,17 +1209,17 @@ namespace TJAPlayer3
             Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture; // Change default culture to invariant, fixes (Purota)
             Dan_C = new Dan_C[3];
         }
-        public CDTX(string strファイル名, bool bヘッダのみ, double db再生速度, int nBGMAdjust, int nReadVersion)
+        public CDTX(string strFileName, bool bヘッダのみ, double db再生速度, int nBGMAdjust, int nReadVersion)
             : this()
         {
             this.On活性化();
-            this.t入力(strファイル名, bヘッダのみ, db再生速度, nBGMAdjust, nReadVersion, 0, false);
+            this.t入力(strFileName, bヘッダのみ, db再生速度, nBGMAdjust, nReadVersion, 0, false);
         }
-        public CDTX(string strファイル名, bool bヘッダのみ, double db再生速度, int nBGMAdjust, int nReadVersion, int nPlayerSide, bool bSession)
+        public CDTX(string strFileName, bool bヘッダのみ, double db再生速度, int nBGMAdjust, int nReadVersion, int nPlayerSide, bool bSession)
             : this()
         {
             this.On活性化();
-            this.t入力(strファイル名, bヘッダのみ, db再生速度, nBGMAdjust, nReadVersion, nPlayerSide, bSession);
+            this.t入力(strFileName, bヘッダのみ, db再生速度, nBGMAdjust, nReadVersion, nPlayerSide, bSession);
         }
 
 
@@ -1657,10 +1657,10 @@ namespace TJAPlayer3
         }
         #endregion
 
-        public void t入力(string strファイル名, bool bヘッダのみ, double db再生速度, int nBGMAdjust, int nReadVersion, int nPlayerSide, bool bSession)
+        public void t入力(string strFileName, bool bヘッダのみ, double db再生速度, int nBGMAdjust, int nReadVersion, int nPlayerSide, bool bSession)
         {
             this.bヘッダのみ = bヘッダのみ;
-            this.strtFileAbsolutePath = Path.GetFullPath(strファイル名);
+            this.strtFileAbsolutePath = Path.GetFullPath(strFileName);
             this.strFileName = Path.GetFileName(this.strtFileAbsolutePath);
             this.strFolderName = Path.GetDirectoryName(this.strtFileAbsolutePath) + @"\";
             //if ( this.e種別 != EType.SMF )
@@ -1677,7 +1677,7 @@ namespace TJAPlayer3
                         //TimeSpan span;
                         string[] files = Directory.GetFiles(this.strFolderName, "*.tja");
 
-                        StreamReader reader = new StreamReader(strファイル名, Encoding.GetEncoding("Shift_JIS"));
+                        StreamReader reader = new StreamReader(strFileName, Encoding.GetEncoding("Shift_JIS"));
                         string str2 = reader.ReadToEnd();
                         reader.Close();
 
@@ -1698,7 +1698,7 @@ namespace TJAPlayer3
                         //DateTime timeBeginLoad = DateTime.Now;
                         //TimeSpan span;
 
-                        StreamReader reader = new StreamReader(strファイル名, Encoding.GetEncoding("Shift_JIS"));
+                        StreamReader reader = new StreamReader(strFileName, Encoding.GetEncoding("Shift_JIS"));
                         string str2 = reader.ReadToEnd();
                         reader.Close();
 
@@ -2055,7 +2055,7 @@ namespace TJAPlayer3
                                     {
                                         nNoiseLocation = chip.nNoiseLocation;
 
-                                        if (this.bOFFSETの値がマイナスである == false)
+                                        if (this.bHasNegativeOFFSET == false)
                                             chip.nNoiseTimems += this.nOFFSET;
                                         ms = chip.nNoiseTimems;
                                         continue;
@@ -2063,7 +2063,7 @@ namespace TJAPlayer3
                                 case 0x02:  // BarLength
                                     {
                                         nNoiseLocation = chip.nNoiseLocation;
-                                        if (this.bOFFSETの値がマイナスである == false)
+                                        if (this.bHasNegativeOFFSET == false)
                                             chip.nNoiseTimems += this.nOFFSET;
                                         ms = chip.nNoiseTimems;
                                         dbBarLength = chip.dbActualValue;
@@ -2072,7 +2072,7 @@ namespace TJAPlayer3
                                 case 0x03:  // BPM
                                     {
                                         nNoiseLocation = chip.nNoiseLocation;
-                                        if (this.bOFFSETの値がマイナスである == false)
+                                        if (this.bHasNegativeOFFSET == false)
                                             chip.nNoiseTimems += this.nOFFSET;
                                         ms = chip.nNoiseTimems;
                                         bpm = this.BASEBPM + chip.nIntNum;
@@ -2087,7 +2087,7 @@ namespace TJAPlayer3
                                 case 0x16:
                                 case 0x17:
                                     {
-                                        if (this.bOFFSETの値がマイナスである)
+                                        if (this.bHasNegativeOFFSET)
                                         {
                                             chip.nNoiseTimems += this.nOFFSET;
                                             chip.nノーツ終了時刻ms += this.nOFFSET;
@@ -2098,7 +2098,7 @@ namespace TJAPlayer3
                                     }
                                 case 0x18:
                                     {
-                                        if (this.bOFFSETの値がマイナスである)
+                                        if (this.bHasNegativeOFFSET)
                                         {
                                             chip.nNoiseTimems += this.nOFFSET;
                                         }
@@ -2115,7 +2115,7 @@ namespace TJAPlayer3
 
                                 case 0x50:
                                     {
-                                        if (this.bOFFSETの値がマイナスである)
+                                        if (this.bHasNegativeOFFSET)
                                             chip.nNoiseTimems += this.nOFFSET;
                                         //chip.nNoiseTimems += this.nDELAY;
                                         //chip.dbBPM = this.dbNowBPM;
@@ -2171,7 +2171,7 @@ namespace TJAPlayer3
                                 case 0x08:  // 拡張BPM
                                     {
                                         nNoiseLocation = chip.nNoiseLocation;
-                                        if (this.bOFFSETの値がマイナスである == false)
+                                        if (this.bHasNegativeOFFSET == false)
                                             chip.nNoiseTimems += this.nOFFSET;
                                         ms = chip.nNoiseTimems;
                                         if (this.listBPM.TryGetValue(chip.nIntNum_Internal, out CBPM cBPM))
@@ -2183,9 +2183,9 @@ namespace TJAPlayer3
                                     }
                                 case 0x54:  // 動画再生
                                     {
-                                        if (this.bOFFSETの値がマイナスである == false)
+                                        if (this.bHasNegativeOFFSET == false)
                                             chip.nNoiseTimems += this.nOFFSET;
-                                        if (this.bMOVIEOFFSETの値がマイナスである == false)
+                                        if (this.bMOVIEOFFSETIsNegative== false)
                                             chip.nNoiseTimems += this.nMOVIEOFFSET;
                                         else
                                             chip.nNoiseTimems -= this.nMOVIEOFFSET;
@@ -2201,7 +2201,7 @@ namespace TJAPlayer3
                                 case 0x98:
                                 case 0x99:
                                     {
-                                        if (this.bOFFSETの値がマイナスである)
+                                        if (this.bHasNegativeOFFSET)
                                         {
                                             chip.nNoiseTimems += this.nOFFSET;
                                             chip.nノーツ終了時刻ms += this.nOFFSET;
@@ -2237,7 +2237,7 @@ namespace TJAPlayer3
                                 case 0x9A:
                                     {
 
-                                        if (this.bOFFSETの値がマイナスである)
+                                        if (this.bHasNegativeOFFSET)
                                         {
                                             chip.nNoiseTimems += this.nOFFSET;
                                         }
@@ -2302,7 +2302,7 @@ namespace TJAPlayer3
                                     }
                                 case 0xDC:
                                     {
-                                        if (this.bOFFSETの値がマイナスである)
+                                        if (this.bHasNegativeOFFSET)
                                             chip.nNoiseTimems += this.nOFFSET;
                                         //if ( this.listDELAY.ContainsKey( chip.nIntNum_Internal ) )
                                         //{
@@ -2312,7 +2312,7 @@ namespace TJAPlayer3
                                     }
                                 case 0xDE:
                                     {
-                                        if (this.bOFFSETの値がマイナスである)
+                                        if (this.bHasNegativeOFFSET)
                                             chip.nNoiseTimems += this.nOFFSET;
                                         //chip.nNoiseTimems += this.nDELAY;
                                         //chip.dbBPM = this.dbNowBPM;
@@ -2323,18 +2323,18 @@ namespace TJAPlayer3
                                     }
                                 case 0xDF:
                                     {
-                                        if (this.bOFFSETの値がマイナスである)
+                                        if (this.bHasNegativeOFFSET)
                                             chip.nNoiseTimems += this.nOFFSET;
                                         //if ( this.listBRANCH.ContainsKey( chip.nIntNum_Internal ) )
                                         //{
-                                        //this.listBRANCH[chip.nIntNum_Internal].dbBranchTimems = chip.nNoiseTimems + ( this.bOFFSETの値がマイナスである ? this.nOFFSET : 0 );
+                                        //this.listBRANCH[chip.nIntNum_Internal].dbBranchTimems = chip.nNoiseTimems + ( this.bHasNegativeOFFSET ? this.nOFFSET : 0 );
                                         //}
 
                                         continue;
                                     }
                                 case 0xE0:
                                     {
-                                        //if (this.bOFFSETの値がマイナスである)
+                                        //if (this.bHasNegativeOFFSET)
                                         //    chip.nNoiseTimems += this.nOFFSET;
 
                                         //chip.dbBPM = this.dbNowBPM;
@@ -2347,7 +2347,7 @@ namespace TJAPlayer3
                                     }
                                 default:
                                     {
-                                        if (this.bOFFSETの値がマイナスである)
+                                        if (this.bHasNegativeOFFSET)
                                             chip.nNoiseTimems += this.nOFFSET;
                                         //chip.nNoiseTimems += this.nDELAY;
                                         chip.dbBPM = this.dbNowBPM;
@@ -4356,19 +4356,19 @@ namespace TJAPlayer3
             else if (strCommandName.Equals("OFFSET") && !string.IsNullOrEmpty(strCommandParam))
             {
                 this.nOFFSET = (int)(Convert.ToDouble(strCommandParam) * 1000);
-                this.bOFFSETの値がマイナスである = this.nOFFSET < 0 ? true : false;
+                this.bHasNegativeOFFSET = this.nOFFSET < 0 ? true : false;
 
                 this.listBPM[0].bpm_change_bmscroll_time = -2000 * this.dbNowBPM / 15000;
-                if (this.bOFFSETの値がマイナスである == true)
+                if (this.bHasNegativeOFFSET == true)
                     this.nOFFSET = this.nOFFSET * -1; //OFFSETは秒を加算するので、必ず正の数にすること。
                 //tbOFFSET.Text = strCommandParam;
             }
             else if (strCommandName.Equals("MOVIEOFFSET"))
             {
                 this.nMOVIEOFFSET = (int)(Convert.ToDouble(strCommandParam) * 1000);
-                this.bMOVIEOFFSETの値がマイナスである = this.nMOVIEOFFSET < 0 ? true : false;
+                this.bMOVIEOFFSETIsNegative= this.nMOVIEOFFSET < 0 ? true : false;
 
-                if (this.bMOVIEOFFSETの値がマイナスである == true)
+                if (this.bMOVIEOFFSETIsNegative== true)
                     this.nMOVIEOFFSET = this.nMOVIEOFFSET * -1; //OFFSETは秒を加算するので、必ず正の数にすること。
                 //tbOFFSET.Text = strCommandParam;
             }
@@ -4548,9 +4548,9 @@ namespace TJAPlayer3
 
                 var ds = new CDirectShow()
                 {
-                    n番号 = 1,
-                    strファイル名 = this.strBGVIDEO_PATH,
-                    strコメント文 = "BGMOVIE命令",
+                    nNumber = 1,
+                    strFileName = this.strBGVIDEO_PATH,
+                    strCommentText = "BGMOVIE命令",
                 };
 
                 if (this.listDS.ContainsKey(1))	// 既にリスト中に存在しているなら削除。後のものが有効。
@@ -6108,9 +6108,9 @@ namespace TJAPlayer3
 
             var ds = new CDirectShow()
             {
-                n番号 = zz,
-                strファイル名 = strパラメータ,
-                strコメント文 = strコメント,
+                nNumber = zz,
+                strFileName = strパラメータ,
+                strCommentText = strコメント,
             };
 
             if (this.listDS.ContainsKey(zz))	// 既にリスト中に存在しているなら削除。後のものが有効。
@@ -6138,14 +6138,14 @@ namespace TJAPlayer3
             // (2) パラメータを処理。
 
             if (strコマンド.Length < 2)
-                return false;   // AVIPAN番号 zz がないなら無効。
+                return false;   // AVIPAnNumber zz がないなら無効。
 
-            #region [ AVIPAN番号 zz を取得する。]
+            #region [ AVIPAnNumber zz を取得する。]
             //-----------------
             int zz = C変換.n36進数2桁の文字列を数値に変換して返す(strコマンド.Substring(0, 2));
             if (zz < 0 || zz >= 36 * 36)
             {
-                Trace.TraceError("AVIPAN番号に 00～ZZ 以外の値または不正な文字列が指定されました。[{0}: {1}行]", this.strtFileAbsolutePath, this.n現在の行数);
+                Trace.TraceError("AVIPAnNumberに 00～ZZ 以外の値または不正な文字列が指定されました。[{0}: {1}行]", this.strtFileAbsolutePath, this.n現在の行数);
                 return false;
             }
             //-----------------

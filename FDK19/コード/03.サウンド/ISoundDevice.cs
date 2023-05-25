@@ -19,8 +19,8 @@ namespace FDK
 		long n経過時間を更新したシステム時刻ms { get; }
 		CTimer tmシステムタイマ { get; }
 
-		CSound tサウンドを作成する( string strファイル名, ESoundGroup soundGroup );
-		void tサウンドを作成する( string strファイル名, CSound sound );
+		CSound tサウンドを作成する( string strFileName, ESoundGroup soundGroup );
+		void tサウンドを作成する( string strFileName, CSound sound );
 		void tサウンドを作成する( byte[] byArrWAVファイルイメージ, CSound sound );
 	}
 }
