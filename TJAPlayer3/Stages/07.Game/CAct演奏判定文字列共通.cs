@@ -87,7 +87,7 @@ namespace TJAPlayer3
                 return;
             }
 
-            if( pChip.nチャンネル番号 >= 0x15 && pChip.nチャンネル番号 <= 0x19 )
+            if( pChip.nChannelNumber >= 0x15 && pChip.nChannelNumber <= 0x19 )
             {
                 return;
             }

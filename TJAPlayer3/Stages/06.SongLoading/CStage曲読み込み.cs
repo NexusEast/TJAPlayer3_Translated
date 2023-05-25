@@ -191,7 +191,7 @@ namespace TJAPlayer3
 					}
 					this.sd読み込み音.t再生を開始する();
 					this.nBGM再生開始時刻 = CSoundManager.rPlaybackTimer.n現在時刻;
-					this.nBGMの総再生時間ms = this.sd読み込み音.n総演奏時間ms;
+					this.nBGMの総再生時間ms = this.sd読み込み音.nTotalPlayTimems;
 				}
 				else
 				{
@@ -286,7 +286,7 @@ namespace TJAPlayer3
                              
                             if( TJAPlayer3.ConfigIni.nPlayerCount == 2 )
 						        TJAPlayer3.DTX_2P = new CDTX( str, false, ( (double) TJAPlayer3.ConfigIni.n演奏速度 ) / 20.0, ini.stファイル.BGMAdjust, 0, 1, true );
-                            if( File.Exists( TJAPlayer3.DTX.strFileName + @"\\set.def" ) )
+                            if( File.Exists( TJAPlayer3.DTX.strFolderName + @"\\set.def" ) )
                             {
 						        TJAPlayer3.DTX = new CDTX( str, false, ( (double) TJAPlayer3.ConfigIni.n演奏速度 ) / 20.0, ini.stファイル.BGMAdjust, 0, 1, true );
                                 if( TJAPlayer3.ConfigIni.nPlayerCount == 2 )
@@ -295,7 +295,7 @@ namespace TJAPlayer3
 
 					    	Trace.TraceInformation( "----曲情報-----------------" );
 				    		Trace.TraceInformation( "TITLE: {0}", TJAPlayer3.DTX.TITLE );
-			    			Trace.TraceInformation( "FILE: {0}",  TJAPlayer3.DTX.strファイル名の絶対パス );
+			    			Trace.TraceInformation( "FILE: {0}",  TJAPlayer3.DTX.strtFileAbsolutePath );
 		    				Trace.TraceInformation( "---------------------------" );
 
 							var span = (TimeSpan) ( DateTime.Now - timeBeginLoad );
@@ -374,7 +374,7 @@ namespace TJAPlayer3
 					{
 						if ( nWAVcount == 1 && TJAPlayer3.DTX.listWAV.Count > 0 )			// #28934 2012.7.7 yyagi (added checking Count)
 						{
-							ShowProgressByFilename( TJAPlayer3.DTX.listWAV[ nWAVcount ].strファイル名 );
+							ShowProgressByFilename( TJAPlayer3.DTX.listWAV[ nWAVcount ].strFileName );
 						}
 						int looptime = (TJAPlayer3.ConfigIni.b垂直帰線待ちを行う)? 3 : 1;	// VSyncWait=ON時は1frame(1/60s)あたり3つ読むようにする
 						for ( int i = 0; i < looptime && nWAVcount <= TJAPlayer3.DTX.listWAV.Count; i++ )
@@ -387,7 +387,7 @@ namespace TJAPlayer3
 						}
 						if ( nWAVcount <= TJAPlayer3.DTX.listWAV.Count )
 						{
-							ShowProgressByFilename( TJAPlayer3.DTX.listWAV[ nWAVcount ].strファイル名 );
+							ShowProgressByFilename( TJAPlayer3.DTX.listWAV[ nWAVcount ].strFileName );
 						}
 						if ( nWAVcount > TJAPlayer3.DTX.listWAV.Count )
 						{
@@ -495,12 +495,12 @@ namespace TJAPlayer3
 		}
 
 
-		private void ShowProgressByFilename(string strファイル名 )
+		private void ShowProgressByFilename(string strFileName )
 		{
 			if ( graphicsFilename != null && ftFilename != null )
 			{
 				graphicsFilename.Clear( Color.Transparent );
-				graphicsFilename.DrawString( strファイル名, ftFilename, Brushes.White, new RectangleF( 0, 0, 640, 24 ) );
+				graphicsFilename.DrawString( strFileName, ftFilename, Brushes.White, new RectangleF( 0, 0, 640, 24 ) );
 				if ( txFilename != null )
 				{
 					txFilename.Dispose();

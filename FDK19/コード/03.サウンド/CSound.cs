@@ -368,7 +368,7 @@ namespace FDK
 
 		#region [ DTXMania用拡張 ]
 
-		public int n総演奏時間ms
+		public int nTotalPlayTimems
 		{
 			get;
 			private set;
@@ -434,7 +434,7 @@ namespace FDK
 						{
 							Bass.BASS_ChannelSetAttribute( this.hBassStream, BASSAttribute.BASS_ATTRIB_TEMPO, (float) ( db再生速度 * 100 - 100 ) );
 							//double seconds = Bass.BASS_ChannelBytes2Seconds( this.hTempoStream, nBytes );
-							//this.n総演奏時間ms = (int) ( seconds * 1000 );
+							//this.nTotalPlayTimems = (int) ( seconds * 1000 );
 						}
 						else
 						{
@@ -717,35 +717,35 @@ namespace FDK
 			this._hTempoStream = 0;
 		}
 
-		public void tASIOサウンドを作成する( string strファイル名, int hMixer )
+		public void tASIOサウンドを作成する( string strFileName, int hMixer )
 		{
 		    this.eデバイス種別 = ESoundDeviceType.ASIO;		// 作成後に設定する。（作成に失敗してると例外発出されてここは実行されない）
-			this.tBASSサウンドを作成する( strファイル名, hMixer, BASSFlag.BASS_STREAM_DECODE );
+			this.tBASSサウンドを作成する( strFileName, hMixer, BASSFlag.BASS_STREAM_DECODE );
 		}
 		public void tASIOサウンドを作成する( byte[] byArrWAVファイルイメージ, int hMixer )
 		{
 		    this.eデバイス種別 = ESoundDeviceType.ASIO;		// 作成後に設定する。（作成に失敗してると例外発出されてここは実行されない）
 			this.tBASSサウンドを作成する( byArrWAVファイルイメージ, hMixer, BASSFlag.BASS_STREAM_DECODE );
 		}
-		public void tWASAPIサウンドを作成する( string strファイル名, int hMixer, ESoundDeviceType eデバイス種別 )
+		public void tWASAPIサウンドを作成する( string strFileName, int hMixer, ESoundDeviceType eデバイス種別 )
 		{
 		    this.eデバイス種別 = eデバイス種別;		// 作成後に設定する。（作成に失敗してると例外発出されてここは実行されない）
-			this.tBASSサウンドを作成する( strファイル名, hMixer, BASSFlag.BASS_STREAM_DECODE | BASSFlag.BASS_SAMPLE_FLOAT );
+			this.tBASSサウンドを作成する( strFileName, hMixer, BASSFlag.BASS_STREAM_DECODE | BASSFlag.BASS_SAMPLE_FLOAT );
 		}
 		public void tWASAPIサウンドを作成する( byte[] byArrWAVファイルイメージ, int hMixer, ESoundDeviceType eデバイス種別 )
 		{
 		    this.eデバイス種別 = eデバイス種別;		// 作成後に設定する。（作成に失敗してると例外発出されてここは実行されない）
 			this.tBASSサウンドを作成する( byArrWAVファイルイメージ, hMixer, BASSFlag.BASS_STREAM_DECODE | BASSFlag.BASS_SAMPLE_FLOAT );
 		}
-		public void tDirectSoundサウンドを作成する( string strファイル名, DirectSound DirectSound )
+		public void tDirectSoundサウンドを作成する( string strFileName, DirectSound DirectSound )
 		{
 			this.e作成方法 = E作成方法.ファイルから;
-			this.strファイル名 = strファイル名;
-			if ( String.Compare( Path.GetExtension( strファイル名 ), ".xa", true ) == 0 ||
-				 String.Compare( Path.GetExtension( strファイル名 ), ".mp3", true ) == 0 ||
-				 String.Compare( Path.GetExtension( strファイル名 ), ".ogg", true ) == 0 )	// caselessで文字列比較
+			this.strFileName = strFileName;
+			if ( String.Compare( Path.GetExtension( strFileName ), ".xa", true ) == 0 ||
+				 String.Compare( Path.GetExtension( strFileName ), ".mp3", true ) == 0 ||
+				 String.Compare( Path.GetExtension( strFileName ), ".ogg", true ) == 0 )	// caselessで文字列比較
 			{
-				tDirectSoundサウンドを作成するXaOggMp3( strファイル名, DirectSound );
+				tDirectSoundサウンドを作成するXaOggMp3( strFileName, DirectSound );
 				return;
 			}
 
@@ -759,7 +759,7 @@ namespace FDK
 				//-----------------
 				try
 				{
-					using ( var ws = new WaveStream( strファイル名 ) )
+					using ( var ws = new WaveStream( strFileName ) )
 					{
 						if ( ws.Format.FormatTag != WaveFormatTag.Pcm )
 							bファイルがWAVかつPCMフォーマットである = false;
@@ -776,7 +776,7 @@ namespace FDK
 				{
 					#region [ ファイルを読み込んで byArrWAVファイルイメージへ格納。]
 					//-----------------
-                    using (var fs = File.Open( strファイル名, FileMode.Open, FileAccess.Read ))
+                    using (var fs = File.Open( strFileName, FileMode.Open, FileAccess.Read ))
                     using (var br = new BinaryReader(fs))
                     {
                         byArrWAVファイルイメージ = new byte[fs.Length];
@@ -790,7 +790,7 @@ namespace FDK
 				{
 					#region [ DirectShow でデコード変換し、 byArrWAVファイルイメージへ格納。]
 					//-----------------
-					CDStoWAVFileImage.t変換( strファイル名, out byArrWAVファイルイメージ );
+					CDStoWAVFileImage.t変換( strFileName, out byArrWAVファイルイメージ );
 					//-----------------
 					#endregion
 				}
@@ -800,10 +800,10 @@ namespace FDK
 
 			this.tDirectSoundサウンドを作成する( byArrWAVファイルイメージ, DirectSound );
 		}
-		public void tDirectSoundサウンドを作成するXaOggMp3( string strファイル名, DirectSound DirectSound )
+		public void tDirectSoundサウンドを作成するXaOggMp3( string strFileName, DirectSound DirectSound )
 		{
 			this.e作成方法 = E作成方法.ファイルから;
-			this.strファイル名 = strファイル名;
+			this.strFileName = strFileName;
 
 
 			WaveFormat wfx = new WaveFormat();
@@ -812,7 +812,7 @@ namespace FDK
 
 			int nPCMサイズbyte;
 			CWin32.WAVEFORMATEX cw32wfx;
-			tオンメモリ方式でデコードする( strファイル名, out this.byArrWAVファイルイメージ,
+			tオンメモリ方式でデコードする( strFileName, out this.byArrWAVファイルイメージ,
 			out nPCMデータの先頭インデックス, out nPCMサイズbyte, out cw32wfx, false );
 
 			wfx.AverageBytesPerSecond = (int) cw32wfx.nAvgBytesPerSec;
@@ -954,7 +954,7 @@ namespace FDK
 
 			// DTXMania用に追加
 			this.nオリジナルの周波数 = wfx.SamplesPerSecond;
-			n総演奏時間ms = (int) ( ( (double) nPCMサイズbyte ) / ( this.Buffer.Format.AverageBytesPerSecond * 0.001 ) );
+			nTotalPlayTimems = (int) ( ( (double) nPCMサイズbyte ) / ( this.Buffer.Format.AverageBytesPerSecond * 0.001 ) );
 
 
 			// インスタンスリストに登録。
@@ -1064,7 +1064,7 @@ namespace FDK
 			bool bManagedも解放する = true;
 			bool bインスタンス削除 = _bインスタンス削除;	// CSoundの再初期化時は、インスタンスは存続する。
 			this.Dispose( bManagedも解放する, bインスタンス削除 );
-//Debug.WriteLine( "Disposed: " + _bインスタンス削除 + " : " + Path.GetFileName( this.strファイル名 ) );
+//Debug.WriteLine( "Disposed: " + _bインスタンス削除 + " : " + Path.GetFileName( this.strFileName ) );
 		}
 		public void tサウンドを再生する()
 		{
@@ -1074,36 +1074,36 @@ namespace FDK
 		{
 			if ( this.bBASSサウンドである )			// BASSサウンド時のループ処理は、t再生を開始する()側に実装。ここでは「bループする」は未使用。
 			{
-//Debug.WriteLine( "再生中?: " +  System.IO.Path.GetFileName(this.strファイル名) + " status=" + BassMix.BASS_Mixer_ChannelIsActive( this.hBassStream ) + " current=" + BassMix.BASS_Mixer_ChannelGetPosition( this.hBassStream ) + " nBytes=" + nBytes );
+//Debug.WriteLine( "再生中?: " +  System.IO.Path.GetFileName(this.strFileName) + " status=" + BassMix.BASS_Mixer_ChannelIsActive( this.hBassStream ) + " current=" + BassMix.BASS_Mixer_ChannelGetPosition( this.hBassStream ) + " nBytes=" + nBytes );
 				bool b = BassMix.BASS_Mixer_ChannelPlay( this.hBassStream );
 				if ( !b )
 				{
-//Debug.WriteLine( "再生しようとしたが、Mixerに登録されていなかった: " + Path.GetFileName( this.strファイル名 ) + ", stream#=" + this.hBassStream + ", ErrCode=" + Bass.BASS_ErrorGetCode() );
+//Debug.WriteLine( "再生しようとしたが、Mixerに登録されていなかった: " + Path.GetFileName( this.strFileName ) + ", stream#=" + this.hBassStream + ", ErrCode=" + Bass.BASS_ErrorGetCode() );
 
 					bool bb = tBASSサウンドをミキサーに追加する();
 					if ( !bb )
 					{
-Debug.WriteLine( "Mixerへの登録に失敗: " + Path.GetFileName( this.strファイル名 ) + ", ErrCode=" + Bass.BASS_ErrorGetCode() );
+Debug.WriteLine( "Mixerへの登録に失敗: " + Path.GetFileName( this.strFileName ) + ", ErrCode=" + Bass.BASS_ErrorGetCode() );
 					}
 					else
 					{
-//Debug.WriteLine( "Mixerへの登録に成功: " + Path.GetFileName( this.strファイル名 ) + ": " + Bass.BASS_ErrorGetCode() );
+//Debug.WriteLine( "Mixerへの登録に成功: " + Path.GetFileName( this.strFileName ) + ": " + Bass.BASS_ErrorGetCode() );
 					}
 					//this.t再生位置を先頭に戻す();
 
 					bool bbb = BassMix.BASS_Mixer_ChannelPlay( this.hBassStream );
 					if (!bbb)
 					{
-Debug.WriteLine("更に再生に失敗: " + Path.GetFileName(this.strファイル名) + ", ErrCode=" + Bass.BASS_ErrorGetCode() );
+Debug.WriteLine("更に再生に失敗: " + Path.GetFileName(this.strFileName) + ", ErrCode=" + Bass.BASS_ErrorGetCode() );
 					}
 					else
 					{
-//						Debug.WriteLine("再生成功(ミキサー追加後)                       : " + Path.GetFileName(this.strファイル名));
+//						Debug.WriteLine("再生成功(ミキサー追加後)                       : " + Path.GetFileName(this.strFileName));
 					}
 				}
 				else
 				{
-//Debug.WriteLine( "再生成功: " + Path.GetFileName( this.strファイル名 ) + " (" + hBassStream + ")" );
+//Debug.WriteLine( "再生成功: " + Path.GetFileName( this.strFileName ) + " (" + hBassStream + ")" );
 				}
 			}
 			else if( this.bDirectSoundである )
@@ -1133,7 +1133,7 @@ Debug.WriteLine("更に再生に失敗: " + Path.GetFileName(this.strファイ�
 		{
 			if( this.bBASSサウンドである )
 			{
-//Debug.WriteLine( "停止: " + System.IO.Path.GetFileName( this.strファイル名 ) + " status=" + BassMix.BASS_Mixer_ChannelIsActive( this.hBassStream ) + " current=" + BassMix.BASS_Mixer_ChannelGetPosition( this.hBassStream ) + " nBytes=" + nBytes );
+//Debug.WriteLine( "停止: " + System.IO.Path.GetFileName( this.strFileName ) + " status=" + BassMix.BASS_Mixer_ChannelIsActive( this.hBassStream ) + " current=" + BassMix.BASS_Mixer_ChannelGetPosition( this.hBassStream ) + " nBytes=" + nBytes );
 				BassMix.BASS_Mixer_ChannelPause( this.hBassStream );
 				if ( !pause )
 				{
@@ -1179,19 +1179,19 @@ Debug.WriteLine("更に再生に失敗: " + Path.GetFileName(this.strファイ�
 				catch( Exception e )
 				{
 					Trace.TraceError( e.ToString() );
-					Trace.TraceInformation( Path.GetFileName( this.strファイル名 ) + ": Seek error: " + e.ToString() + ": " + n位置ms + "ms" );
+					Trace.TraceInformation( Path.GetFileName( this.strFileName ) + ": Seek error: " + e.ToString() + ": " + n位置ms + "ms" );
 				}
 				finally
 				{
 					if ( !b )
 					{
 						BASSError be = Bass.BASS_ErrorGetCode();
-						Trace.TraceInformation( Path.GetFileName( this.strファイル名 ) + ": Seek error: " + be.ToString() + ": " + n位置ms + "MS" );
+						Trace.TraceInformation( Path.GetFileName( this.strFileName ) + ": Seek error: " + be.ToString() + ": " + n位置ms + "MS" );
 					}
 				}
-				//if ( this.n総演奏時間ms > 5000 )
+				//if ( this.nTotalPlayTimems > 5000 )
 				//{
-				//    Trace.TraceInformation( Path.GetFileName( this.strファイル名 ) + ": Seeked to " + n位置ms + "ms = " + Bass.BASS_ChannelSeconds2Bytes( this.hBassStream, n位置ms * this.db周波数倍率 * this.db再生速度 / 1000.0 ) );
+				//    Trace.TraceInformation( Path.GetFileName( this.strFileName ) + ": Seeked to " + n位置ms + "ms = " + Bass.BASS_ChannelSeconds2Bytes( this.hBassStream, n位置ms * this.db周波数倍率 * this.db再生速度 / 1000.0 ) );
 				//}
 			}
 			else if( this.bDirectSoundである )
@@ -1203,13 +1203,13 @@ Debug.WriteLine("更に再生に失敗: " + Path.GetFileName(this.strファイ�
 				}
 				catch ( DirectSoundException e )
 				{
-					Trace.TraceError( "{0}: Seek error: {1}", Path.GetFileName( this.strファイル名 ), n位置ms);
+					Trace.TraceError( "{0}: Seek error: {1}", Path.GetFileName( this.strFileName ), n位置ms);
 					Trace.TraceError( e.ToString() );
 					Trace.TraceError( "例外が発生しましたが処理を継続します。 (95dee242-1f92-4fcf-aaf6-b162ad2bfc03)" );
 				}
-				//if ( this.n総演奏時間ms > 5000 )
+				//if ( this.nTotalPlayTimems > 5000 )
 				//{
-				//    Trace.TraceInformation( Path.GetFileName( this.strファイル名 ) + ": Seeked to " + n位置ms + "ms = " + n位置sample );
+				//    Trace.TraceInformation( Path.GetFileName( this.strFileName ) + ": Seeked to " + n位置ms + "ms = " + n位置sample );
 				//}
 			}
 		}
@@ -1265,9 +1265,9 @@ Debug.WriteLine("更に再生に失敗: " + Path.GetFileName(this.strファイ�
 				{
 					#region [ ファイルから ]
 					case E作成方法.ファイルから:
-						string strファイル名 = sounds[ i ].strファイル名;
+						string strFileName = sounds[ i ].strFileName;
 						sounds[ i ].Dispose( true, false );
-						device.tサウンドを作成する( strファイル名, sounds[ i ] );
+						device.tサウンドを作成する( strFileName, sounds[ i ] );
 						break;
 					#endregion
 					#region [ WAVファイルイメージから ]
@@ -1327,7 +1327,7 @@ Debug.WriteLine("更に再生に失敗: " + Path.GetFileName(this.strファイ�
 				//    freeIndex = CSound.listインスタンス.IndexOf( this );
 				//    if ( freeIndex == -1 )
 				//    {
-				//        Debug.WriteLine( "ERR: freeIndex==-1 : Count=" + CSound.listインスタンス.Count + ", filename=" + Path.GetFileName( this.strファイル名 ) );
+				//        Debug.WriteLine( "ERR: freeIndex==-1 : Count=" + CSound.listインスタンス.Count + ", filename=" + Path.GetFileName( this.strFileName ) );
 				//    }
 				//}
 
@@ -1377,12 +1377,12 @@ Debug.WriteLine("更に再生に失敗: " + Path.GetFileName(this.strファイ�
 					//}
 					//catch
 					//{
-					//    Debug.WriteLine( "FAILED to remove CSound.listインスタンス: Count=" + CSound.listインスタンス.Count + ", filename=" + Path.GetFileName( this.strファイル名 ) );
+					//    Debug.WriteLine( "FAILED to remove CSound.listインスタンス: Count=" + CSound.listインスタンス.Count + ", filename=" + Path.GetFileName( this.strFileName ) );
 					//}
 					bool b = CSound.listインスタンス.Remove( this );	// これだと、Clone()したサウンドのremoveに失敗する
 					if ( !b )
 					{
-						Debug.WriteLine( "FAILED to remove CSound.listインスタンス: Count=" + CSound.listインスタンス.Count + ", filename=" + Path.GetFileName( this.strファイル名 ) );
+						Debug.WriteLine( "FAILED to remove CSound.listインスタンス: Count=" + CSound.listインスタンス.Count + ", filename=" + Path.GetFileName( this.strFileName ) );
 					}
 
 				}
@@ -1400,7 +1400,7 @@ Debug.WriteLine("更に再生に失敗: " + Path.GetFileName(this.strファイ�
 		protected enum E作成方法 { ファイルから, WAVファイルイメージから, Unknown }
 		protected E作成方法 e作成方法 = E作成方法.Unknown;
 		protected ESoundDeviceType eデバイス種別 = ESoundDeviceType.Unknown;
-		public string strファイル名 = null;
+		public string strFileName = null;
 		protected byte[] byArrWAVファイルイメージ = null;	// WAVファイルイメージ、もしくはchunkのDATA部のみ
 		protected GCHandle hGC;
 		protected int _hTempoStream = 0;
@@ -1461,17 +1461,17 @@ Debug.WriteLine("更に再生に失敗: " + Path.GetFileName(this.strファイ�
 		private double _db再生速度 = 1.0;
 		private bool bIs1倍速再生 = true;
 
-		private void tBASSサウンドを作成する( string strファイル名, int hMixer, BASSFlag flags )
+		private void tBASSサウンドを作成する( string strFileName, int hMixer, BASSFlag flags )
 		{
 			#region [ xaとwav(RIFF chunked vorbis)に対しては専用の処理をする ]
-			switch ( Path.GetExtension( strファイル名 ).ToLower() )
+			switch ( Path.GetExtension( strFileName ).ToLower() )
 			{
 				case ".xa":
-					tBASSサウンドを作成するXA( strファイル名, hMixer, flags );
+					tBASSサウンドを作成するXA( strFileName, hMixer, flags );
 					return;
 
 				case ".wav":
-					if ( tRIFFchunkedVorbisならDirectShowでDecodeする( strファイル名, ref byArrWAVファイルイメージ ) )
+					if ( tRIFFchunkedVorbisならDirectShowでDecodeする( strFileName, ref byArrWAVファイルイメージ ) )
 					{
 						tBASSサウンドを作成する( byArrWAVファイルイメージ, hMixer, flags );
 						return;
@@ -1484,12 +1484,12 @@ Debug.WriteLine("更に再生に失敗: " + Path.GetFileName(this.strファイ�
 			#endregion
 
 			this.e作成方法 = E作成方法.ファイルから;
-			this.strファイル名 = strファイル名;
+			this.strFileName = strFileName;
 
 
 			// BASSファイルストリームを作成。
 
-			this._hBassStream = Bass.BASS_StreamCreateFile( strファイル名, 0, 0, flags );
+			this._hBassStream = Bass.BASS_StreamCreateFile( strFileName, 0, 0, flags );
 			if( this._hBassStream == 0 )
 				throw new Exception( string.Format( "サウンドストリームの生成に失敗しました。(BASS_StreamCreateFile)[{0}]", Bass.BASS_ErrorGetCode().ToString() ) );
 			
@@ -1520,10 +1520,10 @@ Debug.WriteLine("更に再生に失敗: " + Path.GetFileName(this.strファイ�
 		/// because BASE.DLL has two problems for RIFF chunked Vorbis;
 		/// 1. time seek is not fine  2. delay occurs (about 10ms)
 		/// </summary>
-		/// <param name="strファイル名">wave filename</param>
+		/// <param name="strFileName">wave filename</param>
 		/// <param name="byArrWAVファイルイメージ">wav file image</param>
 		/// <returns></returns>
-		private bool tRIFFchunkedVorbisならDirectShowでDecodeする( string strファイル名, ref byte[] byArrWAVファイルイメージ )
+		private bool tRIFFchunkedVorbisならDirectShowでDecodeする( string strFileName, ref byte[] byArrWAVファイルイメージ )
 		{
 			bool bファイルにVorbisコンテナが含まれている = false;
 
@@ -1531,20 +1531,20 @@ Debug.WriteLine("更に再生に失敗: " + Path.GetFileName(this.strファイ�
 			//-----------------
 			try
 			{
-				using ( var ws = new WaveStream( strファイル名 ) )
+				using ( var ws = new WaveStream( strFileName ) )
 				{
 					if ( ws.Format.FormatTag == (WaveFormatTag) 0x6770 ||	// Ogg Vorbis Mode 2+
 						 ws.Format.FormatTag == (WaveFormatTag) 0x6771 )	// Ogg Vorbis Mode 3+
 					{
-						Trace.TraceInformation( Path.GetFileName( strファイル名 ) + ": RIFF chunked Vorbis. Decode to raw Wave first, to avoid BASS.DLL troubles" );
+						Trace.TraceInformation( Path.GetFileName( strFileName ) + ": RIFF chunked Vorbis. Decode to raw Wave first, to avoid BASS.DLL troubles" );
 						try
 						{
-							CDStoWAVFileImage.t変換( strファイル名, out byArrWAVファイルイメージ );
+							CDStoWAVFileImage.t変換( strFileName, out byArrWAVファイルイメージ );
 							bファイルにVorbisコンテナが含まれている = true;
 						}
 						catch
 						{
-							Trace.TraceWarning( "Warning: " + Path.GetFileName( strファイル名 ) + " : RIFF chunked Vorbisのデコードに失敗しました。" );
+							Trace.TraceWarning( "Warning: " + Path.GetFileName( strFileName ) + " : RIFF chunked Vorbisのデコードに失敗しました。" );
 						}
 					}
 				}
@@ -1552,31 +1552,31 @@ Debug.WriteLine("更に再生に失敗: " + Path.GetFileName(this.strファイ�
 			catch ( InvalidDataException )
 			{
 				// DirectShowのデコードに失敗したら、次はACMでのデコードを試すことになるため、ここではエラーログを出さない。
-				// Trace.TraceWarning( "Warning: " + Path.GetFileName( strファイル名 ) + " : デコードに失敗しました。" );
+				// Trace.TraceWarning( "Warning: " + Path.GetFileName( strFileName ) + " : デコードに失敗しました。" );
 			}
 			catch ( Exception e )
 			{
 				Trace.TraceWarning( e.ToString() );
-				Trace.TraceWarning( "Warning: " + Path.GetFileName( strファイル名 ) + " : 読み込みに失敗しました。" );
+				Trace.TraceWarning( "Warning: " + Path.GetFileName( strFileName ) + " : 読み込みに失敗しました。" );
 			}
 			#endregion
 
 			return bファイルにVorbisコンテナが含まれている;
 		}
 
-		private void tBASSサウンドを作成するXA( string strファイル名, int hMixer, BASSFlag flags )
+		private void tBASSサウンドを作成するXA( string strFileName, int hMixer, BASSFlag flags )
 		{
 			int nPCMデータの先頭インデックス;
 			CWin32.WAVEFORMATEX wfx;
 			int totalPCMSize;
 
-			tオンメモリ方式でデコードする( strファイル名, out this.byArrWAVファイルイメージ,
+			tオンメモリ方式でデコードする( strFileName, out this.byArrWAVファイルイメージ,
 				out nPCMデータの先頭インデックス, out totalPCMSize, out wfx, true );
 
 			nBytes = totalPCMSize;
 
 			this.e作成方法 = E作成方法.WAVファイルイメージから;		//.ファイルから;	// 再構築時はデコード後のイメージを流用する&Dispose時にhGCを解放する
-			this.strファイル名 = strファイル名;
+			this.strFileName = strFileName;
 			this.hGC = GCHandle.Alloc( this.byArrWAVファイルイメージ, GCHandleType.Pinned );		// byte[] をピン留め
 
 			//_cbStreamXA = new STREAMPROC( CallbackPlayingXA );
@@ -1636,7 +1636,7 @@ Debug.WriteLine("更に再生に失敗: " + Path.GetFileName(this.strファイ�
 
 			// n総演奏時間の取得; DTXMania用に追加。
 			double seconds = Bass.BASS_ChannelBytes2Seconds( this._hBassStream, nBytes );
-			this.n総演奏時間ms = (int) ( seconds * 1000 );
+			this.nTotalPlayTimems = (int) ( seconds * 1000 );
 			//this.pos = 0;
 			this.hMixer = hMixer;
 			float freq = 0.0f;
@@ -1676,7 +1676,7 @@ Debug.WriteLine("更に再生に失敗: " + Path.GetFileName(this.strファイ�
 		/// <param name="user"></param>
 		private void CallbackEndofStream( int handle, int channel, int data, IntPtr user )	// #32248 2013.10.14 yyagi
 		{
-// Trace.TraceInformation( "Callback!(remove): " + Path.GetFileName( this.strファイル名 ) );
+// Trace.TraceInformation( "Callback!(remove): " + Path.GetFileName( this.strFileName ) );
 			if ( b演奏終了後も再生が続くチップである )			// 演奏終了後に再生終了するチップ音のミキサー削除は、再生終了のコールバックに引っ掛けて、自前で行う。
 			{													// そうでないものは、ミキサー削除予定時刻に削除する。
 				tBASSサウンドをミキサーから削除する( channel );
@@ -1695,7 +1695,7 @@ Debug.WriteLine("更に再生に失敗: " + Path.GetFileName(this.strファイ�
 			if ( b )
 			{
 				Interlocked.Decrement( ref CSoundManager.nMixing );
-//				Debug.WriteLine( "Removed: " + Path.GetFileName( this.strファイル名 ) + " (" + channel + ")" + " MixedStreams=" + CSoundManager.nMixing );
+//				Debug.WriteLine( "Removed: " + Path.GetFileName( this.strFileName ) + " (" + channel + ")" + " MixedStreams=" + CSoundManager.nMixing );
 			}
 			return b;
 		}
@@ -1716,7 +1716,7 @@ Debug.WriteLine("更に再生に失敗: " + Path.GetFileName(this.strファイ�
 				bool b1 = BassMix.BASS_Mixer_StreamAddChannel( this.hMixer, this.hBassStream, bf );
 				//bool b2 = BassMix.BASS_Mixer_ChannelPause( this.hBassStream );
 				t再生位置を先頭に戻す();	// StreamAddChannelの後で再生位置を戻さないとダメ。逆だと再生位置が変わらない。
-//Trace.TraceInformation( "Add Mixer: " + Path.GetFileName( this.strファイル名 ) + " (" + hBassStream + ")" + " MixedStreams=" + CSoundManager.nMixing );
+//Trace.TraceInformation( "Add Mixer: " + Path.GetFileName( this.strFileName ) + " (" + hBassStream + ")" + " MixedStreams=" + CSoundManager.nMixing );
 				Bass.BASS_ChannelUpdate( this.hBassStream, 0 );	// pre-buffer
 				return b1;	// &b2;
 			}
@@ -1724,7 +1724,7 @@ Debug.WriteLine("更に再生に失敗: " + Path.GetFileName(this.strファイ�
 		}
 
 		#region [ tオンメモリ方式でデコードする() ]
-		public void tオンメモリ方式でデコードする( string strファイル名, out byte[] buffer,
+		public void tオンメモリ方式でデコードする( string strFileName, out byte[] buffer,
 			out int nPCMデータの先頭インデックス, out int totalPCMSize, out CWin32.WAVEFORMATEX wfx,
 			bool bIntegrateWaveHeader )
 		{
@@ -1733,15 +1733,15 @@ Debug.WriteLine("更に再生に失敗: " + Path.GetFileName(this.strファイ�
 
 			SoundDecoder sounddecoder;
 
-			if ( String.Compare( Path.GetExtension( strファイル名 ), ".xa", true ) == 0 )
+			if ( String.Compare( Path.GetExtension( strFileName ), ".xa", true ) == 0 )
 			{
 				sounddecoder = new Cxa();
 			}
-			else if ( String.Compare( Path.GetExtension( strファイル名 ), ".ogg", true ) == 0 )
+			else if ( String.Compare( Path.GetExtension( strFileName ), ".ogg", true ) == 0 )
 			{
 				sounddecoder = new Cogg();
 			}
-			else if ( String.Compare( Path.GetExtension( strファイル名 ), ".mp3", true ) == 0 )
+			else if ( String.Compare( Path.GetExtension( strFileName ), ".mp3", true ) == 0 )
 			{
 				sounddecoder = new Cmp3();
 			}
@@ -1750,27 +1750,27 @@ Debug.WriteLine("更に再生に失敗: " + Path.GetFileName(this.strファイ�
 				throw new NotImplementedException();
 			}
 
-			if ( !File.Exists( strファイル名 ) )
+			if ( !File.Exists( strFileName ) )
 			{
-				throw new Exception( string.Format( "ファイルが見つかりませんでした。({0})", strファイル名 ) );
+				throw new Exception( string.Format( "ファイルが見つかりませんでした。({0})", strFileName ) );
 			}
-			int nHandle = sounddecoder.Open( strファイル名 );
+			int nHandle = sounddecoder.Open( strFileName );
 			if ( nHandle < 0 )
 			{
-				throw new Exception( string.Format( "Open() に失敗しました。({0})({1})", nHandle, strファイル名 ) );
+				throw new Exception( string.Format( "Open() に失敗しました。({0})({1})", nHandle, strFileName ) );
 			}
 			wfx = new CWin32.WAVEFORMATEX();
 			if ( sounddecoder.GetFormat( nHandle, ref wfx ) < 0 )
 			{
 				sounddecoder.Close( nHandle );
-				throw new Exception( string.Format( "GetFormat() に失敗しました。({0})", strファイル名 ) );
+				throw new Exception( string.Format( "GetFormat() に失敗しました。({0})", strFileName ) );
 			}
 			//totalPCMSize = (int) sounddecoder.nTotalPCMSize;		//  tデコード後のサイズを調べる()で既に取得済みの値を流用する。ms単位の高速化だが、チップ音がたくさんあると塵積で結構効果がある
 			totalPCMSize = (int) sounddecoder.GetTotalPCMSize( nHandle );
 			if ( totalPCMSize == 0 )
 			{
 				sounddecoder.Close( nHandle );
-				throw new Exception( string.Format( "GetTotalPCMSize() に失敗しました。({0})", strファイル名 ) );
+				throw new Exception( string.Format( "GetTotalPCMSize() に失敗しました。({0})", strFileName ) );
 			}
 			totalPCMSize += ( ( totalPCMSize % 2 ) != 0 ) ? 1 : 0;
 			int wavheadersize = ( bIntegrateWaveHeader ) ? 44 : 0;
@@ -1782,7 +1782,7 @@ Debug.WriteLine("更に再生に失敗: " + Path.GetFileName(this.strファイ�
 				if ( sounddecoder.Decode( nHandle, handle.AddrOfPinnedObject(), (uint) totalPCMSize, 0 ) < 0 )
 				{
 					buffer = null;
-					throw new Exception( string.Format( "デコードに失敗しました。({0})", strファイル名 ) );
+					throw new Exception( string.Format( "デコードに失敗しました。({0})", strFileName ) );
 				}
 				if ( bIntegrateWaveHeader )
 				{

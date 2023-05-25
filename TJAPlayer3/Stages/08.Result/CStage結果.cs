@@ -80,7 +80,7 @@ namespace TJAPlayer3
 				{
 					this.nランク値[ i ] = -1;
 					this.fPerfect率[ i ] = this.fGreat率[ i ] = this.fGood率[ i ] = this.fPoor率[ i ] = this.fMiss率[ i ] = 0.0f;	// #28500 2011.5.24 yyagi
-					if ( ( ( ( i != 0 ) || ( TJAPlayer3.DTX.bチップがある.Drums  ) ) ) )
+					if ( ( ( ( i != 0 ) || ( TJAPlayer3.DTX.bSTHasChip.Drums  ) ) ) )
 					{
 						CScoreIni.C演奏記録 part = this.st演奏記録[ i ];
 						bool bIsAutoPlay = true;
@@ -114,7 +114,7 @@ namespace TJAPlayer3
 
                 #region [ .score.ini の作成と出力 ]
 				//---------------------
-				string str = TJAPlayer3.DTX.strファイル名の絶対パス + ".score.ini";
+				string str = TJAPlayer3.DTX.strtFileAbsolutePath + ".score.ini";
 				CScoreIni ini = new CScoreIni( str );
 
 				bool[] b今までにフルコンボしたことがある = new bool[] { false, false, false };
@@ -350,7 +350,7 @@ namespace TJAPlayer3
 
 				// キー入力
 
-				if( ( ( TJAPlayer3.Pad.b押されたDGB( Eパッド.CY ) || TJAPlayer3.Pad.b押された( E楽器パート.DRUMS, Eパッド.RD ) ) || ( TJAPlayer3.Pad.b押された( E楽器パート.DRUMS, Eパッド.LC ) || TJAPlayer3.Input管理.Keyboard.bキーが押された( (int)SlimDX.DirectInput.Key.Return ) ) ) && !this.bアニメが完了 )
+				if( ( ( TJAPlayer3.Pad.b押されたDGB( Eパッド.CY ) || TJAPlayer3.Pad.b押された( EInstrumentPart.DRUMS, Eパッド.RD ) ) || ( TJAPlayer3.Pad.b押された( EInstrumentPart.DRUMS, Eパッド.LC ) || TJAPlayer3.Input管理.Keyboard.bキーが押された( (int)SlimDX.DirectInput.Key.Return ) ) ) && !this.bアニメが完了 )
 				{
 					this.actFI.tフェードイン完了();					// #25406 2011.6.9 yyagi
 					this.actResultImage.tアニメを完了させる();
@@ -375,7 +375,7 @@ namespace TJAPlayer3
 						base.eフェーズID = CStage.Eフェーズ.共通_フェードアウト;
 						this.eフェードアウト完了時の戻り値 = E戻り値.完了;
 					}
-					if ( ( ( TJAPlayer3.Pad.b押されたDGB( Eパッド.CY ) || TJAPlayer3.Pad.b押された( E楽器パート.DRUMS, Eパッド.RD ) ) || ( TJAPlayer3.Pad.b押された( E楽器パート.DRUMS, Eパッド.LC ) || TJAPlayer3.Input管理.Keyboard.bキーが押された( (int) SlimDX.DirectInput.Key.Return ) ) ) && this.bアニメが完了 )
+					if ( ( ( TJAPlayer3.Pad.b押されたDGB( Eパッド.CY ) || TJAPlayer3.Pad.b押された( EInstrumentPart.DRUMS, Eパッド.RD ) ) || ( TJAPlayer3.Pad.b押された( EInstrumentPart.DRUMS, Eパッド.LC ) || TJAPlayer3.Input管理.Keyboard.bキーが押された( (int) SlimDX.DirectInput.Key.Return ) ) ) && this.bアニメが完了 )
 					{
 						TJAPlayer3.Skin.sound取消音.t再生する();
 //						this.actFO.tフェードアウト開始();
@@ -427,7 +427,7 @@ namespace TJAPlayer3
 		/// <param name="bIsAutoSave">true=自動保存モード, false=手動保存モード</param>
 		private void CheckAndSaveResultScreen(bool bIsAutoSave)
 		{
-			string path = Path.GetDirectoryName( TJAPlayer3.DTX.strファイル名の絶対パス );
+			string path = Path.GetDirectoryName( TJAPlayer3.DTX.strtFileAbsolutePath );
 			string datetime = DateTime.Now.ToString( "yyyyMMddHHmmss" );
 			if ( bIsAutoSave )
 			{
@@ -436,9 +436,9 @@ namespace TJAPlayer3
 				{
 					if ( this.b新記録ランク[ i ] == true || this.b新記録スキル[ i ] == true )
 					{
-						string strPart = ( (E楽器パート) ( i ) ).ToString();
+						string strPart = ( (EInstrumentPart) ( i ) ).ToString();
 						string strRank = ( (CScoreIni.ERANK) ( this.nランク値[ i ] ) ).ToString();
-						string strFullPath = TJAPlayer3.DTX.strファイル名の絶対パス + "." + datetime + "_" + strPart + "_" + strRank + ".png";
+						string strFullPath = TJAPlayer3.DTX.strtFileAbsolutePath + "." + datetime + "_" + strPart + "_" + strRank + ".png";
 						//Surface.ToFile( pSurface, strFullPath, ImageFileFormat.Png );
 						TJAPlayer3.app.SaveResultScreen( strFullPath );
 					}

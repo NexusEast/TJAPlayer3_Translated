@@ -147,7 +147,7 @@ namespace TJAPlayer3
 		{
 			foreach ( CDTX.CChip chip in TJAPlayer3.DTX.listChip )
 			{
-				if ( chip.n発声時刻ms > n移動開始時刻ms )
+				if ( chip.nNoiseTimems > n移動開始時刻ms )
 				{
 					break;
 				}
@@ -157,7 +157,7 @@ namespace TJAPlayer3
 						{
 							if ( chip.rAVI != null )
 							{
-								this.Start( chip.nチャンネル番号, chip.rAVI, chip.rDShow, 1280, 720, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, chip.n発声時刻ms );
+								this.Start( chip.nChannelNumber, chip.rAVI, chip.rDShow, 1280, 720, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, chip.nNoiseTimems );
 							}
 							continue;
 						}

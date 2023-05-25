@@ -141,7 +141,7 @@ namespace TJAPlayer3
 		{
 			if( !base.bDeactivated )
 			{
-                Dan_Plate = TJAPlayer3.tテクスチャの生成(Path.GetDirectoryName(TJAPlayer3.DTX.strファイル名の絶対パス) + @"\Dan_Plate.png");
+                Dan_Plate = TJAPlayer3.tテクスチャの生成(Path.GetDirectoryName(TJAPlayer3.DTX.strtFileAbsolutePath) + @"\Dan_Plate.png");
                 base.OnManagedResourceLoaded();
 			}
 		}

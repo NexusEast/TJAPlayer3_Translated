@@ -608,7 +608,7 @@ namespace TJAPlayer3
 				"(ScrollSpeed=x0.5 means half speed)" );
 			this.list項目リスト.Add( this.iDrumsScrollSpeed );
 
-            //this.iDrumsSudHid = new CItemList( "Sud+Hid", CItemBase.Eパネル種別.通常, getDefaultSudHidValue(E楽器パート.DRUMS ),
+            //this.iDrumsSudHid = new CItemList( "Sud+Hid", CItemBase.Eパネル種別.通常, getDefaultSudHidValue(EInstrumentPart.DRUMS ),
             //    "ドラムチップの表示方式:\n" +
             //    "OFF:　　チップを常に表示します。\n" +
             //    "Sudden: チップが譜面の下の方から\n" +

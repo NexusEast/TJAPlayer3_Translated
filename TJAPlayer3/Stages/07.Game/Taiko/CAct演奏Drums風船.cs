@@ -177,7 +177,7 @@ namespace TJAPlayer3
 
                 //    if (CDTXMania.Tx.Chara_Balloon_Broken != null)
                 //        CDTXMania.Tx.Chara_Balloon_Broken.t2D描画(CDTXMania.app.Device, 240, 140 - nY);
-                //    //this.txキャラクター_風船終了.n透明度 = nT;
+                //    //this.txキャラクター_風船終了.nTranslucency = nT;
                 //    CDTXMania.act文字コンソール.tPrint( 0, 0, C文字コンソール.Eフォント種別.赤, this.ct風船終了.db現在の値.ToString() );
 
                     

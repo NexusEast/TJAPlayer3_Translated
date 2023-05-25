@@ -197,7 +197,7 @@ namespace TJAPlayer3
                             bool b = false;
                             for( int n = 0; n < (int)Difficulty.Total; n++ )
                             {
-                                if( dtx.b譜面が存在する[ n ] )
+                                if( dtx.AvailableCharts[ n ] )
                                 {
                                     c曲リストノード.nスコア数++;
                                     c曲リストノード.r親ノード = node親;
@@ -326,7 +326,7 @@ namespace TJAPlayer3
                         bool b = false;
                         for( int n = 0; n < (int)Difficulty.Total; n++ )
                         {
-                            if( dtx.b譜面が存在する[ n ] )
+                            if( dtx.AvailableCharts[ n ] )
                             {
                                 c曲リストノード.nスコア数++;
                                 c曲リストノード.r親ノード = node親;
@@ -864,7 +864,7 @@ namespace TJAPlayer3
 									c曲リストノード.arスコア[ i ].譜面情報.レベルを非表示にする = cdtx.HIDDENLEVEL;
 									c曲リストノード.arスコア[ i ].譜面情報.曲種別 = cdtx.e種別;
 									c曲リストノード.arスコア[ i ].譜面情報.Bpm = cdtx.BPM;
-									c曲リストノード.arスコア[ i ].譜面情報.Duration = 0;	//  (cdtx.listChip == null)? 0 : cdtx.listChip[ cdtx.listChip.Count - 1 ].n発声時刻ms;
+									c曲リストノード.arスコア[ i ].譜面情報.Duration = 0;	//  (cdtx.listChip == null)? 0 : cdtx.listChip[ cdtx.listChip.Count - 1 ].nNoiseTimems;
                                     c曲リストノード.arスコア[ i ].譜面情報.strBGMファイル名 = cdtx.strBGM_PATH;
                                     c曲リストノード.arスコア[ i ].譜面情報.SongVol = cdtx.SongVol;
                                     c曲リストノード.arスコア[ i ].譜面情報.SongLoudnessMetadata = cdtx.SongLoudnessMetadata;
@@ -1118,11 +1118,11 @@ namespace TJAPlayer3
             }
             else if( TJAPlayer3.ConfigIni.nDefaultSongSort == 1 )
             {
-                t曲リストのソート9_ジャンル順( ノードリスト, E楽器パート.TAIKO, 1, 0 );
+                t曲リストのソート9_ジャンル順( ノードリスト, EInstrumentPart.TAIKO, 1, 0 );
             }
             else if( TJAPlayer3.ConfigIni.nDefaultSongSort == 2 )
             {
-                t曲リストのソート9_ジャンル順( ノードリスト, E楽器パート.TAIKO, 2, 0 );
+                t曲リストのソート9_ジャンル順( ノードリスト, EInstrumentPart.TAIKO, 2, 0 );
             }
 			//-----------------------------
 			#endregion
@@ -1260,7 +1260,7 @@ namespace TJAPlayer3
 
 	    public static void t曲リストのソート1_絶対パス順( List<C曲リストノード> ノードリスト )
 	    {
-	        t曲リストのソート1_絶対パス順(ノードリスト, E楽器パート.TAIKO, 1, 0);
+	        t曲リストのソート1_絶対パス順(ノードリスト, EInstrumentPart.TAIKO, 1, 0);
 
 	        foreach( C曲リストノード c曲リストノード in ノードリスト )
 	        {
@@ -1271,7 +1271,7 @@ namespace TJAPlayer3
 	        }
 	    }
 
-	    public static void t曲リストのソート1_絶対パス順( List<C曲リストノード> ノードリスト, E楽器パート part, int order, params object[] p )
+	    public static void t曲リストのソート1_絶対パス順( List<C曲リストノード> ノードリスト, EInstrumentPart part, int order, params object[] p )
 	    {
             var comparer = new ComparerChain<C曲リストノード>(
                 new C曲リストノードComparerノード種別(),
@@ -1281,7 +1281,7 @@ namespace TJAPlayer3
 	        ノードリスト.Sort( comparer );
 	    }
 
-	    public static void t曲リストのソート2_タイトル順( List<C曲リストノード> ノードリスト, E楽器パート part, int order, params object[] p )
+	    public static void t曲リストのソート2_タイトル順( List<C曲リストノード> ノードリスト, EInstrumentPart part, int order, params object[] p )
 	    {
 	        var comparer = new ComparerChain<C曲リストノード>(
 	            new C曲リストノードComparerノード種別(),
@@ -1297,11 +1297,11 @@ namespace TJAPlayer3
 		/// <param name="ノードリスト"></param>
 		/// <param name="part"></param>
 		/// <param name="order">1=Ascend -1=Descend</param>
-		public static void t曲リストのソート3_演奏回数の多い順( List<C曲リストノード> ノードリスト, E楽器パート part, int order, params object[] p )
+		public static void t曲リストのソート3_演奏回数の多い順( List<C曲リストノード> ノードリスト, EInstrumentPart part, int order, params object[] p )
 		{
 			order = -order;
 			int nL12345 = (int) p[ 0 ];
-			if ( part != E楽器パート.UNKNOWN )
+			if ( part != EInstrumentPart.UNKNOWN )
 			{
 				ノードリスト.Sort( delegate( C曲リストノード n1, C曲リストノード n2 )
 				{
@@ -1344,11 +1344,11 @@ namespace TJAPlayer3
 				}
 			}
 		}
-		public static void t曲リストのソート4_LEVEL順( List<C曲リストノード> ノードリスト, E楽器パート part, int order, params object[] p )
+		public static void t曲リストのソート4_LEVEL順( List<C曲リストノード> ノードリスト, EInstrumentPart part, int order, params object[] p )
 		{
 			order = -order;
 			int nL12345 = (int)p[ 0 ];
-			if ( part != E楽器パート.UNKNOWN )
+			if ( part != EInstrumentPart.UNKNOWN )
 			{
 				ノードリスト.Sort( delegate( C曲リストノード n1, C曲リストノード n2 )
 				{
@@ -1385,11 +1385,11 @@ namespace TJAPlayer3
 				}
 			}
 		}
-		public static void t曲リストのソート5_BestRank順( List<C曲リストノード> ノードリスト, E楽器パート part, int order, params object[] p )
+		public static void t曲リストのソート5_BestRank順( List<C曲リストノード> ノードリスト, EInstrumentPart part, int order, params object[] p )
 		{
 			order = -order;
 			int nL12345 = (int) p[ 0 ];
-			if ( part != E楽器パート.UNKNOWN )
+			if ( part != EInstrumentPart.UNKNOWN )
 			{
 				ノードリスト.Sort( delegate( C曲リストノード n1, C曲リストノード n2 )
 				{
@@ -1433,11 +1433,11 @@ namespace TJAPlayer3
 				}
 			}
 		}
-		public static void t曲リストのソート6_SkillPoint順( List<C曲リストノード> ノードリスト, E楽器パート part, int order, params object[] p )
+		public static void t曲リストのソート6_SkillPoint順( List<C曲リストノード> ノードリスト, EInstrumentPart part, int order, params object[] p )
 		{
 			order = -order;
 			int nL12345 = (int) p[ 0 ];
-			if ( part != E楽器パート.UNKNOWN )
+			if ( part != EInstrumentPart.UNKNOWN )
 			{
 				ノードリスト.Sort( delegate( C曲リストノード n1, C曲リストノード n2 )
 				{
@@ -1474,10 +1474,10 @@ namespace TJAPlayer3
 				}
 			}
 		}
-		public static void t曲リストのソート7_更新日時順( List<C曲リストノード> ノードリスト, E楽器パート part, int order, params object[] p )
+		public static void t曲リストのソート7_更新日時順( List<C曲リストノード> ノードリスト, EInstrumentPart part, int order, params object[] p )
 		{
 			int nL12345 = (int) p[ 0 ];
-			if ( part != E楽器パート.UNKNOWN )
+			if ( part != EInstrumentPart.UNKNOWN )
 			{
 				ノードリスト.Sort( delegate( C曲リストノード n1, C曲リストノード n2 )
 				{
@@ -1516,7 +1516,7 @@ namespace TJAPlayer3
 			}
 		}
 
-	    public static void t曲リストのソート9_ジャンル順(List<C曲リストノード> ノードリスト, E楽器パート part, int order, params object[] p)
+	    public static void t曲リストのソート9_ジャンル順(List<C曲リストノード> ノードリスト, EInstrumentPart part, int order, params object[] p)
 	    {
 	        try
 	        {
@@ -1593,7 +1593,7 @@ Debug.WriteLine( dBPM + ":" + c曲リストノード.strタイトル );
 		}
 #endif
 
-	    public static void t曲リストのソート10_Rating順(List<C曲リストノード> ノードリスト, E楽器パート part, int itemIndex, params object[] p)
+	    public static void t曲リストのソート10_Rating順(List<C曲リストノード> ノードリスト, EInstrumentPart part, int itemIndex, params object[] p)
 	    {
 	        try
 	        {

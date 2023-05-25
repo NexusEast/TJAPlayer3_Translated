@@ -187,10 +187,10 @@ namespace FDK
 			Trace.TraceInformation( "DirectSound を初期化しました。({0})({1})", ( priority ) ? "Priority" : "Normal", bUseOSTimer? "OStimer" : "FDKtimer" );
 		}
 
-		public CSound tサウンドを作成する( string strファイル名, ESoundGroup soundGroup )
+		public CSound tサウンドを作成する( string strFileName, ESoundGroup soundGroup )
 		{
 			var sound = new CSound(soundGroup);
-			sound.tDirectSoundサウンドを作成する( strファイル名, this.DirectSound );
+			sound.tDirectSoundサウンドを作成する( strFileName, this.DirectSound );
 			return sound;
 		}
 
@@ -202,9 +202,9 @@ namespace FDK
 		}
 
 		// 既存のインスタンス（生成直後 or Dispose済み）に対してサウンドを生成する。
-		public void tサウンドを作成する( string strファイル名, CSound sound )
+		public void tサウンドを作成する( string strFileName, CSound sound )
 		{
-			sound.tDirectSoundサウンドを作成する( strファイル名, this.DirectSound );
+			sound.tDirectSoundサウンドを作成する( strFileName, this.DirectSound );
 		}
 		public void tサウンドを作成する( byte[] byArrWAVファイルイメージ, CSound sound )
 		{

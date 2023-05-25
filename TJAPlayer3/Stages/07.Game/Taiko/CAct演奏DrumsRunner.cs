@@ -30,7 +30,7 @@ namespace TJAPlayer3
                         break; // 2018.6.15 IMARER 無限ループが発生するので修正
                     }
                 }
-                if (pChip.nチャンネル番号 < 0x15 || (pChip.nチャンネル番号 >= 0x1A))
+                if (pChip.nChannelNumber < 0x15 || (pChip.nChannelNumber >= 0x1A))
                 {
                     if (!stRunners[Index].b使用中)
                     {

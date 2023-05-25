@@ -49,7 +49,7 @@ namespace TJAPlayer3
 		}
 
 		// メソッド
-		public override void tActivatePopupMenu( E楽器パート einst )
+		public override void tActivatePopupMenu( EInstrumentPart einst )
 		{
             this.CAct演奏PauseMenuMain();
             this.bやり直しを選択した = false;

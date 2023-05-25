@@ -55,7 +55,7 @@ namespace TJAPlayer3
         [STAThread]
         private static void Main()
         {
-			MainImpl();
+            ErrorReporter.WithErrorReporting(MainImpl);
         }
 
         private static void MainImpl()

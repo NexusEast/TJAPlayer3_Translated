@@ -198,23 +198,23 @@ namespace FDK
         /// <para>その他、ミップマップ数は 1、Usage は None、イメージフィルタは Point、ミップマップフィルタは None になる。</para>
         /// </summary>
         /// <param name="device">Direct3D9 デバイス。</param>
-        /// <param name="strファイル名">画像ファイル名。</param>
+        /// <param name="strFileName">画像ファイル名。</param>
         /// <param name="format">テクスチャのフォーマット。</param>
         /// <param name="b黒を透過する">画像の黒（0xFFFFFFFF）を透過させるなら true。</param>
         /// <param name="pool">テクスチャの管理方法。</param>
         /// <exception cref="CTextureCreateFailedException">テクスチャの作成に失敗しました。</exception>
-        public CTexture(Device device, string strファイル名, Format format, bool b黒を透過する, Pool pool = Pool.Managed)
+        public CTexture(Device device, string strFileName, Format format, bool b黒を透過する, Pool pool = Pool.Managed)
             : this()
         {
-            MakeTexture(device, strファイル名, format, b黒を透過する, pool);
+            MakeTexture(device, strFileName, format, b黒を透過する, pool);
         }
 
-        protected void MakeTexture(Device device, string strファイル名, Format format, bool b黒を透過する, Pool pool)
+        protected void MakeTexture(Device device, string strFileName, Format format, bool b黒を透過する, Pool pool)
         {
-            if (!File.Exists(strファイル名))     // #27122 2012.1.13 from: ImageInformation では FileNotFound 例外は返ってこないので、ここで自分でチェックする。わかりやすいログのために。
-                throw new FileNotFoundException(string.Format("ファイルが存在しません。\n[{0}]", strファイル名));
+            if (!File.Exists(strFileName))     // #27122 2012.1.13 from: ImageInformation では FileNotFound 例外は返ってこないので、ここで自分でチェックする。わかりやすいログのために。
+                throw new FileNotFoundException(string.Format("ファイルが存在しません。\n[{0}]", strFileName));
 
-            Byte[] _txData = File.ReadAllBytes(strファイル名);
+            Byte[] _txData = File.ReadAllBytes(strFileName);
             MakeTexture(device, _txData, format, b黒を透過する, pool);
         }
 
@@ -259,7 +259,7 @@ namespace FDK
             catch
             {
                 this.Dispose();
-                // throw new CTextureCreateFailedException( string.Format( "テクスチャの生成に失敗しました。\n{0}", strファイル名 ) );
+                // throw new CTextureCreateFailedException( string.Format( "テクスチャの生成に失敗しました。\n{0}", strFileName ) );
                 throw new CTextureCreateFailedException(string.Format("テクスチャの生成に失敗しました。\n"));
             }
         }
