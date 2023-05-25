@@ -1024,7 +1024,7 @@ namespace TJAPlayer3
 		{
             //unsafeコードにつき、デバッグ中の変更厳禁!
 
-            //if( ( pChip.nCourse != this.nCurrentCourse ) && !CDTXMania.DTX.bチップがある.Branch )
+            //if( ( pChip.nCourse != this.nCurrentCourse ) && !CDTXMania.DTX.bSTHasChip.Branch )
                 //return E判定.Auto;
             bool bAutoPlay = false;
             switch( nPlayer )
@@ -2637,7 +2637,7 @@ namespace TJAPlayer3
 
             if( this.n分岐した回数[ nPlayer ] == 0 )
             {
-                this.bUseBranch[ nPlayer ] = dTX.bHIDDENBRANCH ? false : dTX.bチップがある.Branch;
+                this.bUseBranch[ nPlayer ] = dTX.bHIDDENBRANCH ? false : dTX.bSTHasChip.Branch;
             }
 
 

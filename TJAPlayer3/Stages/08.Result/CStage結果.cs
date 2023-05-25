@@ -80,7 +80,7 @@ namespace TJAPlayer3
 				{
 					this.nランク値[ i ] = -1;
 					this.fPerfect率[ i ] = this.fGreat率[ i ] = this.fGood率[ i ] = this.fPoor率[ i ] = this.fMiss率[ i ] = 0.0f;	// #28500 2011.5.24 yyagi
-					if ( ( ( ( i != 0 ) || ( TJAPlayer3.DTX.bチップがある.Drums  ) ) ) )
+					if ( ( ( ( i != 0 ) || ( TJAPlayer3.DTX.bSTHasChip.Drums  ) ) ) )
 					{
 						CScoreIni.C演奏記録 part = this.st演奏記録[ i ];
 						bool bIsAutoPlay = true;

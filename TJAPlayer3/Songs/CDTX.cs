@@ -894,7 +894,7 @@ namespace TJAPlayer3
             }
         }
 
-        public struct STチップがある
+        public struct STHasChip
         {
             public bool Drums;
             public bool Guitar;
@@ -935,7 +935,7 @@ namespace TJAPlayer3
         public string BACKGROUND_GR;
         public double BASEBPM;
         public double BPM;
-        public STチップがある bチップがある;
+        public STHasChip bSTHasChip;
         public double db再生速度;
         public EType e種別;
         public string GENRE;
@@ -1008,7 +1008,7 @@ namespace TJAPlayer3
         private int n現在の発声時刻ms;
         private int nCurrentCourse;
 
-        private bool b最初の分岐である;
+        private bool bFirstBranch;
         public int[] nノーツ数 = new int[4]; //0～2:各コース 3:共通
         public int[] n風船数 = new int[4]; //0～2:各コース 3:共通
         private bool b次の小節が分岐である;
@@ -1121,15 +1121,15 @@ namespace TJAPlayer3
             this.LEVEL = stdgbvalue;
             this.bHIDDENBRANCH = false;
             this.db再生速度 = 1.0;
-            this.bチップがある = new STチップがある();
-            this.bチップがある.Drums = false;
-            this.bチップがある.Guitar = false;
-            this.bチップがある.Bass = false;
-            this.bチップがある.HHOpen = false;
-            this.bチップがある.Ride = false;
-            this.bチップがある.LeftCymbal = false;
-            this.bチップがある.OpenGuitar = false;
-            this.bチップがある.OpenBass = false;
+            this.bSTHasChip = new STHasChip();
+            this.bSTHasChip.Drums = false;
+            this.bSTHasChip.Guitar = false;
+            this.bSTHasChip.Bass = false;
+            this.bSTHasChip.HHOpen = false;
+            this.bSTHasChip.Ride = false;
+            this.bSTHasChip.LeftCymbal = false;
+            this.bSTHasChip.OpenGuitar = false;
+            this.bSTHasChip.OpenBass = false;
             this.strファイル名 = "";
             this.strFileName = "";
             this.strtFileAbsolutePath = "";
@@ -1192,7 +1192,7 @@ namespace TJAPlayer3
 
             this.dbBarLength = 1.0;
 
-            this.b最初の分岐である = true;
+            this.bFirstBranch = true;
             this.b次の小節が分岐である = false;
 
             this.SongVol = CSound.DefaultSongVol;
@@ -3060,7 +3060,7 @@ namespace TJAPlayer3
 
                 this.listChip.Add(chip);
 
-                if (this.bチップがある.Branch)
+                if (this.bSTHasChip.Branch)
                 {
                     for (int f = 0; f <= 2; f++)
                     {
@@ -3292,11 +3292,11 @@ namespace TJAPlayer3
             else if (command == "#BRANCHSTART")
             {
                 IsEndedBranching = false;
-                this.bチップがある.Branch = true;
-                this.b最初の分岐である = false;
+                this.bSTHasChip.Branch = true;
+                this.bFirstBranch = false;
 
                 //分岐:分岐スタート
-                int n条件 = 0;
+                int nCondition = 0;
 
                 //条件数値。
                 double[] nNum = new double[2];
@@ -3313,19 +3313,19 @@ namespace TJAPlayer3
                 switch (branchStartArgumentMatch.Groups[1].Value)
                 {
                     case "p":
-                        n条件 = 0;
+                        nCondition = 0;
                         break;
                     case "r":
-                        n条件 = 1;
+                        nCondition = 1;
                         break;
                     case "s":
-                        n条件 = 2;
+                        nCondition = 2;
                         break;
                     case "d":
-                        n条件 = 3;
+                        nCondition = 3;
                         break;
                     default:
-                        n条件 = 0;
+                        nCondition = 0;
                         break;
                 }
 
@@ -3343,7 +3343,7 @@ namespace TJAPlayer3
                 branch.n条件数値B = nNum[1];
                 branch.nInternalNumber = this.nInternalNumberBRANCH1to;
                 branch.nNotationalNumber = 0;
-                branch.n分岐の種類 = n条件;
+                branch.n分岐の種類 = nCondition;
                 branch.n命令時のChipList番号 = this.listChip.Count;
 
                 this.listBRANCH.Add(this.nInternalNumberBRANCH1to, branch);
@@ -3935,14 +3935,14 @@ namespace TJAPlayer3
 
                                 if (nObjectNum < 5)
                                 {
-                                    if (this.b最初の分岐である == false)
+                                    if (this.bFirstBranch == false)
                                         this.nノーツ数[this.nCurrentCourse]++;
                                     else
                                         this.nノーツ数[3]++;
                                 }
                                 else if (nObjectNum == 7)
                                 {
-                                    if (this.b最初の分岐である == false)
+                                    if (this.bFirstBranch == false)
                                         this.n風船数[this.nCurrentCourse]++;
                                     else
                                         this.n風船数[3]++;
@@ -6534,36 +6534,36 @@ namespace TJAPlayer3
             //-----------------
             if ((nチャンネル番号 >= 0x11) && (nチャンネル番号 <= 0x1a))
             {
-                this.bチップがある.Drums = true;
+                this.bSTHasChip.Drums = true;
             }
             else if ((nチャンネル番号 >= 0x20) && (nチャンネル番号 <= 0x27))
             {
-                this.bチップがある.Guitar = true;
+                this.bSTHasChip.Guitar = true;
             }
             else if ((nチャンネル番号 >= 0xA0) && (nチャンネル番号 <= 0xa7))
             {
-                this.bチップがある.Bass = true;
+                this.bSTHasChip.Bass = true;
             }
             switch (nチャンネル番号)
             {
                 case 0x18:
-                    this.bチップがある.HHOpen = true;
+                    this.bSTHasChip.HHOpen = true;
                     break;
 
                 case 0x19:
-                    this.bチップがある.Ride = true;
+                    this.bSTHasChip.Ride = true;
                     break;
 
                 case 0x1a:
-                    this.bチップがある.LeftCymbal = true;
+                    this.bSTHasChip.LeftCymbal = true;
                     break;
 
                 case 0x20:
-                    this.bチップがある.OpenGuitar = true;
+                    this.bSTHasChip.OpenGuitar = true;
                     break;
 
                 case 0xA0:
-                    this.bチップがある.OpenBass = true;
+                    this.bSTHasChip.OpenBass = true;
                     break;
             }
             //-----------------
