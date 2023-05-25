@@ -405,7 +405,7 @@ namespace TJAPlayer3
 						if ( TJAPlayer3.Input管理.Keyboard.bキーが押された( (int) SlimDX.DirectInput.Key.F2 ) )
 						{
                             TJAPlayer3.Skin.sound変更音.t再生する();
-                            this.actQuickConfig.tActivatePopupMenu( E楽器パート.DRUMS );
+                            this.actQuickConfig.tActivatePopupMenu( EInstrumentPart.DRUMS );
 						}
 						#endregion
 						#region [ F3 1PオートON/OFF ]
@@ -537,7 +537,7 @@ namespace TJAPlayer3
                             #region [ Up ]
                             this.ctキー反復用.Up.tキー反復( TJAPlayer3.Input管理.Keyboard.bキーが押されている( (int) SlimDX.DirectInput.Key.LeftArrow ), new CCounter.DGキー処理( this.tカーソルを上へ移動する ) );
 							//this.ctキー反復用.Up.tキー反復( CDTXMania.Input管理.Keyboard.bキーが押されている( (int) SlimDX.DirectInput.Key.UpArrow ) || CDTXMania.Input管理.Keyboard.bキーが押されている( (int) SlimDX.DirectInput.Key.LeftArrow ), new CCounter.DGキー処理( this.tカーソルを上へ移動する ) );
-							if ( TJAPlayer3.Pad.b押された( E楽器パート.DRUMS, Eパッド.LBlue ) )
+							if ( TJAPlayer3.Pad.b押された( EInstrumentPart.DRUMS, Eパッド.LBlue ) )
 							{
 								this.tカーソルを上へ移動する();
 							}
@@ -545,13 +545,13 @@ namespace TJAPlayer3
 							#region [ Down ]
 							this.ctキー反復用.Down.tキー反復( TJAPlayer3.Input管理.Keyboard.bキーが押されている( (int) SlimDX.DirectInput.Key.RightArrow ), new CCounter.DGキー処理( this.tカーソルを下へ移動する ) );
 							//this.ctキー反復用.Down.tキー反復( CDTXMania.Input管理.Keyboard.bキーが押されている( (int) SlimDX.DirectInput.Key.DownArrow ) || CDTXMania.Input管理.Keyboard.bキーが押されている( (int) SlimDX.DirectInput.Key.RightArrow ), new CCounter.DGキー処理( this.tカーソルを下へ移動する ) );
-							if ( TJAPlayer3.Pad.b押された( E楽器パート.DRUMS, Eパッド.RBlue ) )
+							if ( TJAPlayer3.Pad.b押された( EInstrumentPart.DRUMS, Eパッド.RBlue ) )
 							{
 								this.tカーソルを下へ移動する();
 							}
 							#endregion
 							#region [ Upstairs ]
-							if ( ( ( this.act曲リスト.r現在選択中の曲 != null ) && ( this.act曲リスト.r現在選択中の曲.r親ノード != null ) ) && ( TJAPlayer3.Pad.b押された( E楽器パート.DRUMS, Eパッド.FT ) || TJAPlayer3.Pad.b押されたGB( Eパッド.Cancel ) ) )
+							if ( ( ( this.act曲リスト.r現在選択中の曲 != null ) && ( this.act曲リスト.r現在選択中の曲.r親ノード != null ) ) && ( TJAPlayer3.Pad.b押された( EInstrumentPart.DRUMS, Eパッド.FT ) || TJAPlayer3.Pad.b押されたGB( Eパッド.Cancel ) ) )
 							{
 								this.actPresound.tサウンド停止();
 								TJAPlayer3.Skin.sound取消音.t再生する();
@@ -563,15 +563,15 @@ namespace TJAPlayer3
                             if( TJAPlayer3.Input管理.Keyboard.bキーが押された( (int) SlimDX.DirectInput.Key.Space ) )
                             {
 							    TJAPlayer3.Skin.sound変更音.t再生する();
-								this.actSortSongs.tActivatePopupMenu( E楽器パート.DRUMS, ref this.act曲リスト );
+								this.actSortSongs.tActivatePopupMenu( EInstrumentPart.DRUMS, ref this.act曲リスト );
                             }
 							#endregion
 							#region [ HHx2: 難易度変更 ]
-							if ( TJAPlayer3.Pad.b押された( E楽器パート.DRUMS, Eパッド.HH ) || TJAPlayer3.Pad.b押された( E楽器パート.DRUMS, Eパッド.HHO ) )
+							if ( TJAPlayer3.Pad.b押された( EInstrumentPart.DRUMS, Eパッド.HH ) || TJAPlayer3.Pad.b押された( EInstrumentPart.DRUMS, Eパッド.HHO ) )
 							{	// [HH]x2 難易度変更
-								CommandHistory.Add( E楽器パート.DRUMS, EパッドFlag.HH );
+								CommandHistory.Add( EInstrumentPart.DRUMS, EパッドFlag.HH );
 								EパッドFlag[] comChangeDifficulty = new EパッドFlag[] { EパッドFlag.HH, EパッドFlag.HH };
-								if ( CommandHistory.CheckCommand( comChangeDifficulty, E楽器パート.DRUMS ) )
+								if ( CommandHistory.CheckCommand( comChangeDifficulty, EInstrumentPart.DRUMS ) )
 								{
 									Debug.WriteLine( "ドラムス難易度変更" );
 									this.act曲リスト.t難易度レベルをひとつ進める();
@@ -582,9 +582,9 @@ namespace TJAPlayer3
 							#region [ 上: 難易度変更(上) ]
 							if( TJAPlayer3.Input管理.Keyboard.bキーが押された( (int) SlimDX.DirectInput.Key.UpArrow ) )
 							{
-								//CommandHistory.Add( E楽器パート.DRUMS, EパッドFlag.HH );
+								//CommandHistory.Add( EInstrumentPart.DRUMS, EパッドFlag.HH );
 								//EパッドFlag[] comChangeDifficulty = new EパッドFlag[] { EパッドFlag.HH, EパッドFlag.HH };
-								//if ( CommandHistory.CheckCommand( comChangeDifficulty, E楽器パート.DRUMS ) )
+								//if ( CommandHistory.CheckCommand( comChangeDifficulty, EInstrumentPart.DRUMS ) )
 								{
 									Debug.WriteLine( "ドラムス難易度変更" );
                                     this.act曲リスト.t難易度レベルをひとつ進める();
@@ -595,9 +595,9 @@ namespace TJAPlayer3
 							#region [ 下: 難易度変更(下) ]
 							if( TJAPlayer3.Input管理.Keyboard.bキーが押された( (int) SlimDX.DirectInput.Key.DownArrow ) )
 							{
-								//CommandHistory.Add( E楽器パート.DRUMS, EパッドFlag.HH );
+								//CommandHistory.Add( EInstrumentPart.DRUMS, EパッドFlag.HH );
 								//EパッドFlag[] comChangeDifficulty = new EパッドFlag[] { EパッドFlag.HH, EパッドFlag.HH };
-								//if ( CommandHistory.CheckCommand( comChangeDifficulty, E楽器パート.DRUMS ) )
+								//if ( CommandHistory.CheckCommand( comChangeDifficulty, EInstrumentPart.DRUMS ) )
 								{
 									Debug.WriteLine( "ドラムス難易度変更" );
                                     this.act曲リスト.t難易度レベルをひとつ戻す();
@@ -766,7 +766,7 @@ namespace TJAPlayer3
 
 		private struct STCommandTime		// #24063 2011.1.16 yyagi コマンド入力時刻の記録用
 		{
-			public E楽器パート eInst;		// 使用楽器
+			public EInstrumentPart eInst;		// 使用楽器
 			public EパッドFlag ePad;		// 押されたコマンド(同時押しはOR演算で列挙する)
 			public long time;				// コマンド入力時刻
 		}
@@ -785,7 +785,7 @@ namespace TJAPlayer3
 			/// </summary>
 			/// <param name="_eInst">楽器の種類</param>
 			/// <param name="_ePad">入力コマンド(同時押しはOR演算で列挙すること)</param>
-			public void Add( E楽器パート _eInst, EパッドFlag _ePad )
+			public void Add( EInstrumentPart _eInst, EパッドFlag _ePad )
 			{
 				STCommandTime _stct = new STCommandTime {
 					eInst = _eInst,
@@ -807,7 +807,7 @@ namespace TJAPlayer3
 			/// <param name="_ePad">入力が成功したか調べたいコマンド</param>
 			/// <param name="_eInst">対象楽器</param>
 			/// <returns>コマンド入力成功時true</returns>
-			public bool CheckCommand( EパッドFlag[] _ePad, E楽器パート _eInst)
+			public bool CheckCommand( EパッドFlag[] _ePad, EInstrumentPart _eInst)
 			{
 				int targetCount = _ePad.Length;
 				int stciCount = stct.Count;

@@ -302,7 +302,7 @@ namespace TJAPlayer3
 					base.b初めての進行描画 = false;
 				}
 				#endregion
-				if ( ( ( TJAPlayer3.ConfigIni.nRisky != 0 && this.actGauge.IsFailed( E楽器パート.TAIKO ) ) || this.actGame.st叩ききりまショー.ct残り時間.bEnded ) && ( base.eフェーズID == CStage.Eフェーズ.共通_通常状態 ) )
+				if ( ( ( TJAPlayer3.ConfigIni.nRisky != 0 && this.actGauge.IsFailed( EInstrumentPart.TAIKO ) ) || this.actGame.st叩ききりまショー.ct残り時間.bEnded ) && ( base.eフェーズID == CStage.Eフェーズ.共通_通常状態 ) )
 				{
 					this.actStageFailed.Start();
 					TJAPlayer3.DTX.t全チップの再生停止();
@@ -384,7 +384,7 @@ namespace TJAPlayer3
                 for ( int i = 0; i < TJAPlayer3.ConfigIni.nPlayerCount; i++ )
                 {
 				    bIsFinishedPlaying = this.t進行描画_チップ( i );
-                    this.t進行描画_チップ_連打( E楽器パート.DRUMS, i );
+                    this.t進行描画_チップ_連打( EInstrumentPart.DRUMS, i );
                 }
 
                 this.actDan.OnDraw();
@@ -545,7 +545,7 @@ namespace TJAPlayer3
             }
             else if( index >= 0x15 && index <= 0x17 )
             {
-			    this.tチップのヒット処理( nHitTime, pChip, E楽器パート.TAIKO, true, nInput, nPlayer );
+			    this.tチップのヒット処理( nHitTime, pChip, EInstrumentPart.TAIKO, true, nInput, nPlayer );
                 return;
             }
             else
@@ -559,7 +559,7 @@ namespace TJAPlayer3
 			{
 				return;
 			}
-			this.tチップのヒット処理( nHitTime, pChip, E楽器パート.TAIKO, true, nInput, nPlayer );
+			this.tチップのヒット処理( nHitTime, pChip, EInstrumentPart.TAIKO, true, nInput, nPlayer );
 			if( ( e判定 != E判定.Poor ) && ( e判定 != E判定.Miss ) )
 			{
                 TJAPlayer3.stage演奏ドラム画面.actLaneTaiko.Start( pChip.nChannelNumber, e判定, b両手入力, nPlayer );
@@ -626,12 +626,12 @@ namespace TJAPlayer3
 			for( int nPad = 0; nPad < (int) Eパッド.MAX; nPad++ )		// #27029 2012.1.4 from: <10 to <=10; Eパッドの要素が１つ（HP）増えたため。
 																		//		  2012.1.5 yyagi: (int)Eパッド.MAX に変更。Eパッドの要素数への依存を無くすため。
 			{
-				List<STInputEvent> listInputEvent = TJAPlayer3.Pad.GetEvents( E楽器パート.DRUMS, (Eパッド) nPad );
+				List<STInputEvent> listInputEvent = TJAPlayer3.Pad.GetEvents( EInstrumentPart.DRUMS, (Eパッド) nPad );
 
 				if( ( listInputEvent == null ) || ( listInputEvent.Count == 0 ) )
 					continue;
 
-				this.t入力メソッド記憶( E楽器パート.DRUMS );
+				this.t入力メソッド記憶( EInstrumentPart.DRUMS );
 
 				foreach( STInputEvent inputEvent in listInputEvent )
 				{
@@ -1019,7 +1019,7 @@ namespace TJAPlayer3
 					int pad = nPad;	// 以下、nPad の代わりに pad を用いる。（成りすまし用）
 					// BAD or TIGHT 時の処理。
 					if( TJAPlayer3.ConfigIni.bTight && !b連打中[nUsePlayer]) // 18/8/13 - 連打時にこれが発動すると困る!!! (AioiLight)
-						this.tチップのヒット処理_BadならびにTight時のMiss( E楽器パート.DRUMS, 0, E楽器パート.TAIKO );
+						this.tチップのヒット処理_BadならびにTight時のMiss( EInstrumentPart.DRUMS, 0, EInstrumentPart.TAIKO );
 					//-----------------------------
 					#endregion
 				}
@@ -1074,7 +1074,7 @@ namespace TJAPlayer3
 
                             int n大音符 = (pChip.nChannelNumber == 0x11 || pChip.nChannelNumber == 0x12 ? 2 : 0);
 
-                            this.tチップのヒット処理(pChip.nNoiseTimems, pChip, E楽器パート.TAIKO, true, nLane + n大音符, nPlayer);
+                            this.tチップのヒット処理(pChip.nNoiseTimems, pChip, EInstrumentPart.TAIKO, true, nLane + n大音符, nPlayer);
                             this.tサウンド再生(pChip, nPlayer);
                             return;
                         }
@@ -1115,13 +1115,13 @@ namespace TJAPlayer3
                     int xTemp = 0;
                     int yTemp = 0;
 
-                    #region[ スクロール方向変更 ]
-                    if( pChip.nスクロール方向 != 0 )
+                    #region[ ScrollDirection変更 ]
+                    if( pChip.nScrollDirection != 0 )
                     {
                         xTemp = x;
                         yTemp = y;
                     }
-                    switch ( pChip.nスクロール方向 )
+                    switch ( pChip.nScrollDirection )
                     {
                         case 0:
                             x += ( TJAPlayer3.Skin.Game_Lane_Field_X[ nPlayer ] );
@@ -1356,7 +1356,7 @@ namespace TJAPlayer3
             int nSenotesY = TJAPlayer3.Skin.nSENotesY[ nPlayer ];
             int nノート座標 = 0;
             int nノート末端座標 = 0;
-            int n先頭発声位置 = 0;
+            int n先頭NoiseLocation = 0;
 
             // 2016.11.2 kairera0467
             // 黄連打音符を赤くするやつの実装方法メモ
@@ -1386,26 +1386,26 @@ namespace TJAPlayer3
                 }
                 if( pChip.nChannelNumber == 0x18 )
                 {
-                    if( pChip.nNodeAppearTimems != 0 && ( CSoundManager.rPlaybackTimer.n現在時刻ms < n先頭発声位置 - pChip.nNodeAppearTimems ) )
+                    if( pChip.nNodeAppearTimems != 0 && ( CSoundManager.rPlaybackTimer.n現在時刻ms < n先頭NoiseLocation - pChip.nNodeAppearTimems ) )
                         pChip.bShow = false;
                     else
                         pChip.bShow = true;
 
                     CDTX.CChip cChip = null;
-                    if( pChip.nMovementStandbyTimems != 0 ) // n先頭発声位置 value is only used when this condition is met
+                    if( pChip.nMovementStandbyTimems != 0 ) // n先頭NoiseLocation value is only used when this condition is met
                     {
                         cChip = TJAPlayer3.stage演奏ドラム画面.r指定時刻に一番近い連打Chip_ヒット未済問わず不可視考慮( pChip.nNoiseTimems, 0x10 + pChip.n連打音符State, 0, nPlayer );
                         if( cChip != null )
                         {
-                            n先頭発声位置 = cChip.nNoiseTimems;
+                            n先頭NoiseLocation = cChip.nNoiseTimems;
                         }
                     }
 
                     //連打音符先頭の開始時刻を取得しなければならない。
                     //そうしなければ連打先頭と連打末端の移動開始時刻にズレが出てしまう。
-                    if( pChip.nMovementStandbyTimems != 0 && ( CSoundManager.rPlaybackTimer.n現在時刻ms < n先頭発声位置 - pChip.nMovementStandbyTimems ) )
+                    if( pChip.nMovementStandbyTimems != 0 && ( CSoundManager.rPlaybackTimer.n現在時刻ms < n先頭NoiseLocation - pChip.nMovementStandbyTimems ) )
                     {
-                        nノート座標 = (int)( ( ( pChip.nNoiseTimems - ( n先頭発声位置 - pChip.nMovementStandbyTimems ) ) * pChip.dbBPM * pChip.dbSCROLL * ( this.act譜面スクロール速度.db現在の譜面スクロール速度.Drums + 1 ) ) / 502.8594 );
+                        nノート座標 = (int)( ( ( pChip.nNoiseTimems - ( n先頭NoiseLocation - pChip.nMovementStandbyTimems ) ) * pChip.dbBPM * pChip.dbSCROLL * ( this.act譜面スクロール速度.db現在の譜面スクロール速度.Drums + 1 ) ) / 502.8594 );
                     }
                     else
                     {
@@ -1432,7 +1432,7 @@ namespace TJAPlayer3
                 }
                 else if( pChip.nChannelNumber == 0x18 )
                 {
-                    if( pChip.nMovementStandbyTimems != 0 && ( CSoundManager.rPlaybackTimer.n現在時刻ms < n先頭発声位置 - pChip.nMovementStandbyTimems ) )
+                    if( pChip.nMovementStandbyTimems != 0 && ( CSoundManager.rPlaybackTimer.n現在時刻ms < n先頭NoiseLocation - pChip.nMovementStandbyTimems ) )
                     {
                         x = TJAPlayer3.Skin.Game_Lane_Field_X[nPlayer] - (130 / 2) + nノート座標;
                     }
@@ -1654,7 +1654,7 @@ namespace TJAPlayer3
             {
                 //時間内でかつ0x9Aじゃないならならヒット処理
                 if( pChip.nChannelNumber != 0x18 && ( nPlayer == 0 ? TJAPlayer3.ConfigIni.b太鼓パートAutoPlay : TJAPlayer3.ConfigIni.b太鼓パートAutoPlay2P ) )
-                    this.tチップのヒット処理( pChip.nNoiseTimems, pChip, E楽器パート.TAIKO, false, 0, nPlayer );
+                    this.tチップのヒット処理( pChip.nNoiseTimems, pChip, EInstrumentPart.TAIKO, false, 0, nPlayer );
             }
             #endregion
 		}
@@ -1856,7 +1856,7 @@ namespace TJAPlayer3
                     this.actAVI.tPauseControl();
 
                     this.bPAUSE = true;
-                    this.actPauseMenu.tActivatePopupMenu( E楽器パート.DRUMS );
+                    this.actPauseMenu.tActivatePopupMenu( EInstrumentPart.DRUMS );
                 }
 
             }

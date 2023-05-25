@@ -163,7 +163,7 @@ namespace TJAPlayer3
 		SUPERRANDOM,
 		HYPERRANDOM
 	}
-	public enum E楽器パート		// ここを修正するときは、セットで次の EKeyConfigPart も修正すること。
+	public enum EInstrumentPart		// ここを修正するときは、セットで次の EKeyConfigPart も修正すること。
 	{
 		DRUMS	= 0,
 		GUITAR	= 1,
@@ -171,14 +171,14 @@ namespace TJAPlayer3
         TAIKO   = 3,
 		UNKNOWN	= 99
 	}
-	public enum EKeyConfigPart	// : E楽器パート
+	public enum EKeyConfigPart	// : EInstrumentPart
 	{
-		DRUMS	= E楽器パート.DRUMS,
-		GUITAR	= E楽器パート.GUITAR,
-		BASS	= E楽器パート.BASS,
-        TAIKO   = E楽器パート.TAIKO,
+		DRUMS	= EInstrumentPart.DRUMS,
+		GUITAR	= EInstrumentPart.GUITAR,
+		BASS	= EInstrumentPart.BASS,
+        TAIKO   = EInstrumentPart.TAIKO,
 		SYSTEM,
-		UNKNOWN	= E楽器パート.UNKNOWN
+		UNKNOWN	= EInstrumentPart.UNKNOWN
 	}
 
 	internal enum EInputDevice
@@ -327,19 +327,19 @@ namespace TJAPlayer3
 			{
 				switch( index )
 				{
-					case (int) E楽器パート.DRUMS:
+					case (int) EInstrumentPart.DRUMS:
 						return this.Drums;
 
-					case (int) E楽器パート.GUITAR:
+					case (int) EInstrumentPart.GUITAR:
 						return this.Guitar;
 
-					case (int) E楽器パート.BASS:
+					case (int) EInstrumentPart.BASS:
 						return this.Bass;
 
-                    case (int) E楽器パート.TAIKO:
+                    case (int) EInstrumentPart.TAIKO:
                         return this.Taiko;
 
-					case (int) E楽器パート.UNKNOWN:
+					case (int) EInstrumentPart.UNKNOWN:
 						return this.Unknown;
 				}
 				throw new IndexOutOfRangeException();
@@ -348,23 +348,23 @@ namespace TJAPlayer3
 			{
 				switch( index )
 				{
-					case (int) E楽器パート.DRUMS:
+					case (int) EInstrumentPart.DRUMS:
 						this.Drums = value;
 						return;
 
-					case (int) E楽器パート.GUITAR:
+					case (int) EInstrumentPart.GUITAR:
 						this.Guitar = value;
 						return;
 
-					case (int) E楽器パート.BASS:
+					case (int) EInstrumentPart.BASS:
 						this.Bass = value;
 						return;
 
-                    case (int) E楽器パート.TAIKO:
+                    case (int) EInstrumentPart.TAIKO:
                         this.Taiko = value;
                         return;
 
-					case (int) E楽器パート.UNKNOWN:
+					case (int) EInstrumentPart.UNKNOWN:
 						this.Unknown = value;
 						return;
 				}

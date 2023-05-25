@@ -136,15 +136,15 @@ namespace TJAPlayer3
             1.000f
         };
 
-        public double Get( E楽器パート part, int player )
+        public double Get( EInstrumentPart part, int player )
 		{
 			return this.n現在の本当のスコア[ player ][ (int) part ];
 		}
-		public void Set( E楽器パート part, double nScore, int player )
+		public void Set( EInstrumentPart part, double nScore, int player )
 		{
             //現状、TAIKOパートでの演奏記録を結果ステージに持っていけないので、ドラムパートにも加算することでお茶を濁している。
-            if( part == E楽器パート.TAIKO )
-                part = E楽器パート.DRUMS;
+            if( part == EInstrumentPart.TAIKO )
+                part = EInstrumentPart.DRUMS;
 
 			int nPart = (int) part;
 			if( this.n現在の本当のスコア[ player ][ nPart ] != nScore )
@@ -158,8 +158,8 @@ namespace TJAPlayer3
 				}
 			}
 
-            if( part == E楽器パート.DRUMS )
-                part = E楽器パート.TAIKO;
+            if( part == EInstrumentPart.DRUMS )
+                part = EInstrumentPart.TAIKO;
 
 			nPart = (int) part;
 			if( this.n現在の本当のスコア[ player ][ nPart ] != nScore )
@@ -180,13 +180,13 @@ namespace TJAPlayer3
 		/// <param name="part"></param>
 		/// <param name="bAutoPlay"></param>
 		/// <param name="delta"></param>
-		public void Add( E楽器パート part, STAUTOPLAY bAutoPlay, long delta, int player )
+		public void Add( EInstrumentPart part, STAUTOPLAY bAutoPlay, long delta, int player )
 		{
 			double rev = 1.0;
 			switch ( part )
 			{
 				#region [ Unknown ]
-				case E楽器パート.UNKNOWN:
+				case EInstrumentPart.UNKNOWN:
 					throw new ArgumentException();
 				#endregion
 			}
@@ -233,7 +233,7 @@ namespace TJAPlayer3
                 }
             }
 
-            this.Set( E楽器パート.TAIKO, this.Get( E楽器パート.TAIKO, player ) + 10000, player );
+            this.Set( EInstrumentPart.TAIKO, this.Get( EInstrumentPart.TAIKO, player ) + 10000, player );
         }
 
 		// CActivity 実装

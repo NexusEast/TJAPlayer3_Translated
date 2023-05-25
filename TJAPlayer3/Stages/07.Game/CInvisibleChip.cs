@@ -56,7 +56,7 @@ namespace TJAPlayer3
 		/// まだSemi-Invisibleを開始していなければ、開始する
 		/// </summary>
 		/// <param name="eInst"></param>
-		public void StartSemiInvisible( E楽器パート eInst )
+		public void StartSemiInvisible( EInstrumentPart eInst )
 		{
 			int nInst = (int) eInst;
 			if ( !b演奏チップが１つでもバーを通過した[ nInst ] )
@@ -73,7 +73,7 @@ namespace TJAPlayer3
 		/// 一時的にチップを表示するモードを開始する
 		/// </summary>
 		/// <param name="eInst">楽器パート</param>
-		public void ShowChipTemporally( E楽器パート eInst )
+		public void ShowChipTemporally( EInstrumentPart eInst )
 		{
 			ccounter[ (int) eInst ].tStart( 0, nDisplayTimeMs + nFadeoutTimeMs + 1, 1, TJAPlayer3.Timer );
 		}

@@ -351,11 +351,11 @@ namespace TJAPlayer3
             public int nRollCount;
             public int nBalloon;
             public int nProcessTime;
-            public int nスクロール方向;
+            public int nScrollDirection;
             public int n描画優先度; //(特殊)現状連打との判断目的で使用
             public ENoteState eNoteState;
             public EAVI種別 eAVI種別;
-            public E楽器パート e楽器パート = E楽器パート.UNKNOWN;
+            public EInstrumentPart eInstrumentPart = EInstrumentPart.UNKNOWN;
             public int nChannelNumber;
             public STDGBVALUE<int> nバーからの距離dot;
             public STDGBVALUE<int> nバーからのノーツ末端距離dot;
@@ -364,7 +364,7 @@ namespace TJAPlayer3
             public int n総移動時間;
             public int n透明度 = 0xff;
             public int nNoiseLocation;
-            public double db発声位置;  // 発声時刻を格納していた変数のうちの１つをfloat型からdouble型に変更。(kairera0467)
+            public double dbNoiseLocation;  // 発声時刻を格納していた変数のうちの１つをfloat型からdouble型に変更。(kairera0467)
             public double fBMSCROLLTime;
             public double fBMSCROLLTime_end;
             public int nNoiseTimems;
@@ -373,7 +373,7 @@ namespace TJAPlayer3
             public int nノーツ終了時刻ms;
             public int nNodeAppearTimems;
             public int nMovementStandbyTimems;
-            public int n分岐回数;
+            public int nBranchCount;
             public int n連打音符State;
             public int nLag;                // 2011.2.1 yyagi
             public CDTX.CAVI rAVI;
@@ -576,7 +576,7 @@ namespace TJAPlayer3
             {
                 // まずは位置で比較。
 
-                //BGMチップだけ発声位置
+                //BGMチップだけNoiseLocation
                 //if( this.nChannelNumber == 0x01 || this.nChannelNumber == 0x02 )
                 //{
                 //    if( this.nNoiseLocation < other.nNoiseLocation )
@@ -1009,8 +1009,8 @@ namespace TJAPlayer3
         private int nCurrentCourse;
 
         private bool bFirstBranch;
-        public int[] nノーツ数 = new int[4]; //0～2:各コース 3:共通
-        public int[] n風船数 = new int[4]; //0～2:各コース 3:共通
+        public int[] nNoteCount = new int[4]; //0～2:各コース 3:共通
+        public int[] nBalloon = new int[4]; //0～2:各コース 3:共通
         private bool b次の小節が分岐である;
         private bool b次の分岐で数値リセット; //2018.03.16 kairera0467 SECTION処理を分岐判定と同時に行う。
         private int n文字数;
@@ -1058,7 +1058,7 @@ namespace TJAPlayer3
         private string[] dlmtEnter = { "\n" };
         private string[] dlmtCOURSE = { "COURSE:" };
 
-        private int nスクロール方向 = 0;
+        private int nScrollDirection = 0;
         //2015.09.18 kairera0467
         //バタフライスライドみたいなアレをやりたいがために実装。
         //次郎2みたいな複素数とかは意味不明なので、方向を指定してスクロールさせることにした。
@@ -1934,7 +1934,7 @@ namespace TJAPlayer3
                         #region [ 拍子_拍線の挿入 ]
                         if (this.listChip.Count > 0)
                         {
-                            this.listChip.Sort();       // 高速化のためにはこれを削りたいが、listChipの最後がn発声位置の終端である必要があるので、
+                            this.listChip.Sort();       // 高速化のためにはこれを削りたいが、listChipの最後がnNoiseLocationの終端である必要があるので、
                                                         // 保守性確保を優先してここでのソートは残しておく
                                                         // なお、093時点では、このソートを削除しても動作するようにはしてある。
                                                         // (ここまでの一部チップ登録を、listChip.Add(c)から同Insert(0,c)に変更してある)
@@ -2006,7 +2006,7 @@ namespace TJAPlayer3
                         #region [ 発声時刻の計算 ]
                         double bpm = 120.0;
                         //double dbBarLength = 1.0;
-                        int n発声位置 = 0;
+                        int nNoiseLocation = 0;
                         int ms = 0;
                         int nBar = 0;
                         int nCount = 0;
@@ -2026,12 +2026,12 @@ namespace TJAPlayer3
                             else if (chip.nChannelNumber == 0xF1) { }
                             else if (chip.nChannelNumber == 0xF2) { }
                             else if (chip.nChannelNumber == 0xFF) { }
-                            else if (chip.nChannelNumber == 0xDD) { chip.nNoiseTimems = ms + ((int)(((625 * (chip.nNoiseLocation - n発声位置)) * this.dbBarLength) / bpm)); }
-                            else if (chip.nChannelNumber == 0xDF) { chip.nNoiseTimems = ms + ((int)(((625 * (chip.nNoiseLocation - n発声位置)) * this.dbBarLength) / bpm)); }
+                            else if (chip.nChannelNumber == 0xDD) { chip.nNoiseTimems = ms + ((int)(((625 * (chip.nNoiseLocation - nNoiseLocation)) * this.dbBarLength) / bpm)); }
+                            else if (chip.nChannelNumber == 0xDF) { chip.nNoiseTimems = ms + ((int)(((625 * (chip.nNoiseLocation - nNoiseLocation)) * this.dbBarLength) / bpm)); }
                             else if (chip.nChannelNumber < 0x93)
-                                chip.nNoiseTimems = ms + ((int)(((625 * (chip.nNoiseLocation - n発声位置)) * this.dbBarLength) / bpm));
+                                chip.nNoiseTimems = ms + ((int)(((625 * (chip.nNoiseLocation - nNoiseLocation)) * this.dbBarLength) / bpm));
                             else if ((chip.nChannelNumber > 0x9F && chip.nChannelNumber < 0xA0) || (chip.nChannelNumber >= 0xF0 && chip.nChannelNumber < 0xFE))
-                                chip.nNoiseTimems = ms + ((int)(((625 * (chip.nNoiseLocation - n発声位置)) * this.dbBarLength) / bpm));
+                                chip.nNoiseTimems = ms + ((int)(((625 * (chip.nNoiseLocation - nNoiseLocation)) * this.dbBarLength) / bpm));
                             //else if( chip.nChannelNumber > 0xDF )
                             //    chip.nNoiseTimems = ms + ( (int) ( ( ( 625 * ( chip.nNoiseLocation - nNoiseLocation ) ) * this.dbBarLength ) / bpm ) );
 
@@ -2039,7 +2039,7 @@ namespace TJAPlayer3
                             //chip.nノーツ終了時刻ms += nDELAY;
                             if (((this.e種別 == EType.BMS) || (this.e種別 == EType.BME)) && ((this.dbBarLength != 1.0) && ((chip.nNoiseLocation / 384) != nBar)))
                             {
-                                n発声位置 = chip.nNoiseLocation;
+                                nNoiseLocation = chip.nNoiseLocation;
                                 ms = chip.nNoiseTimems;
                                 this.dbBarLength = 1.0;
                             }
@@ -2053,7 +2053,7 @@ namespace TJAPlayer3
                             {
                                 case 0x01:
                                     {
-                                        n発声位置 = chip.nNoiseLocation;
+                                        nNoiseLocation = chip.nNoiseLocation;
 
                                         if (this.bOFFSETの値がマイナスである == false)
                                             chip.nNoiseTimems += this.nOFFSET;
@@ -2062,7 +2062,7 @@ namespace TJAPlayer3
                                     }
                                 case 0x02:  // BarLength
                                     {
-                                        n発声位置 = chip.nNoiseLocation;
+                                        nNoiseLocation = chip.nNoiseLocation;
                                         if (this.bOFFSETの値がマイナスである == false)
                                             chip.nNoiseTimems += this.nOFFSET;
                                         ms = chip.nNoiseTimems;
@@ -2071,7 +2071,7 @@ namespace TJAPlayer3
                                     }
                                 case 0x03:  // BPM
                                     {
-                                        n発声位置 = chip.nNoiseLocation;
+                                        nNoiseLocation = chip.nNoiseLocation;
                                         if (this.bOFFSETの値がマイナスである == false)
                                             chip.nNoiseTimems += this.nOFFSET;
                                         ms = chip.nNoiseTimems;
@@ -2170,7 +2170,7 @@ namespace TJAPlayer3
                                     }
                                 case 0x08:  // 拡張BPM
                                     {
-                                        n発声位置 = chip.nNoiseLocation;
+                                        nNoiseLocation = chip.nNoiseLocation;
                                         if (this.bOFFSETの値がマイナスである == false)
                                             chip.nNoiseTimems += this.nOFFSET;
                                         ms = chip.nNoiseTimems;
@@ -2191,8 +2191,8 @@ namespace TJAPlayer3
                                             chip.nNoiseTimems -= this.nMOVIEOFFSET;
                                         if (this.listAVIPAN.TryGetValue(chip.nIntNum, out CAVIPAN cavipan))
                                         {
-                                            int num21 = ms + ((int)(((0x271 * (chip.nNoiseLocation - n発声位置)) * this.dbBarLength) / bpm));
-                                            int num22 = ms + ((int)(((0x271 * ((chip.nNoiseLocation + cavipan.nMoveTimect) - n発声位置)) * this.dbBarLength) / bpm));
+                                            int num21 = ms + ((int)(((0x271 * (chip.nNoiseLocation - nNoiseLocation)) * this.dbBarLength) / bpm));
+                                            int num22 = ms + ((int)(((0x271 * ((chip.nNoiseLocation + cavipan.nMoveTimect) - nNoiseLocation)) * this.dbBarLength) / bpm));
                                             chip.n総移動時間 = num22 - num21;
                                         }
                                         continue;
@@ -3064,7 +3064,7 @@ namespace TJAPlayer3
                 {
                     for (int f = 0; f <= 2; f++)
                     {
-                        this.nノーツ数[f] = this.nノーツ数[f] + this.nノーツ数[3];
+                        this.nNoteCount[f] = this.nNoteCount[f] + this.nNoteCount[3];
                     }
                 }
             }
@@ -3329,7 +3329,7 @@ namespace TJAPlayer3
                         break;
                 }
 
-                //まずはリストに現在の小節、発声位置、分岐条件を追加。
+                //まずはリストに現在の小節、NoiseLocation、分岐条件を追加。
                 var branch = new CBRANCH();
                 branch.dbJudgeTime = this.dbNowTime;
                 branch.dbBranchTime = ((this.nCurrentBar + 1) * 384);
@@ -3482,7 +3482,7 @@ namespace TJAPlayer3
             else if (command == "#DIRECTION")
             {
                 double dbSCROLL = Convert.ToDouble(argument);
-                this.nスクロール方向 = (int)dbSCROLL;
+                this.nScrollDirection = (int)dbSCROLL;
 
                 //チップ追加して割り込んでみる。
                 var chip = new CChip();
@@ -3491,7 +3491,7 @@ namespace TJAPlayer3
                 chip.nNoiseLocation = ((this.nCurrentBar) * 384) - 1;
                 chip.nNoiseTimems = (int)this.dbNowTime;
                 chip.nIntNum_Internal = 0;
-                chip.nスクロール方向 = (int)dbSCROLL;
+                chip.nScrollDirection = (int)dbSCROLL;
                 chip.nCourse = this.nCurrentCourse;
 
                 // チップを配置。
@@ -3716,13 +3716,13 @@ namespace TJAPlayer3
 
                         #region[ 拍線チップテスト ]
                         //1拍の時間を計算
-                        double db1拍 = (60.0 / this.dbNowBPM) / 4.0;
+                        double db1Beat = (60.0 / this.dbNowBPM) / 4.0;
                         //forループ(拍数)
                         for (int measure = 1; measure < this.fNow_Measure_s; measure++)
                         {
                             CChip hakusen = new CChip();
                             hakusen.nNoiseLocation = ((this.nCurrentBar) * 384);
-                            hakusen.nNoiseTimems = (int)(this.dbNowTime + (((db1拍 * 4.0)) * measure) * 1000.0);
+                            hakusen.nNoiseTimems = (int)(this.dbNowTime + (((db1Beat * 4.0)) * measure) * 1000.0);
                             hakusen.nChannelNumber = 0x51;
                             //hakusen.nNoiseTimems = (int)this.dbNowTime;
                             hakusen.fBMSCROLLTime = this.dbNowBMScollTime;
@@ -3788,7 +3788,7 @@ namespace TJAPlayer3
                                 chip.nChannelNumber = 0x10 + nObjectNum;
                                 //chip.nNoiseLocation = (this.nCurrentBar * 384) + ((384 * n) / nCharacterNum);
                                 chip.nNoiseLocation = (int)((this.nCurrentBar * 384.0) + ((384.0 * n) / nCharacterCount));
-                                chip.db発声位置 = this.dbNowTime;
+                                chip.dbNoiseLocation = this.dbNowTime;
                                 chip.nNoiseTimems = (int)this.dbNowTime;
                                 //chip.fBMSCROLLTime = (float)(( this.dbBarLength ) * (16.0f / this.n各小節の文字数[this.nCurrentBar]));
                                 chip.fBMSCROLLTime = (float)this.dbNowBMScollTime;
@@ -3797,13 +3797,13 @@ namespace TJAPlayer3
                                 chip.dbBPM = this.dbNowBPM;
                                 chip.dbSCROLL = this.dbNowScroll;
                                 chip.dbSCROLL_Y = this.dbNowScrollY;
-                                chip.nスクロール方向 = this.nスクロール方向;
+                                chip.nScrollDirection = this.nScrollDirection;
                                 if (IsEndedBranching)
                                     chip.nCourse = i;
                                 else
                                     chip.nCourse = nCurrentCourse;
-                                chip.n分岐回数 = this.nInternalNumberBRANCH1to;
-                                chip.e楽器パート = E楽器パート.TAIKO;
+                                chip.nBranchCount = this.nInternalNumberBRANCH1to;
+                                chip.eInstrumentPart = EInstrumentPart.TAIKO;
                                 chip.nNodeAppearTimems = (int)(this.dbAppearTime * 1000.0);
                                 chip.nMovementStandbyTimems = (int)(this.dbMovementStandbyTime * 1000.0);
                                 chip.nPlayerSide = this.nPlayerSide;
@@ -3936,16 +3936,16 @@ namespace TJAPlayer3
                                 if (nObjectNum < 5)
                                 {
                                     if (this.bFirstBranch == false)
-                                        this.nノーツ数[this.nCurrentCourse]++;
+                                        this.nNoteCount[this.nCurrentCourse]++;
                                     else
-                                        this.nノーツ数[3]++;
+                                        this.nNoteCount[3]++;
                                 }
                                 else if (nObjectNum == 7)
                                 {
                                     if (this.bFirstBranch == false)
-                                        this.n風船数[this.nCurrentCourse]++;
+                                        this.nBalloon[this.nCurrentCourse]++;
                                     else
-                                        this.n風船数[3]++;
+                                        this.nBalloon[3]++;
                                 }
 
 
@@ -5380,7 +5380,7 @@ namespace TJAPlayer3
                         int nAddMixer時刻ms, nAddMixer位置 = 0;
                         //Debug.WriteLine("==================================================================");
                         //Debug.WriteLine( "Start: ch=" + pChip.nChannelNumber.ToString("x2") + ", nWAV番号=" + pChip.nIntNum + ", time=" + pChip.nNoiseTimems + ", lasttime=" + listChip[ listChip.Count - 1 ].nNoiseTimems );
-                        t発声時刻msと発声位置を取得する(pChip.nNoiseTimems - n発音前余裕ms, out nAddMixer時刻ms, out nAddMixer位置);
+                        t発声時刻msとNoiseLocationを取得する(pChip.nNoiseTimems - n発音前余裕ms, out nAddMixer時刻ms, out nAddMixer位置);
                         //Debug.WriteLine( "nAddMixer時刻ms=" + nAddMixer時刻ms + ",nAddMixer位置=" + nAddMixer位置 );
 
                         CChip c_AddMixer = new CChip()
@@ -5404,14 +5404,14 @@ namespace TJAPlayer3
                         }
                         //Debug.WriteLine("duration=" + duration );
                         int n新RemoveMixer時刻ms, n新RemoveMixer位置;
-                        t発声時刻msと発声位置を取得する(pChip.nNoiseTimems + duration + n発音後余裕ms, out n新RemoveMixer時刻ms, out n新RemoveMixer位置);
+                        t発声時刻msとNoiseLocationを取得する(pChip.nNoiseTimems + duration + n発音後余裕ms, out n新RemoveMixer時刻ms, out n新RemoveMixer位置);
                         //Debug.WriteLine( "n新RemoveMixer時刻ms=" + n新RemoveMixer時刻ms + ",n新RemoveMixer位置=" + n新RemoveMixer位置 );
                         if (n新RemoveMixer時刻ms < pChip.nNoiseTimems + duration)   // 曲の最後でサウンドが切れるような場合は
                         {
                             CChip c_AddMixer_noremove = c_AddMixer;
                             c_AddMixer_noremove.b演奏終了後も再生が続くチップである = true;
                             listAddMixerChannel[listAddMixerChannel.Count - 1] = c_AddMixer_noremove;
-                            //continue;												// 発声位置の計算ができないので、Mixer削除をあきらめる___のではなく
+                            //continue;												// NoiseLocationの計算ができないので、Mixer削除をあきらめる___のではなく
                             // #32248 2013.10.15 yyagi 演奏終了後も再生を続けるチップであるというフラグをpChip内に立てる
                             break;
                         }
@@ -5502,10 +5502,10 @@ namespace TJAPlayer3
             listChip.Sort();
         }
 
-        private bool t発声時刻msと発声位置を取得する(int n希望発声時刻ms, out int n新発声時刻ms, out int n新発声位置)
+        private bool t発声時刻msとNoiseLocationを取得する(int n希望発声時刻ms, out int n新発声時刻ms, out int n新NoiseLocation)
         {
-            // 発声時刻msから発声位置を逆算することはできないため、近似計算する。
-            // 具体的には、希望発声位置前後の2つのチップの発声位置の中間を取る。
+            // 発声時刻msからNoiseLocationを逆算することはできないため、近似計算する。
+            // 具体的には、希望NoiseLocation前後の2つのチップのNoiseLocationの中間を取る。
 
             if (n希望発声時刻ms < 0)
             {
@@ -5517,7 +5517,7 @@ namespace TJAPlayer3
             //}
 
             int index_min = -1, index_max = -1;
-            for (int i = 0; i < listChip.Count; i++)        // 希望発声位置前後の「前」の方のチップを検索
+            for (int i = 0; i < listChip.Count; i++)        // 希望NoiseLocation前後の「前」の方のチップを検索
             {
                 if (listChip[i].nNoiseTimems >= n希望発声時刻ms)
                 {
@@ -5529,11 +5529,11 @@ namespace TJAPlayer3
             {
                 // listの最終項目の時刻をそのまま使用する
                 //___のではダメ。BGMが尻切れになる。
-                // そこで、listの最終項目の発声時刻msと発生位置から、希望発声時刻に相当する希望発声位置を比例計算して求める。
+                // そこで、listの最終項目の発声時刻msと発生位置から、希望発声時刻に相当する希望NoiseLocationを比例計算して求める。
                 //n新発声時刻ms = n希望発声時刻ms;
-                //n新発声位置 = listChip[ listChip.Count - 1 ].nNoiseLocation * n希望発声時刻ms / listChip[ listChip.Count - 1 ].nNoiseTimems;
+                //n新NoiseLocation = listChip[ listChip.Count - 1 ].nNoiseLocation * n希望発声時刻ms / listChip[ listChip.Count - 1 ].nNoiseTimems;
                 n新発声時刻ms = listChip[listChip.Count - 1].nNoiseTimems;
-                n新発声位置 = listChip[listChip.Count - 1].nNoiseLocation;
+                n新NoiseLocation = listChip[listChip.Count - 1].nNoiseLocation;
                 return false;
             }
             index_max = index_min + 1;
@@ -5542,7 +5542,7 @@ namespace TJAPlayer3
                 index_max = index_min;
             }
             n新発声時刻ms = (listChip[index_max].nNoiseTimems + listChip[index_min].nNoiseTimems) / 2;
-            n新発声位置 = (listChip[index_max].nNoiseLocation + listChip[index_min].nNoiseLocation) / 2;
+            n新NoiseLocation = (listChip[index_max].nNoiseLocation + listChip[index_min].nNoiseLocation) / 2;
 
             return true;
         }
@@ -6677,15 +6677,15 @@ namespace TJAPlayer3
                 //-----------------
                 if ((nチャンネル番号 >= 0x11) && (nチャンネル番号 <= 0x1C))
                 {
-                    chip.e楽器パート = E楽器パート.DRUMS;
+                    chip.eInstrumentPart = EInstrumentPart.DRUMS;
                 }
                 if ((nチャンネル番号 >= 0x20) && (nチャンネル番号 <= 0x27))
                 {
-                    chip.e楽器パート = E楽器パート.GUITAR;
+                    chip.eInstrumentPart = EInstrumentPart.GUITAR;
                 }
                 if ((nチャンネル番号 >= 160) && (nチャンネル番号 <= 0xA7))
                 {
-                    chip.e楽器パート = E楽器パート.BASS;
+                    chip.eInstrumentPart = EInstrumentPart.BASS;
                 }
                 //-----------------
                 #endregion
@@ -6703,7 +6703,7 @@ namespace TJAPlayer3
                 //-----------------
                 #endregion
 
-                #region [ フィルインON/OFFチャンネル(Ch.53)の場合、発声位置を少し前後にずらす。]
+                #region [ フィルインON/OFFチャンネル(Ch.53)の場合、NoiseLocationを少し前後にずらす。]
                 //-----------------
                 if (nチャンネル番号 == 0x53)
                 {
