@@ -37,7 +37,7 @@ namespace TJAPlayer3
                 if (!string.IsNullOrEmpty(TJAPlayer3.DTX.PATH_WAV))
                     strAVIFileName = TJAPlayer3.DTX.PATH_WAV + this.strFileName;
                 else
-                    strAVIFileName = TJAPlayer3.DTX.strFileName + this.strFileName;
+                    strAVIFileName = TJAPlayer3.DTX.strFolderName + this.strFileName;
                 //-----------------
                 #endregion
 
@@ -82,7 +82,7 @@ namespace TJAPlayer3
                     if (!string.IsNullOrEmpty(TJAPlayer3.DTX.PATH_WAV))
                         strAVIFileName = TJAPlayer3.DTX.PATH_WAV + this.strFileName;
                     else
-                        strAVIFileName = TJAPlayer3.DTX.strFileName + this.strFileName;
+                        strAVIFileName = TJAPlayer3.DTX.strFolderName + this.strFileName;
                     //-----------------
                     #endregion
 
@@ -139,7 +139,7 @@ namespace TJAPlayer3
                 if (!string.IsNullOrEmpty(TJAPlayer3.DTX.PATH_WAV))
                     str動画ファイル名 = TJAPlayer3.DTX.PATH_WAV + this.strファイル名;
                 else
-                    str動画ファイル名 = TJAPlayer3.DTX.strFileName + this.strファイル名;
+                    str動画ファイル名 = TJAPlayer3.DTX.strFolderName + this.strファイル名;
                 //-----------------
                 #endregion
 
@@ -183,7 +183,7 @@ namespace TJAPlayer3
                     if (!string.IsNullOrEmpty(TJAPlayer3.DTX.PATH_WAV))
                         str動画ファイル名 = TJAPlayer3.DTX.PATH_WAV + this.strファイル名;
                     else
-                        str動画ファイル名 = TJAPlayer3.DTX.strFileName + this.strファイル名;
+                        str動画ファイル名 = TJAPlayer3.DTX.strFolderName + this.strファイル名;
                     //-----------------
                     #endregion
 
@@ -625,7 +625,7 @@ namespace TJAPlayer3
             public bool bBGMとして使う;
             public List<int> listこのWAVを使用するチャンネル番号の集合 = new List<int>(16);
             public int nChipSize = 100;
-            public int n位置;
+            public int nLocation;
             public long[] n一時停止時刻 = new long[TJAPlayer3.ConfigIni.nPoliphonicSounds];    // 4
             public int SongVol = CSound.DefaultSongVol;
             public LoudnessMetadata? SongLoudnessMetadata = null;
@@ -634,8 +634,8 @@ namespace TJAPlayer3
             public int nInternalNumber;
             public int nNotationalNumber;
             public CSound[] rSound = new CSound[TJAPlayer3.ConfigIni.nPoliphonicSounds];     // 4
-            public string strコメント文 = "";
-            public string strファイル名 = "";
+            public string strCommentText = "";
+            public string strFileName = "";
             public bool bBGMとして使わない
             {
                 get
@@ -666,7 +666,7 @@ namespace TJAPlayer3
                     sb.Append(string.Format("CWAV{0}(内部{1}): ", CDTX.tZZ(this.nNotationalNumber), this.nInternalNumber));
                 }
                 sb.Append(
-                    $"{nameof(SongVol)}:{this.SongVol}, {nameof(LoudnessMetadata.Integrated)}:{this.SongLoudnessMetadata?.Integrated}, {nameof(LoudnessMetadata.TruePeak)}:{this.SongLoudnessMetadata?.TruePeak}, 位置:{this.n位置}, サイズ:{this.nChipSize}, BGM:{(this.bBGMとして使う ? 'Y' : 'N')}, File:{this.strファイル名}, Comment:{this.strコメント文}");
+                    $"{nameof(SongVol)}:{this.SongVol}, {nameof(LoudnessMetadata.Integrated)}:{this.SongLoudnessMetadata?.Integrated}, {nameof(LoudnessMetadata.TruePeak)}:{this.SongLoudnessMetadata?.TruePeak}, 位置:{this.nLocation}, サイズ:{this.nChipSize}, BGM:{(this.bBGMとして使う ? 'Y' : 'N')}, File:{this.strFileName}, Comment:{this.strCommentText}");
 
                 return sb.ToString();
             }
@@ -692,7 +692,7 @@ namespace TJAPlayer3
                         this.rSound[i] = null;
 
                         if ((i == 0) && TJAPlayer3.ConfigIni.bLogCreatedDisposed)
-                            Trace.TraceInformation("サウンドを解放しました。({0})({1})", this.strコメント文, this.strファイル名);
+                            Trace.TraceInformation("サウンドを解放しました。({0})({1})", this.strCommentText, this.strFileName);
                     }
                 }
 
@@ -975,9 +975,9 @@ namespace TJAPlayer3
         public string PREIMAGE;
         public string PREVIEW;
         public string strハッシュofDTXファイル;
-        public string strファイル名;
-        public string strtFileAbsolutePath;
         public string strFileName;
+        public string strtFileAbsolutePath;
+        public string strFolderName;
         public string SUBTITLE;
         public string TITLE;
         public double dbScrollSpeed;
@@ -1130,13 +1130,13 @@ namespace TJAPlayer3
             this.bSTHasChip.LeftCymbal = false;
             this.bSTHasChip.OpenGuitar = false;
             this.bSTHasChip.OpenBass = false;
-            this.strファイル名 = "";
             this.strFileName = "";
+            this.strFolderName = "";
             this.strtFileAbsolutePath = "";
             this.n無限管理WAV = new int[36 * 36];
             this.n無限管理BPM = new int[36 * 36];
-            this.n無限管理PAN = new int[36 * 36];
-            this.n無限管理SIZE = new int[36 * 36];
+            this.nResizablePAN = new int[36 * 36];
+            this.nResizableSIZE = new int[36 * 36];
             this.listBalloon_Normal_NumberManage = 0;
             this.listBalloon_Expert_NumberManage = 0;
             this.listBalloon_Master_NumberManage = 0;
@@ -1297,7 +1297,7 @@ namespace TJAPlayer3
                         {
                             long nAbsTimeFromStartPlaying = nCurrentTime - wc.n再生開始時刻[i];
                             //Trace.TraceInformation( "再生位置自動補正: {0}, seek先={1}ms, 全音長={2}ms",
-                            //    Path.GetFileName( wc.rSound[ 0 ].strFileName ),
+                            //    Path.GetFileName( wc.rSound[ 0 ].strFolderName ),
                             //    nAbsTimeFromStartPlaying,
                             //    wc.rSound[ 0 ].n総演奏時間ms
                             //);
@@ -1334,8 +1334,8 @@ namespace TJAPlayer3
         }
         public void tWAVの読み込み(CWAV cwav)
         {
-            string str = string.IsNullOrEmpty(this.PATH_WAV) ? this.strFileName : this.PATH_WAV;
-            str = str + cwav.strファイル名;
+            string str = string.IsNullOrEmpty(this.PATH_WAV) ? this.strFolderName : this.PATH_WAV;
+            str = str + cwav.strFileName;
 
             try
             {
@@ -1368,21 +1368,21 @@ namespace TJAPlayer3
 
                         if (TJAPlayer3.ConfigIni.bLogCreatedDisposed)
                         {
-                            Trace.TraceInformation("サウンドを作成しました。({3})({0})({1})({2}bytes)", cwav.strコメント文, str,
+                            Trace.TraceInformation("サウンドを作成しました。({3})({0})({1})({2}bytes)", cwav.strCommentText, str,
                                 cwav.rSound[0].nサウンドバッファサイズ, cwav.rSound[0].bストリーム再生する ? "Stream" : "OnMemory");
                         }
                     }
                     catch (Exception e)
                     {
                         cwav.rSound[i] = null;
-                        Trace.TraceError("サウンドの作成に失敗しました。({0})({1})", cwav.strコメント文, str);
+                        Trace.TraceError("サウンドの作成に失敗しました。({0})({1})", cwav.strCommentText, str);
                         Trace.TraceError(e.ToString());
                     }
                 }
             }
             catch (Exception exception)
             {
-                Trace.TraceError("サウンドの生成に失敗しました。({0})({1})", cwav.strコメント文, str);
+                Trace.TraceError("サウンドの生成に失敗しました。({0})({1})", cwav.strCommentText, str);
                 Trace.TraceError(exception.ToString());
 
                 for (int j = 0; j < nPolyphonicSounds; j++)
@@ -1574,7 +1574,7 @@ namespace TJAPlayer3
                         //                           will have just made such an attempt.
                         TJAPlayer3.SongGainController.Set(wc.SongVol, wc.SongLoudnessMetadata, sound);
 
-                        sound.n位置 = wc.n位置;
+                        sound.n位置 = wc.nLocation;
                         sound.t再生を開始する();
                     }
                     wc.n再生開始時刻[wc.n現在再生中のサウンド番号] = n再生開始システム時刻ms;
@@ -1661,8 +1661,8 @@ namespace TJAPlayer3
         {
             this.bヘッダのみ = bヘッダのみ;
             this.strtFileAbsolutePath = Path.GetFullPath(strファイル名);
-            this.strファイル名 = Path.GetFileName(this.strtFileAbsolutePath);
-            this.strFileName = Path.GetDirectoryName(this.strtFileAbsolutePath) + @"\";
+            this.strFileName = Path.GetFileName(this.strtFileAbsolutePath);
+            this.strFolderName = Path.GetDirectoryName(this.strtFileAbsolutePath) + @"\";
             //if ( this.e種別 != EType.SMF )
             {
                 try
@@ -1675,13 +1675,13 @@ namespace TJAPlayer3
 
                         //DateTime timeBeginLoad = DateTime.Now;
                         //TimeSpan span;
-                        string[] files = Directory.GetFiles(this.strFileName, "*.tja");
+                        string[] files = Directory.GetFiles(this.strFolderName, "*.tja");
 
                         StreamReader reader = new StreamReader(strファイル名, Encoding.GetEncoding("Shift_JIS"));
                         string str2 = reader.ReadToEnd();
                         reader.Close();
 
-                        //StreamReader reader2 = new StreamReader( this.strFileName + "test.tja", Encoding.GetEncoding( "Shift_JIS" ) );
+                        //StreamReader reader2 = new StreamReader( this.strFolderName + "test.tja", Encoding.GetEncoding( "Shift_JIS" ) );
                         StreamReader reader2 = new StreamReader(files[0], Encoding.GetEncoding("Shift_JIS"));
                         string str3 = reader2.ReadToEnd();
                         reader2.Close();
@@ -1702,8 +1702,8 @@ namespace TJAPlayer3
                         string str2 = reader.ReadToEnd();
                         reader.Close();
 
-                        //StreamReader reader2 = new StreamReader( this.strFileName + "test.tja", Encoding.GetEncoding( "Shift_JIS" ) );
-                        //StreamReader reader2 = new StreamReader( strFileName, Encoding.GetEncoding( "Shift_JIS" ) );
+                        //StreamReader reader2 = new StreamReader( this.strFolderName + "test.tja", Encoding.GetEncoding( "Shift_JIS" ) );
+                        //StreamReader reader2 = new StreamReader( strFolderName, Encoding.GetEncoding( "Shift_JIS" ) );
                         //string str3 = reader2.ReadToEnd();
                         //reader2.Close();
                         string str3 = str2;
@@ -1745,8 +1745,8 @@ namespace TJAPlayer3
                 {
                     this.n無限管理WAV[j] = -j;
                     this.n無限管理BPM[j] = -j;
-                    this.n無限管理PAN[j] = -10000 - j;
-                    this.n無限管理SIZE[j] = -j;
+                    this.nResizablePAN[j] = -10000 - j;
+                    this.nResizableSIZE[j] = -j;
                 }
                 this.nInternalNumberWAV1to = 1;
                 this.nInternalNumberBPM1to = 1;
@@ -1817,8 +1817,8 @@ namespace TJAPlayer3
                     //timeBeginLoad = DateTime.Now;
                     this.n無限管理WAV = null;
                     this.n無限管理BPM = null;
-                    this.n無限管理PAN = null;
-                    this.n無限管理SIZE = null;
+                    this.nResizablePAN = null;
+                    this.nResizableSIZE = null;
                     //this.tPaser_ParseHeader( str1 );
                     if (!this.bヘッダのみ)
                     {
@@ -1867,9 +1867,9 @@ namespace TJAPlayer3
                             {
                                 cwav.nChipSize = 100;
                             }
-                            if (cwav.n位置 <= -10000)
+                            if (cwav.nLocation <= -10000)
                             {
-                                cwav.n位置 = 0;
+                                cwav.nLocation = 0;
                             }
                         }
                         #endregion
@@ -3622,14 +3622,14 @@ namespace TJAPlayer3
                 {
                     nInternalNumber = this.nInternalNumberWAV1to,
                     nNotationalNumber = this.nInternalNumberWAV1to,
-                    nChipSize = this.n無限管理SIZE[this.nInternalNumberWAV1to],
-                    n位置 = this.n無限管理PAN[this.nInternalNumberWAV1to],
+                    nChipSize = this.nResizableSIZE[this.nInternalNumberWAV1to],
+                    nLocation = this.nResizablePAN[this.nInternalNumberWAV1to],
                     SongVol = this.SongVol,
                     SongLoudnessMetadata = this.SongLoudnessMetadata,
-                    strファイル名 = CDTXCompanionFileFinder.FindFileName(this.strFileName, strファイル名, dansongs.FileName),
-                    strコメント文 = "TJA BGM"
+                    strFileName = CDTXCompanionFileFinder.FindFileName(this.strFolderName, strFileName, dansongs.FileName),
+                    strCommentText = "TJA BGM"
                 };
-                dansongs.Wave.SongLoudnessMetadata = LoudnessMetadataScanner.LoadForAudioPath(dansongs.Wave.strファイル名);
+                dansongs.Wave.SongLoudnessMetadata = LoudnessMetadataScanner.LoadForAudioPath(dansongs.Wave.strFileName);
                 List_DanSongs.Add(dansongs);
                 this.listWAV.Add(this.nInternalNumberWAV1to, dansongs.Wave);
                 this.nInternalNumberWAV1to++;
@@ -3642,7 +3642,7 @@ namespace TJAPlayer3
                 nextSongnextSongChip.nIntNum = 0x01;
                 nextSongnextSongChip.nIntNum_Internal = 1 + List_DanSongs.Count;
 
-                this.listWAV[1].strファイル名 = "";
+                this.listWAV[1].strFileName = "";
 
                 // チップを配置。
                 this.listChip.Add(nextSongnextSongChip);
@@ -4325,7 +4325,7 @@ namespace TJAPlayer3
                 }
                 else
                 {
-                    this.strBGM_PATH = CDTXCompanionFileFinder.FindFileName(this.strFileName, strファイル名, strCommandParam);
+                    this.strBGM_PATH = CDTXCompanionFileFinder.FindFileName(this.strFolderName, strFileName, strCommandParam);
                     //tbWave.Text = strCommandParam;
                     if (this.listWAV != null)
                     {
@@ -4333,19 +4333,19 @@ namespace TJAPlayer3
                         //                           TJAP3 is either launching, enumerating songs, or is about to
                         //                           begin playing a song. If metadata is available, we want it now.
                         //                           If is not yet available then we wish to queue scanning.
-                        var absoluteBgmPath = Path.Combine(this.strFileName, this.strBGM_PATH);
+                        var absoluteBgmPath = Path.Combine(this.strFolderName, this.strBGM_PATH);
                         this.SongLoudnessMetadata = LoudnessMetadataScanner.LoadForAudioPath(absoluteBgmPath);
 
                         var wav = new CWAV()
                         {
                             nInternalNumber = this.nInternalNumberWAV1to,
                             nNotationalNumber = 1,
-                            nChipSize = this.n無限管理SIZE[this.nInternalNumberWAV1to],
-                            n位置 = this.n無限管理PAN[this.nInternalNumberWAV1to],
+                            nChipSize = this.nResizableSIZE[this.nInternalNumberWAV1to],
+                            nLocation = this.nResizablePAN[this.nInternalNumberWAV1to],
                             SongVol = this.SongVol,
                             SongLoudnessMetadata = this.SongLoudnessMetadata,
-                            strファイル名 = this.strBGM_PATH,
-                            strコメント文 = "TJA BGM",
+                            strFileName = this.strBGM_PATH,
+                            strCommentText = "TJA BGM",
                         };
 
                         this.listWAV.Add(this.nInternalNumberWAV1to, wav);
@@ -4531,7 +4531,7 @@ namespace TJAPlayer3
                 if (!string.IsNullOrEmpty(strCommandParam))
                 {
                     this.strBGVIDEO_PATH =
-                        CDTXCompanionFileFinder.FindFileName(this.strFileName, strファイル名, strCommandParam);
+                        CDTXCompanionFileFinder.FindFileName(this.strFolderName, strFileName, strCommandParam);
                 }
 
                 var avi = new CAVI()
@@ -5745,8 +5745,8 @@ namespace TJAPlayer3
         private int nInternalNumberBRANCH1to;
         private int nInternalNumberWAV1to;
         private int[] n無限管理BPM;
-        private int[] n無限管理PAN;
-        private int[] n無限管理SIZE;
+        private int[] nResizablePAN;
+        private int[] nResizableSIZE;
         private int[] n無限管理WAV;
         private int[] nRESULTIMAGE用優先順位;
         private int[] nRESULTMOVIE用優先順位;
@@ -6406,7 +6406,7 @@ namespace TJAPlayer3
 
             #region [ nWAV番号で示されるサイズ未設定のWAVチップがあれば、そのサイズを変更する。無限管理に対応。]
             //-----------------
-            if (this.n無限管理SIZE[nWAV番号] == -nWAV番号)  // 初期状態では n無限管理SIZE[xx] = -xx である。この場合、#SIZExx がまだ出現していないことを意味する。
+            if (this.nResizableSIZE[nWAV番号] == -nWAV番号)  // 初期状態では nResizableSIZE[xx] = -xx である。この場合、#SIZExx がまだ出現していないことを意味する。
             {
                 foreach (CWAV wav in this.listWAV.Values)       // これまでに出てきたWAVチップのうち、該当する（サイズが未設定の）チップのサイズを変更する（仕組み上、必ず後方参照となる）。
                 {
@@ -6414,7 +6414,7 @@ namespace TJAPlayer3
                         wav.nChipSize = nサイズ値;
                 }
             }
-            this.n無限管理SIZE[nWAV番号] = nサイズ値;         // 次にこの nWAV番号を使うWAVチップが現れたら、負数の代わりに、このサイズ値が格納されることになる。
+            this.nResizableSIZE[nWAV番号] = nサイズ値;         // 次にこの nWAV番号を使うWAVチップが現れたら、負数の代わりに、このサイズ値が格納されることになる。
                                                     //-----------------
             #endregion
 
@@ -6460,15 +6460,15 @@ namespace TJAPlayer3
             {
                 n位置 = Math.Min(Math.Max(n位置, -100), 100);   // -100～+100 に丸める
 
-                if (this.n無限管理PAN[zz] == (-10000 - zz)) // 初期状態では n無限管理PAN[zz] = -10000 - zz である。この場合、#WAVPANzz, #PANzz がまだ出現していないことを意味する。
+                if (this.nResizablePAN[zz] == (-10000 - zz)) // 初期状態では nResizablePAN[zz] = -10000 - zz である。この場合、#WAVPANzz, #PANzz がまだ出現していないことを意味する。
                 {
                     foreach (CWAV wav in this.listWAV.Values)   // これまでに出てきたチップのうち、該当する（位置が未設定の）WAVチップの値を変更する（仕組み上、必ず後方参照となる）。
                     {
-                        if (wav.n位置 == (-10000 - zz))   // #WAVPANzz, #PANzz 行より前の行に出現した #WAVzz では、位置は -10000-zz に初期化されている。
-                            wav.n位置 = n位置;
+                        if (wav.nLocation == (-10000 - zz))   // #WAVPANzz, #PANzz 行より前の行に出現した #WAVzz では、位置は -10000-zz に初期化されている。
+                            wav.nLocation = n位置;
                     }
                 }
-                this.n無限管理PAN[zz] = n位置;            // 次にこの WAV番号 zz を使うWAVチップが現れたら、この位置が格納されることになる。
+                this.nResizablePAN[zz] = n位置;            // 次にこの WAV番号 zz を使うWAVチップが現れたら、この位置が格納されることになる。
             }
             //-----------------
             #endregion

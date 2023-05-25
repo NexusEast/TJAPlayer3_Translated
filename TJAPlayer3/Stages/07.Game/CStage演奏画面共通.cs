@@ -570,7 +570,7 @@ namespace TJAPlayer3
 				b演奏終了後も再生が続くチップである = _b演奏終了後も再生が続くチップである
 			};
 			queueMixerSound.Enqueue( stm );
-//		Debug.WriteLine( "★Queue: add " + Path.GetFileName( stm.csound.strFileName ));
+//		Debug.WriteLine( "★Queue: add " + Path.GetFileName( stm.csound.strFolderName ));
 		}
 		public void RemoveMixer( CSound cs )
 		{
@@ -581,7 +581,7 @@ namespace TJAPlayer3
 				b演奏終了後も再生が続くチップである = false
 			};
 			queueMixerSound.Enqueue( stm );
-//		Debug.WriteLine( "★Queue: remove " + Path.GetFileName( stm.csound.strFileName ));
+//		Debug.WriteLine( "★Queue: remove " + Path.GetFileName( stm.csound.strFolderName ));
 		}
 		public void ManageMixerQueue()
 		{

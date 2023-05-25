@@ -180,7 +180,7 @@ namespace TJAPlayer3
 ////				{
 //                    try
 //                    {
-//                        this.rSound[ 0 ] = CDTXMania.Sound管理.tサウンドを生成する( CSkin.Path( this.strFileName ) );
+//                        this.rSound[ 0 ] = CDTXMania.Sound管理.tサウンドを生成する( CSkin.Path( this.strFolderName ) );
 //                    }
 //                    catch
 //                    {

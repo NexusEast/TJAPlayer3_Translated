@@ -2216,7 +2216,7 @@ for (int i = 0; i < 3; i++) {
 			if( !File.Exists( strFilename ) )
 			{
 				ini.stファイル.Title = DTX.TITLE;
-				ini.stファイル.Name = DTX.strファイル名;
+				ini.stファイル.Name = DTX.strFileName;
 				for( int i = 0; i < 6; i++ )
 				{
 					ini.stセクション[ i ].nPerfectになる範囲ms = nPerfect範囲ms;
