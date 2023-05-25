@@ -864,7 +864,7 @@ namespace TJAPlayer3
 									c曲リストノード.arスコア[ i ].譜面情報.レベルを非表示にする = cdtx.HIDDENLEVEL;
 									c曲リストノード.arスコア[ i ].譜面情報.曲種別 = cdtx.e種別;
 									c曲リストノード.arスコア[ i ].譜面情報.Bpm = cdtx.BPM;
-									c曲リストノード.arスコア[ i ].譜面情報.Duration = 0;	//  (cdtx.listChip == null)? 0 : cdtx.listChip[ cdtx.listChip.Count - 1 ].n発声時刻ms;
+									c曲リストノード.arスコア[ i ].譜面情報.Duration = 0;	//  (cdtx.listChip == null)? 0 : cdtx.listChip[ cdtx.listChip.Count - 1 ].nNoiseTimems;
                                     c曲リストノード.arスコア[ i ].譜面情報.strBGMファイル名 = cdtx.strBGM_PATH;
                                     c曲リストノード.arスコア[ i ].譜面情報.SongVol = cdtx.SongVol;
                                     c曲リストノード.arスコア[ i ].譜面情報.SongLoudnessMetadata = cdtx.SongLoudnessMetadata;
