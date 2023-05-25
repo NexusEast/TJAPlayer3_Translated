@@ -115,7 +115,7 @@ namespace TJAPlayer3
                     chip.nList上の位置 = n整数値管理;
                     if( ( chip.nChannelNumber == 0x15 || chip.nChannelNumber == 0x16 ) && ( n整数値管理 < this.listChip[ i ].Count - 1 ) )
                     {
-                        if( chip.db発声時刻ms < r指定時刻に一番近い未ヒットChipを過去方向優先で検索する( 0, i ).db発声時刻ms)
+                        if( chip.dbNoiseTimems < r指定時刻に一番近い未ヒットChipを過去方向優先で検索する( 0, i ).dbNoiseTimems)
                         {
                             chip.n描画優先度 = 1;
                         }
