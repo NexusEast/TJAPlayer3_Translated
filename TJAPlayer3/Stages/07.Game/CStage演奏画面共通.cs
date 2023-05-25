@@ -2389,7 +2389,7 @@ namespace TJAPlayer3
                     if (!TJAPlayer3.DTX.bHasBranch[TJAPlayer3.stage選曲.n確定された曲の難易度]) return;
 
                     if( this.n分岐した回数[ 0 ] < TJAPlayer3.DTX.listBRANCH.Count )
-                        this.t分岐処理( 0, TJAPlayer3.DTX.listBRANCH[ this.n分岐した回数[ 0 ] ].n命令時のChipList番号, 0 );
+                        this.t分岐処理( 0, TJAPlayer3.DTX.listBRANCH[ this.n分岐した回数[ 0 ] ].nChiplistIndex, 0 );
                     TJAPlayer3.stage演奏ドラム画面.actLaneTaiko.t分岐レイヤー_コース変化( this.n現在のコース[ 0 ], 0, 0 );
                     TJAPlayer3.stage演奏ドラム画面.actMtaiko.tBranchEvent( this.n現在のコース[ 0 ], 0, 0 );
                     this.n現在のコース[ 0 ] = 0;
@@ -2401,7 +2401,7 @@ namespace TJAPlayer3
                     if (!TJAPlayer3.DTX.bHasBranch[TJAPlayer3.stage選曲.n確定された曲の難易度]) return;
 
                     if ( this.n分岐した回数[ 0 ] < TJAPlayer3.DTX.listBRANCH.Count )
-                        this.t分岐処理( 1, TJAPlayer3.DTX.listBRANCH[ this.n分岐した回数[ 0 ] ].n命令時のChipList番号, 0 );
+                        this.t分岐処理( 1, TJAPlayer3.DTX.listBRANCH[ this.n分岐した回数[ 0 ] ].nChiplistIndex, 0 );
                     TJAPlayer3.stage演奏ドラム画面.actLaneTaiko.t分岐レイヤー_コース変化( this.n現在のコース[ 0 ], 1, 0 );
                     TJAPlayer3.stage演奏ドラム画面.actMtaiko.tBranchEvent( this.n現在のコース[ 0 ], 1, 0 );
                     this.n現在のコース[ 0 ] = 1;
@@ -2413,7 +2413,7 @@ namespace TJAPlayer3
                     if (!TJAPlayer3.DTX.bHasBranch[TJAPlayer3.stage選曲.n確定された曲の難易度]) return;
 
                     if ( this.n分岐した回数[ 0 ] < TJAPlayer3.DTX.listBRANCH.Count )
-                        this.t分岐処理( 2, TJAPlayer3.DTX.listBRANCH[ this.n分岐した回数[ 0 ] ].n命令時のChipList番号, 0 );
+                        this.t分岐処理( 2, TJAPlayer3.DTX.listBRANCH[ this.n分岐した回数[ 0 ] ].nChiplistIndex, 0 );
                     TJAPlayer3.stage演奏ドラム画面.actLaneTaiko.t分岐レイヤー_コース変化( this.n現在のコース[ 0 ], 2, 0 );
                     TJAPlayer3.stage演奏ドラム画面.actMtaiko.tBranchEvent( this.n現在のコース[ 0 ], 2, 0 );
                     this.n現在のコース[ 0 ] = 2;
@@ -2423,7 +2423,7 @@ namespace TJAPlayer3
                 //else if (keyboard.bキーが押された((int)SlimDX.DirectInput.Key.D1))
                 //{
                 //    if (this.n分岐した回数[1] < CDTXMania.DTX.listBRANCH.Count)
-                //        this.t分岐処理(0, CDTXMania.DTX.listBRANCH[this.n分岐した回数[1]].n命令時のChipList番号, 1);
+                //        this.t分岐処理(0, CDTXMania.DTX.listBRANCH[this.n分岐した回数[1]].nChiplistIndex, 1);
                 //    CDTXMania.stage演奏ドラム画面.actLaneTaiko.t分岐レイヤー_コース変化(this.nCurrentCourse[1], 0, 1);
                 //    CDTXMania.stage演奏ドラム画面.actMtaiko.tBranchEvent(this.nCurrentCourse[1], 1);
                 //    this.nCurrentCourse[1] = 0;
@@ -2433,7 +2433,7 @@ namespace TJAPlayer3
                 //else if (keyboard.bキーが押された((int)SlimDX.DirectInput.Key.D2))		// #24243 2011.1.16 yyagi UI for InputAdjustTime in playing screen.
                 //{
                 //    if (this.n分岐した回数[1] < CDTXMania.DTX.listBRANCH.Count)
-                //        this.t分岐処理(1, CDTXMania.DTX.listBRANCH[this.n分岐した回数[1]].n命令時のChipList番号, 1);
+                //        this.t分岐処理(1, CDTXMania.DTX.listBRANCH[this.n分岐した回数[1]].nChiplistIndex, 1);
                 //    CDTXMania.stage演奏ドラム画面.actLaneTaiko.t分岐レイヤー_コース変化(this.nCurrentCourse[1], 1, 1);
                 //    CDTXMania.stage演奏ドラム画面.actMtaiko.tBranchEvent(this.nCurrentCourse[1], 1);
                 //    this.nCurrentCourse[1] = 1;
@@ -2443,7 +2443,7 @@ namespace TJAPlayer3
                 //else if (keyboard.bキーが押された((int)SlimDX.DirectInput.Key.D3))		// #24243 2011.1.16 yyagi UI for InputAdjustTime in playing screen.
                 //{
                 //    if (this.n分岐した回数[1] < CDTXMania.DTX.listBRANCH.Count)
-                //        this.t分岐処理(2, CDTXMania.DTX.listBRANCH[this.n分岐した回数[0]].n命令時のChipList番号, 1);
+                //        this.t分岐処理(2, CDTXMania.DTX.listBRANCH[this.n分岐した回数[0]].nChiplistIndex, 1);
                 //    CDTXMania.stage演奏ドラム画面.actLaneTaiko.t分岐レイヤー_コース変化(this.nCurrentCourse[1], 2, 1);
                 //    CDTXMania.stage演奏ドラム画面.actMtaiko.tBranchEvent(this.nCurrentCourse[1], 2);
                 //    this.nCurrentCourse[1] = 2;
@@ -3376,10 +3376,10 @@ namespace TJAPlayer3
                             if( !this.bLEVELHOLD[ nPlayer ] )
                             {
                                 this.tBranchJudge( dTX, this.nBranch_roll[ nPlayer ], this.nBranch_Perfect[ nPlayer ], this.nBranch_Good[ nPlayer ], this.nBranch_Miss[ nPlayer ], nPlayer );
-                                this.t分岐処理( this.n次回のコース[ nPlayer ], dTX.listBRANCH[ this.n分岐した回数[ nPlayer ] ].n命令時のChipList番号, nPlayer );
+                                this.t分岐処理( this.n次回のコース[ nPlayer ], dTX.listBRANCH[ this.n分岐した回数[ nPlayer ] ].nChiplistIndex, nPlayer );
                                 TJAPlayer3.stage演奏ドラム画面.actLaneTaiko.t分岐レイヤー_コース変化( this.n現在のコース[ nPlayer ], this.n次回のコース[ nPlayer ], nPlayer );
                                 TJAPlayer3.stage演奏ドラム画面.actMtaiko.tBranchEvent( this.n現在のコース[ nPlayer ], this.n次回のコース[ nPlayer ], nPlayer );
-                                if( dTX.listBRANCH[ this.n分岐した回数[ nPlayer ] ].n分岐の種類 == 0 )
+                                if( dTX.listBRANCH[ this.n分岐した回数[ nPlayer ] ].nBranchType == 0 )
                                 {
                                     this.n現在のコース[ nPlayer ] = this.n次回のコース[ nPlayer ];
                                 }
@@ -3572,7 +3572,7 @@ namespace TJAPlayer3
         {
             if( this.b強制的に分岐させた[ nPlayer ] ) return;
 
-            int n種類 = dTX.listBRANCH[ this.n分岐した回数[ nPlayer ] ].n分岐の種類;
+            int n種類 = dTX.listBRANCH[ this.n分岐した回数[ nPlayer ] ].nBranchType;
 
             double dbRate = 0;
 
@@ -3584,30 +3584,30 @@ namespace TJAPlayer3
 
             if( n種類 == 0 )
             {
-                if( dbRate < dTX.listBRANCH[this.n分岐した回数[ nPlayer ]].n条件数値A )
+                if( dbRate < dTX.listBRANCH[this.n分岐した回数[ nPlayer ]].nConditionValueA )
                 {
                     this.n次回のコース[ nPlayer ] = 0;
                 }
-                else if( dbRate >= dTX.listBRANCH[this.n分岐した回数[ nPlayer ]].n条件数値A && dbRate < dTX.listBRANCH[this.n分岐した回数[ nPlayer ]].n条件数値B )
+                else if( dbRate >= dTX.listBRANCH[this.n分岐した回数[ nPlayer ]].nConditionValueA && dbRate < dTX.listBRANCH[this.n分岐した回数[ nPlayer ]].nConditionValueB )
                 {
                     this.n次回のコース[ nPlayer ] = 1;
                 }
-                else if( dbRate >= dTX.listBRANCH[this.n分岐した回数[ nPlayer ]].n条件数値B )
+                else if( dbRate >= dTX.listBRANCH[this.n分岐した回数[ nPlayer ]].nConditionValueB )
                 {
                     this.n次回のコース[ nPlayer ] = 2;
                 }
             }
             else if( n種類 == 1 )
             {
-                if( n連打数 < dTX.listBRANCH[this.n分岐した回数[ nPlayer ]].n条件数値A )
+                if( n連打数 < dTX.listBRANCH[this.n分岐した回数[ nPlayer ]].nConditionValueA )
                 {
                     this.n次回のコース[ nPlayer ] = 0;
                 }
-                else if( n連打数 >= dTX.listBRANCH[this.n分岐した回数[ nPlayer ]].n条件数値A && n連打数 < dTX.listBRANCH[this.n分岐した回数[ nPlayer ]].n条件数値B )
+                else if( n連打数 >= dTX.listBRANCH[this.n分岐した回数[ nPlayer ]].nConditionValueA && n連打数 < dTX.listBRANCH[this.n分岐した回数[ nPlayer ]].nConditionValueB )
                 {
                     this.n次回のコース[ nPlayer ] = 1;
                 }
-                else if( n連打数 >= dTX.listBRANCH[this.n分岐した回数[ nPlayer ]].n条件数値B )
+                else if( n連打数 >= dTX.listBRANCH[this.n分岐した回数[ nPlayer ]].nConditionValueB )
                 {
                     this.n次回のコース[ nPlayer ] = 2;
                 }
@@ -3662,7 +3662,7 @@ namespace TJAPlayer3
 
             for( int A = n分岐開始位置のChip番号; A < dTX.listChip.Count; A++ )
             {
-                //if( dTX.listChip[ A ].nNoiseTimems < dTX.listBRANCH[ this.n分岐した回数 ].db分岐時間ms )
+                //if( dTX.listChip[ A ].nNoiseTimems < dTX.listBRANCH[ this.n分岐した回数 ].dbBranchTimems )
                 if( dTX.listChip[ A ].nIntNum < n分岐開始位置のChip番号 )
                 {
                     dTX.listChip[ A ].bVisible = true;

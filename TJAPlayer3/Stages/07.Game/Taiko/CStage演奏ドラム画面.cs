@@ -1761,13 +1761,13 @@ namespace TJAPlayer3
             if( ( this.n分岐した回数[ 0 ] < TJAPlayer3.DTX.listBRANCH.Count ) && TJAPlayer3.ConfigIni.bBranchGuide && !TJAPlayer3.ConfigIni.b太鼓パートAutoPlay )
             {
                 f現在の精度 = 0;
-                n種類 = TJAPlayer3.DTX.listBRANCH[this.n分岐した回数[ 0 ]].n分岐の種類;
+                n種類 = TJAPlayer3.DTX.listBRANCH[this.n分岐した回数[ 0 ]].nBranchType;
                 strNext = "NORMAL";
-                n次回分岐までの小節数 = (TJAPlayer3.DTX.listBRANCH[this.n分岐した回数[0]].n現在の小節 - 2) - TJAPlayer3.stage演奏ドラム画面.actPlayInfo.NowMeasure[0];
+                n次回分岐までの小節数 = (TJAPlayer3.DTX.listBRANCH[this.n分岐した回数[0]].nCurrentBar - 2) - TJAPlayer3.stage演奏ドラム画面.actPlayInfo.NowMeasure[0];
 
                 if( TJAPlayer3.stage演奏ドラム画面.actPlayInfo.NowMeasure[0] < 0 )
                 {
-                    n次回分岐までの小節数 = TJAPlayer3.DTX.listBRANCH[this.n分岐した回数[ 0 ]].n現在の小節 - 2;
+                    n次回分岐までの小節数 = TJAPlayer3.DTX.listBRANCH[this.n分岐した回数[ 0 ]].nCurrentBar - 2;
                 }
 
                 if( ( this.nBranch_Perfect[ 0 ] + this.nBranch_Good[ 0 ] + this.nBranch_Miss[ 0 ] ) != 0 )
@@ -1777,15 +1777,15 @@ namespace TJAPlayer3
 
                 if( n種類 == 0 )
                 {
-                    if( f現在の精度 < TJAPlayer3.DTX.listBRANCH[this.n分岐した回数[ 0 ]].n条件数値A )
+                    if( f現在の精度 < TJAPlayer3.DTX.listBRANCH[this.n分岐した回数[ 0 ]].nConditionValueA )
                     {
                         strNext = "NORMAL";
                     }
-                    else if( f現在の精度 >= TJAPlayer3.DTX.listBRANCH[this.n分岐した回数[ 0 ]].n条件数値A && f現在の精度 < TJAPlayer3.DTX.listBRANCH[this.n分岐した回数[ 0 ]].n条件数値B )
+                    else if( f現在の精度 >= TJAPlayer3.DTX.listBRANCH[this.n分岐した回数[ 0 ]].nConditionValueA && f現在の精度 < TJAPlayer3.DTX.listBRANCH[this.n分岐した回数[ 0 ]].nConditionValueB )
                     {
                         strNext = "EXPERT";
                     }
-                    else if( f現在の精度 >= TJAPlayer3.DTX.listBRANCH[this.n分岐した回数[ 0 ]].n条件数値B )
+                    else if( f現在の精度 >= TJAPlayer3.DTX.listBRANCH[this.n分岐した回数[ 0 ]].nConditionValueB )
                     {
                         strNext = "MASTER";
                     }
@@ -1794,15 +1794,15 @@ namespace TJAPlayer3
                 }
                 if( n種類 == 1 )
                 {
-                    if( this.nBranch_roll[ 0 ] < TJAPlayer3.DTX.listBRANCH[this.n分岐した回数[ 0 ]].n条件数値A )
+                    if( this.nBranch_roll[ 0 ] < TJAPlayer3.DTX.listBRANCH[this.n分岐した回数[ 0 ]].nConditionValueA )
                     {
                         strNext = "NORMAL";
                     }
-                    else if( this.nBranch_roll[ 0 ] >= TJAPlayer3.DTX.listBRANCH[this.n分岐した回数[ 0 ]].n条件数値A && this.nBranch_roll[ 0 ] < TJAPlayer3.DTX.listBRANCH[this.n分岐した回数[ 0 ]].n条件数値B )
+                    else if( this.nBranch_roll[ 0 ] >= TJAPlayer3.DTX.listBRANCH[this.n分岐した回数[ 0 ]].nConditionValueA && this.nBranch_roll[ 0 ] < TJAPlayer3.DTX.listBRANCH[this.n分岐した回数[ 0 ]].nConditionValueB )
                     {
                         strNext = "EXPERT";
                     }
-                    else if( this.nBranch_roll[ 0 ] >= TJAPlayer3.DTX.listBRANCH[this.n分岐した回数[ 0 ]].n条件数値B )
+                    else if( this.nBranch_roll[ 0 ] >= TJAPlayer3.DTX.listBRANCH[this.n分岐した回数[ 0 ]].nConditionValueB )
                     {
                         strNext = "MASTER";
                     }
@@ -1812,7 +1812,7 @@ namespace TJAPlayer3
 
 
                 TJAPlayer3.act文字コンソール.tPrint( 0, 160, C文字コンソール.Eフォント種別.白, string.Format( "NEXT BRANCH:{0:##0}", n次回分岐までの小節数.ToString() ) );
-                TJAPlayer3.act文字コンソール.tPrint( 0, 362, C文字コンソール.Eフォント種別.白, string.Format( "NEXT BRANCH INFO:{0:##0} , {1:##0}", TJAPlayer3.DTX.listBRANCH[ this.n分岐した回数[ 0 ] ].n条件数値A.ToString(), TJAPlayer3.DTX.listBRANCH[ this.n分岐した回数[ 0 ] ].n条件数値B.ToString() ) );
+                TJAPlayer3.act文字コンソール.tPrint( 0, 362, C文字コンソール.Eフォント種別.白, string.Format( "NEXT BRANCH INFO:{0:##0} , {1:##0}", TJAPlayer3.DTX.listBRANCH[ this.n分岐した回数[ 0 ] ].nConditionValueA.ToString(), TJAPlayer3.DTX.listBRANCH[ this.n分岐した回数[ 0 ] ].nConditionValueB.ToString() ) );
                 TJAPlayer3.act文字コンソール.tPrint( 0, 144, C文字コンソール.Eフォント種別.白, strNext.ToString() );
             }
             else if( ( this.n分岐した回数[ 0 ] >= TJAPlayer3.DTX.listBRANCH.Count ) && TJAPlayer3.ConfigIni.bBranchGuide && !TJAPlayer3.ConfigIni.b太鼓パートAutoPlay  )

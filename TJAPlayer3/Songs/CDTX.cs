@@ -302,17 +302,17 @@ namespace TJAPlayer3
 
         public class CBRANCH
         {
-            public int n分岐の種類; //0:精度分岐 1:連打分岐 2:スコア分岐 3:大音符のみの精度分岐
-            public double n条件数値A;
-            public double n条件数値B;
-            public double db分岐時間;
-            public double db分岐時間ms;
-            public double db判定時間;
+            public int nBranchType; //0:精度分岐 1:連打分岐 2:スコア分岐 3:大音符のみの精度分岐
+            public double nConditionValueA;
+            public double nConditionValueB;
+            public double dbBranchTime;
+            public double dbBranchTimems;
+            public double dbJudgeTime;
             public double dbBMScrollTime;
             public double dbBPM;
             public double dbSCROLL;
-            public int n現在の小節;
-            public int n命令時のChipList番号;
+            public int nCurrentBar;
+            public int nChiplistIndex;
 
             public int nNotationalNumber;
             public int nInternalNumber;
@@ -328,7 +328,7 @@ namespace TJAPlayer3
                 {
                     builder.Append(string.Format("CBRANCH{0}", CDTX.tZZ(this.nNotationalNumber)));
                 }
-                builder.Append(string.Format(", BRANCH:{0}", this.n分岐の種類));
+                builder.Append(string.Format(", BRANCH:{0}", this.nBranchType));
                 return builder.ToString();
             }
         }
@@ -2124,7 +2124,7 @@ namespace TJAPlayer3
                                         if (this.nInternalNumberBRANCH1to + 1 > this.listBRANCH.Count)
                                             continue;
 
-                                        if (this.listBRANCH[this.nInternalNumberBRANCH1to].n現在の小節 == nBar)
+                                        if (this.listBRANCH[this.nInternalNumberBRANCH1to].nCurrentBar == nBar)
                                         {
                                             chip.bBranch = true;
                                             this.b次の小節が分岐である = false;
@@ -2327,7 +2327,7 @@ namespace TJAPlayer3
                                             chip.nNoiseTimems += this.nOFFSET;
                                         //if ( this.listBRANCH.ContainsKey( chip.nIntNum_Internal ) )
                                         //{
-                                        //this.listBRANCH[chip.nIntNum_Internal].db分岐時間ms = chip.nNoiseTimems + ( this.bOFFSETの値がマイナスである ? this.nOFFSET : 0 );
+                                        //this.listBRANCH[chip.nIntNum_Internal].dbBranchTimems = chip.nNoiseTimems + ( this.bOFFSETの値がマイナスである ? this.nOFFSET : 0 );
                                         //}
 
                                         continue;
@@ -3331,20 +3331,20 @@ namespace TJAPlayer3
 
                 //まずはリストに現在の小節、発声位置、分岐条件を追加。
                 var branch = new CBRANCH();
-                branch.db判定時間 = this.dbNowTime;
-                branch.db分岐時間 = ((this.nCurrentBar + 1) * 384);
-                branch.db分岐時間ms = this.dbNowTime; //ここがうまく計算できてないので後からバグが出る。
-                //branch.db分岐時間ms = this.dbNowTime + ((((60.0 / this.dbNowBPM) / 4.0 ) * 16.0) * 1000.0);
+                branch.dbJudgeTime = this.dbNowTime;
+                branch.dbBranchTime = ((this.nCurrentBar + 1) * 384);
+                branch.dbBranchTimems = this.dbNowTime; //ここがうまく計算できてないので後からバグが出る。
+                //branch.dbBranchTimems = this.dbNowTime + ((((60.0 / this.dbNowBPM) / 4.0 ) * 16.0) * 1000.0);
                 branch.dbBPM = this.dbNowBPM;
                 branch.dbSCROLL = this.dbNowScroll;
                 branch.dbBMScrollTime = this.dbNowBMScollTime;
-                branch.n現在の小節 = this.nCurrentBar;
-                branch.n条件数値A = nNum[0];
-                branch.n条件数値B = nNum[1];
+                branch.nCurrentBar = this.nCurrentBar;
+                branch.nConditionValueA = nNum[0];
+                branch.nConditionValueB = nNum[1];
                 branch.nInternalNumber = this.nInternalNumberBRANCH1to;
                 branch.nNotationalNumber = 0;
-                branch.n分岐の種類 = nCondition;
-                branch.n命令時のChipList番号 = this.listChip.Count;
+                branch.nBranchType = nCondition;
+                branch.nChiplistIndex = this.listChip.Count;
 
                 this.listBRANCH.Add(this.nInternalNumberBRANCH1to, branch);
 
@@ -3386,8 +3386,8 @@ namespace TJAPlayer3
                     Trace.TraceWarning($"正常ではない.tjaファイルを読み込みました。 #N 命令がありません。 ({strtFileAbsolutePath})");
                     return;
                 }
-                this.nCurrentBar = branch.n現在の小節;
-                this.dbNowTime = branch.db分岐時間ms;
+                this.nCurrentBar = branch.nCurrentBar;
+                this.dbNowTime = branch.dbBranchTimems;
                 this.dbNowBPM = branch.dbBPM;
                 this.dbNowScroll = branch.dbSCROLL;
                 this.dbNowBMScollTime = branch.dbBMScrollTime;
@@ -3401,8 +3401,8 @@ namespace TJAPlayer3
                     Trace.TraceWarning($"正常ではない.tjaファイルを読み込みました。 #E 命令がありません。 ({strtFileAbsolutePath})");
                     return;
                 }
-                this.nCurrentBar = branch.n現在の小節;
-                this.dbNowTime = branch.db分岐時間ms;
+                this.nCurrentBar = branch.nCurrentBar;
+                this.dbNowTime = branch.dbBranchTimems;
                 this.dbNowBPM = branch.dbBPM;
                 this.dbNowScroll = branch.dbSCROLL;
                 this.dbNowBMScollTime = branch.dbBMScrollTime;
@@ -3416,8 +3416,8 @@ namespace TJAPlayer3
                     Trace.TraceWarning($"正常ではない.tjaファイルを読み込みました。 #M 命令がありません。 ({strtFileAbsolutePath})");
                     return;
                 }
-                this.nCurrentBar = branch.n現在の小節;
-                this.dbNowTime = branch.db分岐時間ms;
+                this.nCurrentBar = branch.nCurrentBar;
+                this.dbNowTime = branch.dbBranchTimems;
                 this.dbNowBPM = branch.dbBPM;
                 this.dbNowScroll = branch.dbSCROLL;
                 this.dbNowBMScollTime = branch.dbBMScrollTime;
@@ -3704,7 +3704,7 @@ namespace TJAPlayer3
 
                         if (this.listBRANCH.Count != 0)
                         {
-                            if (this.listBRANCH[this.nInternalNumberBRANCH1to - 1].n現在の小節 == this.nCurrentBar)
+                            if (this.listBRANCH[this.nInternalNumberBRANCH1to - 1].nCurrentBar == this.nCurrentBar)
                             {
                                 chip.bBranch = true;
                             }
