@@ -2767,9 +2767,9 @@ namespace TJAPlayer3
                             //{
 							    //if ( dTX.listBPM.ContainsKey( pChip.nIntNum_Internal ) )
 							    //{
-								    //this.actPlayInfo.dbBPM = ( dTX.listBPM[ pChip.nIntNum_Internal ].dbBPM値 * ( ( (double) configIni.n演奏速度 ) / 20.0 ) );// + dTX.BASEBPM;
+								    //this.actPlayInfo.dbBPM = ( dTX.listBPM[ pChip.nIntNum_Internal ].dbBPMValue * ( ( (double) configIni.n演奏速度 ) / 20.0 ) );// + dTX.BASEBPM;
 							    //}
-                                //double bpm = ( dTX.listBPM[ pChip.nIntNum_Internal ].dbBPM値 * ( ( (double) configIni.n演奏速度 ) / 20.0 ) );
+                                //double bpm = ( dTX.listBPM[ pChip.nIntNum_Internal ].dbBPMValue * ( ( (double) configIni.n演奏速度 ) / 20.0 ) );
                                 //int nUnit = (int)((60.0 / ( bpm ) / this.actChara.nキャラクター通常モーション枚数 ) * 1000 );
                                 //int nUnit_gogo = (int)((60.0 / ( bpm ) / this.actChara.nキャラクターゴーゴーモーション枚数 ) * 1000 );
                                 //this.actChara.ct通常モーション = new CCounter( 0, this.actChara.nキャラクター通常モーション枚数 - 1, nUnit, CDTXMania.Timer );
@@ -3129,7 +3129,7 @@ namespace TJAPlayer3
                             {
 							    if ( dTX.listBPM.TryGetValue( pChip.nIntNum_Internal, out CDTX.CBPM cBPM ) )
 							    {
-                                    this.actPlayInfo.dbBPM = cBPM.dbBPM値 * ( ( (double) configIni.n演奏速度 ) / 20.0 );// + dTX.BASEBPM;
+                                    this.actPlayInfo.dbBPM = cBPM.dbBPMValue * ( ( (double) configIni.n演奏速度 ) / 20.0 );// + dTX.BASEBPM;
 							    }
 
 
@@ -3207,7 +3207,7 @@ namespace TJAPlayer3
 
 							//if ( dTX.listSCROLL.ContainsKey( pChip.nIntNum_Internal ) )
 							//{
-								//this.actPlayInfo.dbBPM = ( dTX.listBPM[ pChip.nIntNum_Internal ].dbBPM値 * ( ( (double) configIni.n演奏速度 ) / 20.0 ) );// + dTX.BASEBPM;
+								//this.actPlayInfo.dbBPM = ( dTX.listBPM[ pChip.nIntNum_Internal ].dbBPMValue * ( ( (double) configIni.n演奏速度 ) / 20.0 ) );// + dTX.BASEBPM;
 							//}
 						}
                         break;
@@ -3356,7 +3356,7 @@ namespace TJAPlayer3
 							pChip.bHit = true;
 							//if ( dTX.listDELAY.ContainsKey( pChip.nIntNum_Internal ) )
 							//{
-								//this.actPlayInfo.dbBPM = ( dTX.listBPM[ pChip.nIntNum_Internal ].dbBPM値 * ( ( (double) configIni.n演奏速度 ) / 20.0 ) );// + dTX.BASEBPM;
+								//this.actPlayInfo.dbBPM = ( dTX.listBPM[ pChip.nIntNum_Internal ].dbBPMValue * ( ( (double) configIni.n演奏速度 ) / 20.0 ) );// + dTX.BASEBPM;
 							//}
 						}
                         break;
@@ -3706,7 +3706,7 @@ namespace TJAPlayer3
                 if( i >= tja.listBPM.Count )
                 {
                     CDTX.CBPM cBPM = tja.listBPM[ last_input ];
-                    bpm_time = (float)cBPM.bpm_change_bmscroll_time + ( ( play_time - (float)cBPM.bpm_change_time ) * (float)cBPM.dbBPM値 / 15000.0f );
+                    bpm_time = (float)cBPM.bpm_change_bmscroll_time + ( ( play_time - (float)cBPM.bpm_change_time ) * (float)cBPM.dbBPMValue / 15000.0f );
                     last_bpm_change_time = (float)cBPM.bpm_change_time;
                     break;
                 }
@@ -3727,7 +3727,7 @@ namespace TJAPlayer3
                 if( play_time < tja.listBPM[ i ].bpm_change_time )
                 {
                     CDTX.CBPM cBPM = tja.listBPM[ last_input ];
-                    bpm_time = (float)cBPM.bpm_change_bmscroll_time + ( ( play_time - (float)cBPM.bpm_change_time ) * (float)cBPM.dbBPM値 / 15000.0f );
+                    bpm_time = (float)cBPM.bpm_change_bmscroll_time + ( ( play_time - (float)cBPM.bpm_change_time ) * (float)cBPM.dbBPMValue / 15000.0f );
                     last_bpm_change_time = (float)cBPM.bpm_change_time;
                     break;
                 }
