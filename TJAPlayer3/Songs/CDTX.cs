@@ -451,6 +451,7 @@ namespace TJAPlayer3
                     "BPM変更(拡張)", "??", "??", "??", "??", "??", "??", "??",
 
                     //太鼓1P(移動予定)
+                      //ドンstarts  = 17
 					"??", "ドン", "カツ", "ドン(大)", "カツ(大)", "連打", "連打(大)", "ふうせん連打",
                     "連打終点", "芋", "ドン(手)", "カッ(手)", "??", "??", "??", "AD-LIB",
 
@@ -504,7 +505,7 @@ namespace TJAPlayer3
                     "0xF0", "歌詞", "??", "SUDDEN", "??", "??", "??", "??",
                     "??", "??", "??", "??", "??", "??", "??", "??", "譜面終了"
                 };
-                return string.Format("CChip: 位置:{0:D4}.{1:D3}, 時刻{2}, Ch:{3:X2}({4}), Pn:{5}({11})(内部{6}), Pd:{7}, Sz:{8}, BMScroll:{9}, Auto:{10}, コース:{11}",
+                return string.Format("CChip: 位置:{0:D4}.{1:D3}, 時刻{2}, Ch:{3}({4}), Pn:{5}({11})(内部{6}), Pd:{7}, Sz:{8}, BMScroll:{9}, Auto:{10}, コース:{11}",
                      this.nNoiseLocation / 384, this.nNoiseLocation % 384,
                      ((float)this.nNoiseTimems * 0.001f),
                      this.nChannelNumber, chToStr[this.nChannelNumber],
@@ -996,7 +997,7 @@ namespace TJAPlayer3
         private int nCount = 0;
 
         public int nOFFSET = 0;
-        private bool bHasNegativeOFFSET = false;
+        public bool bHasNegativeOFFSET = false;
         private int nMOVIEOFFSET = 0;
         private bool bMOVIEOFFSETIsNegative= false;
         private double dbNowBPM = 120.0;
